@@ -1,0 +1,71 @@
+/* ============================================================
+   Global Styles – Light Mode (forced)
+   ============================================================ */
+/* Fonts loaded via <link> in index.html */
+
+:root {
+  color-scheme: light;
+  --brand: #3B5BDB;
+  --brand-soft: rgba(59,91,219,.1);
+  --surface: #FFFFFF;
+  --surface-2: #F4F4F5;
+  --border: #E4E4E7;
+  --text: #18181B;
+  --text-muted: #71717A;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --duration: 150ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: var(--surface-2);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+#root { min-height: 100vh; }
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.14);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,.28);
+}
+
+/* ── Focus ring ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Subtle page-enter animation ─────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mantine-AppShell-main > * {
+  animation: fadeUp var(--duration) var(--ease) both;
+}
+
+/* ── Cards & Papers – always white ───────────────────────── */
+.mantine-Paper-root,
+.mantine-Card-root {
+  background: #FFFFFF !important;
+  border-color: #E4E4E7 !important;
+}
+
+/* ── Table rows ───────────────────────────────────────────── */
+.mantine-Table-tr:hover td {
+  background: #F4F4F5 !important;
+}

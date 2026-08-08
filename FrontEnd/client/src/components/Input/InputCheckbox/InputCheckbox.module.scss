@@ -1,0 +1,34 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  border-radius: 8px;
+  border: 1px solid var(--mantine-color-gray-4);
+  background-color: white;
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-6);
+  }
+
+  &:checked {
+    background-color: var(--mantine-color-primary-6);
+    border-color: var(--mantine-color-primary-6);
+  }
+
+  &[data-indeterminate] {
+    background-color: var(--mantine-color-primary-6);
+    border-color: var(--mantine-color-primary-6);
+  }
+
+  &:disabled {
+    background-color: var(--mantine-color-gray-2);
+    border-color: var(--mantine-color-gray-3);
+  }
+}
+
+.icon {
+  color: white;
+}
+

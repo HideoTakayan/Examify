@@ -1,0 +1,15 @@
+{
+	"required": "必須項目です",
+	"unauthorized": "権限がありません",
+	"server_error": "サーバーエラーです。後でもう一度お試しください",
+	"prediction_failed": "予測を取得できませんでした。",
+	"result_load_failed": "結果を読み込めませんでした。",
+	"exam_list_failed": "試験一覧の取得に失敗しました。",
+	"exam_force_submit_failed": "試験セッションの force-submit に失敗しました。",
+	"user_list_failed": "ユーザー一覧の取得に失敗しました。",
+	"user_add_failed": "ユーザーの追加に失敗しました。",
+	"user_delete_failed": "ユーザーの削除に失敗しました。",
+	"realtime_timeout": "Realtime 接続がタイムアウトしました",
+	"realtime_connect_failed": "Realtime サーバーに接続できません",
+	"realtime_error": "Realtime サーバーエラー"
+}

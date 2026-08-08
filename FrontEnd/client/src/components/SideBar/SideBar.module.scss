@@ -1,0 +1,27 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.brandText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: #18181B;
+  user-select: none;
+}
+
+.logoIcon {
+  border-radius: 6px;
+  transition: opacity 150ms ease;
+}
+
+.logoIcon:hover {
+  opacity: 0.8;
+}

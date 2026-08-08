@@ -1,0 +1,147 @@
+/* ============================================================
+   NavbarNested.module.css – Light mode (forced)
+   ============================================================ */
+
+.control {
+  width: 100%;
+  max-width: 100%;
+  padding: 7px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  color: #52525B;
+  font-size: 0.875rem;
+  font-weight: 450;
+  transition: background 120ms ease, color 120ms ease;
+  cursor: pointer;
+  text-align: left;
+  border: none;
+  background: transparent;
+}
+
+.control:hover {
+  background-color: #F4F4F5;
+  color: #18181B;
+}
+
+/* ── Active link ──────────────────────────────────────────── */
+.activeLink {
+  background-color: #EEF2FF !important;
+  color: #3B5BDB !important;
+  font-weight: 550;
+}
+
+.activeLink:hover {
+  background-color: #E0E9FF !important;
+}
+
+/* ── Inner links container ────────────────────────────────── */
+.linksInner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 1px;
+}
+
+/* ── Sub-menu links ───────────────────────────────────────── */
+.link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 12px 6px 44px;
+  font-size: 0.8125rem;
+  color: #71717A;
+  text-decoration: none;
+  border-radius: 6px;
+  text-align: left;
+  transition: background 120ms ease, color 120ms ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-weight: 400;
+}
+
+.link:hover {
+  background-color: #F4F4F5;
+  color: #18181B;
+}
+
+/* ── User section ─────────────────────────────────────────── */
+.user {
+  width: 100%;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: flex-start;
+  border-radius: 6px;
+  transition: background 120ms ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.user:hover {
+  background: #F4F4F5;
+}
+
+/* ── Chevron ──────────────────────────────────────────────── */
+.chevron {
+  transition: transform 0.2s ease;
+  opacity: 0.45;
+}
+
+/* ── Navbar wrapper ───────────────────────────────────────── */
+.navbar {
+  display: flex;
+  flex-direction: column;
+  height: -webkit-fill-available;
+  height: fill-available;
+  justify-content: space-between;
+  transition: width 0.2s ease;
+  padding: 8px 6px 6px;
+}
+
+.links {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── Collapsed state ──────────────────────────────────────── */
+.navbar.collapsed .linksInner {
+  align-items: center;
+}
+
+.navbar.collapsed .control {
+  padding: 8px;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.navbar.collapsed .user {
+  justify-content: center;
+  padding: 8px;
+}
+
+/* ── Toggle button ────────────────────────────────────────── */
+.toggleBtn {
+  width: 100%;
+  padding: 7px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  color: #71717A;
+  transition: background 120ms ease, color 120ms ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.toggleBtn:hover {
+  background-color: #F4F4F5;
+  color: #18181B;
+}

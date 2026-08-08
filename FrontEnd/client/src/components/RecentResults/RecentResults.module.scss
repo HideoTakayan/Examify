@@ -1,0 +1,39 @@
+.table :global(th) {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: var(--mantine-color-gray-5);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--mantine-color-gray-0);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.table :global(td) {
+  padding: 13px 16px;
+  color: var(--mantine-color-gray-7);
+}
+
+.table :global(tr) {
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.table :global(tr:last-child) {
+  border-bottom: none;
+}
+
+.subject {
+  font-weight: 600;
+}
+
+.score {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.scoreSuffix {
+  margin-left: 4px;
+  color: var(--mantine-color-gray-5);
+  font-size: 0.78rem;
+}

@@ -1,0 +1,21 @@
+.rootButton {
+  border: none;
+  border-radius: 8px;
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.innerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sectionButton {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0;
+}

@@ -1,0 +1,30 @@
+.chartScroll {
+  width: 100%;
+  max-width: 100%;
+}
+
+.chartScroll :global([data-orientation='horizontal']) {
+  padding-bottom: 2px;
+}
+
+.chartInner {
+  display: block;
+  flex-shrink: 0;
+}
+
+.chartInner :global(.recharts-cartesian-axis-tick-value) {
+  fill: var(--mantine-color-dimmed);
+}
+
+.chartInner :global(.recharts-legend-item-text) {
+  fill: var(--mantine-color-dimmed);
+}
+
+.chartInner :global(.recharts-tooltip-label) {
+  color: var(--mantine-color-text);
+}
+
+.scrollHint {
+  margin-top: 6px;
+  text-align: center;
+}

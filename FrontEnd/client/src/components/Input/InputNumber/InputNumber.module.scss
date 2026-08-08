@@ -1,0 +1,38 @@
+.inputField {
+    border: 1px solid var(--mantine-color-gray-3);
+    @mixin light {
+        border: 1px solid var(--mantine-color-gray-3);
+        background-color: white;
+    }
+
+    @mixin dark {
+        border: 1px solid var(--mantine-color-neutral-6);
+        background-color: var(--mantine-color-neutral-8);
+      }
+
+    &:hover {
+        border-color: var(--mantine-color-gray-4);
+    }
+
+    &:focus {
+        border: 1px solid var(--mantine-color-primary-6);
+    }
+
+    &[data-error] {
+        border: 1px solid var(--mantine-color-error-6);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+
+        @mixin light {
+            background-color: var(--mantine-color-gray-0);
+            border-color: var(--mantine-color-gray-2);
+        }
+
+        @mixin dark {
+            background-color: var(--mantine-color-dark-6);
+            border-color: var(--mantine-color-dark-5);
+        }
+    }
+}

@@ -1,0 +1,2812 @@
+{
+  "version": "3.0",
+  "trained_at": "2026-05-25T17:24:46.683Z",
+  "class": "DEMO-CLASS",
+  "n_students": 37,
+  "config": {
+    "top_k_features": 5,
+    "ridge_lambda": 0.5,
+    "min_samples": 10,
+    "relaxed_min_samples": 5,
+    "group_bonus": 0.1,
+    "min_same_group": 2,
+    "min_allowed_features": 1
+  },
+  "global_stats": {
+    "overall_mean": 7.373,
+    "overall_std": 0.403
+  },
+  "subject_meta": {
+    "S01": {
+      "name": "Lý luận và phương pháp Giáo dục thể chất 1",
+      "credits": 1,
+      "cluster": "skills_support",
+      "groups": [
+        "pe"
+      ],
+      "mean": 7.497,
+      "std": 0.717,
+      "n": 37
+    },
+    "S02": {
+      "name": "Võ (Cơ bản)",
+      "credits": 1,
+      "cluster": "skills_support",
+      "groups": [
+        "pe"
+      ],
+      "mean": 7.889,
+      "std": 0.892,
+      "n": 27
+    },
+    "S03": {
+      "name": "Yoga (Cơ bản)",
+      "credits": 1,
+      "cluster": "skills_support",
+      "groups": [
+        "pe"
+      ],
+      "mean": 7.5,
+      "std": 0,
+      "n": 4
+    },
+    "S04": {
+      "name": "Zumba(Cơ bản)",
+      "credits": 1,
+      "cluster": "skills_support",
+      "groups": [
+        "pe"
+      ],
+      "mean": 8.9,
+      "std": 0.224,
+      "n": 5
+    },
+    "S05": {
+      "name": "Zumba(Nâng cao)",
+      "credits": 1,
+      "cluster": "skills_support",
+      "groups": [
+        "pe"
+      ],
+      "mean": 9.3,
+      "std": 0.447,
+      "n": 5
+    },
+    "S08": {
+      "name": "Kỹ năng mềm cơ bản",
+      "credits": 2,
+      "cluster": "skills_support",
+      "groups": [
+        "soft_skills"
+      ],
+      "mean": 7.865,
+      "std": 0.435,
+      "n": 37
+    },
+    "S18": {
+      "name": "Hệ thống thông tin địa lý",
+      "credits": 2,
+      "cluster": "skills_support",
+      "groups": [
+        "network"
+      ],
+      "mean": 6.743,
+      "std": 0.63,
+      "n": 37
+    },
+    "S30": {
+      "name": "Kỹ năng mềm nâng cao",
+      "credits": 3,
+      "cluster": "skills_support",
+      "groups": [
+        "soft_skills"
+      ],
+      "mean": 8.392,
+      "std": 0.529,
+      "n": 37
+    },
+    "S48": {
+      "name": "An toàn, bảo mật thông tin",
+      "credits": 2,
+      "cluster": "skills_support",
+      "groups": [
+        "security"
+      ],
+      "mean": 7.511,
+      "std": 0.549,
+      "n": 37
+    },
+    "S49": {
+      "name": "Chuyển đổi số",
+      "credits": 2,
+      "cluster": "skills_support",
+      "groups": [
+        "internship"
+      ],
+      "mean": 8.117,
+      "std": 0.977,
+      "n": 36
+    },
+    "S51": {
+      "name": "Ứng dụng Công nghệ thông tin trong doanh nghiệp",
+      "credits": 3,
+      "cluster": "skills_support",
+      "groups": [
+        "internship"
+      ],
+      "mean": 7.476,
+      "std": 0.816,
+      "n": 37
+    },
+    "S06": {
+      "name": "Thực tập tốt nghiệp",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "internship"
+      ],
+      "mean": 9.143,
+      "std": 0.589,
+      "n": 35
+    },
+    "S12": {
+      "name": "Thực tập CNTT1: Hệ thống máy tính",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 7.041,
+      "std": 0.491,
+      "n": 37
+    },
+    "S19": {
+      "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "software"
+      ],
+      "mean": 6.965,
+      "std": 1.261,
+      "n": 37
+    },
+    "S25": {
+      "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "software"
+      ],
+      "mean": 6.554,
+      "std": 1.212,
+      "n": 37
+    },
+    "S44": {
+      "name": "Thực tập CNTT5: Triển khai ứng dụng AI, IoT",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 8.324,
+      "std": 0.693,
+      "n": 37
+    },
+    "S47": {
+      "name": "Thực tập CNTT6: Cài đặt, cấu hình máy chủ, mạng, triển khai ứng dụng",
+      "credits": 4,
+      "cluster": "internship",
+      "groups": [
+        "network"
+      ],
+      "mean": 6.873,
+      "std": 0.918,
+      "n": 37
+    },
+    "S07": {
+      "name": "Pháp luật đại cương",
+      "credits": 3,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 7,
+      "std": 0.764,
+      "n": 37
+    },
+    "S13": {
+      "name": "Triết học Mác - Lênin",
+      "credits": 3,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 6.757,
+      "std": 0.713,
+      "n": 37
+    },
+    "S14": {
+      "name": "Kinh tế chính trị Mác - Lênin",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 6.878,
+      "std": 0.794,
+      "n": 37
+    },
+    "S26": {
+      "name": "Giáo dục quốc phòng P1",
+      "credits": 3,
+      "cluster": "general_ed",
+      "groups": [
+        "defense"
+      ],
+      "mean": 7.446,
+      "std": 0.55,
+      "n": 37
+    },
+    "S27": {
+      "name": "Giáo dục quốc phòng P2",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "defense"
+      ],
+      "mean": 7.581,
+      "std": 0.878,
+      "n": 37
+    },
+    "S28": {
+      "name": "Giáo dục quốc phòng P3",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "defense"
+      ],
+      "mean": 6.778,
+      "std": 0.555,
+      "n": 37
+    },
+    "S29": {
+      "name": "Giáo dục quốc phòng P4",
+      "credits": 4,
+      "cluster": "general_ed",
+      "groups": [
+        "defense"
+      ],
+      "mean": 7.178,
+      "std": 0.61,
+      "n": 37
+    },
+    "S35": {
+      "name": "Chủ nghĩa xã hội khoa học",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 8.146,
+      "std": 0.492,
+      "n": 37
+    },
+    "S40": {
+      "name": "Tư tưởng Hồ Chí Minh",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 8.346,
+      "std": 0.674,
+      "n": 37
+    },
+    "S45": {
+      "name": "Lịch sử Đảng Cộng sản Việt Nam",
+      "credits": 2,
+      "cluster": "general_ed",
+      "groups": [
+        "philosophy"
+      ],
+      "mean": 8.695,
+      "std": 0.422,
+      "n": 37
+    },
+    "S09": {
+      "name": "Đại số tuyến tính, tối ưu",
+      "credits": 2,
+      "cluster": "foundation",
+      "groups": [
+        "math"
+      ],
+      "mean": 6.676,
+      "std": 1.265,
+      "n": 37
+    },
+    "S10": {
+      "name": "Nhập môn công nghệ thông tin",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "ai_iot",
+        "software"
+      ],
+      "mean": 5.949,
+      "std": 0.805,
+      "n": 37
+    },
+    "S11": {
+      "name": "Lập trình cơ bản",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "ai_iot",
+        "software"
+      ],
+      "mean": 6.689,
+      "std": 1.145,
+      "n": 37
+    },
+    "S15": {
+      "name": "Tiếng Anh P1",
+      "credits": 4,
+      "cluster": "foundation",
+      "groups": [
+        "english"
+      ],
+      "mean": 6.667,
+      "std": 1.134,
+      "n": 36
+    },
+    "S16": {
+      "name": "Toán giải tích",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "math"
+      ],
+      "mean": 6.149,
+      "std": 1.281,
+      "n": 37
+    },
+    "S17": {
+      "name": "Xác suất thống kê và phân tích dữ liệu",
+      "credits": 4,
+      "cluster": "foundation",
+      "groups": [
+        "ai_iot",
+        "math"
+      ],
+      "mean": 7.122,
+      "std": 1.063,
+      "n": 37
+    },
+    "S20": {
+      "name": "Tiếng Anh P2",
+      "credits": 4,
+      "cluster": "foundation",
+      "groups": [
+        "english"
+      ],
+      "mean": 6.686,
+      "std": 1.308,
+      "n": 36
+    },
+    "S21": {
+      "name": "Toán rời rạc",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "math"
+      ],
+      "mean": 6.905,
+      "std": 1.263,
+      "n": 37
+    },
+    "S22": {
+      "name": "Cấu trúc dữ liệu và giải thuật",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 6.27,
+      "std": 0.974,
+      "n": 37
+    },
+    "S23": {
+      "name": "Mạng máy tính",
+      "credits": 2,
+      "cluster": "foundation",
+      "groups": [
+        "network"
+      ],
+      "mean": 6.441,
+      "std": 1.217,
+      "n": 37
+    },
+    "S24": {
+      "name": "Lập trình hướng đối tượng",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "software"
+      ],
+      "mean": 7.276,
+      "std": 0.597,
+      "n": 37
+    },
+    "S31": {
+      "name": "Tiếng Anh P3",
+      "credits": 4,
+      "cluster": "foundation",
+      "groups": [
+        "english"
+      ],
+      "mean": 6.589,
+      "std": 1.667,
+      "n": 35
+    },
+    "S32": {
+      "name": "Lý thuyết, thiết kế cơ sở dữ liệu",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "software"
+      ],
+      "mean": 6.554,
+      "std": 1.201,
+      "n": 37
+    },
+    "S33": {
+      "name": "Lập trình IoT",
+      "credits": 2,
+      "cluster": "foundation",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 8.878,
+      "std": 1.133,
+      "n": 37
+    },
+    "S36": {
+      "name": "Tiếng Anh P4",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "english"
+      ],
+      "mean": 6.977,
+      "std": 1.226,
+      "n": 35
+    },
+    "S37": {
+      "name": "Phân tích, thiết kế hệ thống thông tin",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "bigdata"
+      ],
+      "mean": 6.876,
+      "std": 1.151,
+      "n": 37
+    },
+    "S46": {
+      "name": "Tiếng Anh P5",
+      "credits": 2,
+      "cluster": "foundation",
+      "groups": [
+        "english"
+      ],
+      "mean": 7.153,
+      "std": 0.832,
+      "n": 36
+    },
+    "S50": {
+      "name": "Lập trình mạng",
+      "credits": 3,
+      "cluster": "foundation",
+      "groups": [
+        "network"
+      ],
+      "mean": 7.873,
+      "std": 0.862,
+      "n": 37
+    },
+    "S34": {
+      "name": "Trí tuệ nhân tạo",
+      "credits": 2,
+      "cluster": "ai_ml",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 7.932,
+      "std": 0.783,
+      "n": 37
+    },
+    "S38": {
+      "name": "Học máy",
+      "credits": 2,
+      "cluster": "ai_ml",
+      "groups": [
+        "ai_iot"
+      ],
+      "mean": 8.089,
+      "std": 0.73,
+      "n": 37
+    },
+    "S39": {
+      "name": "Công nghệ dữ liệu",
+      "credits": 2,
+      "cluster": "ai_ml",
+      "groups": [
+        "bigdata"
+      ],
+      "mean": 7.978,
+      "std": 0.84,
+      "n": 37
+    },
+    "S43": {
+      "name": "Dữ liệu lớn",
+      "credits": 2,
+      "cluster": "ai_ml",
+      "groups": [
+        "ai_iot",
+        "bigdata"
+      ],
+      "mean": 7.816,
+      "std": 0.694,
+      "n": 37
+    },
+    "S41": {
+      "name": "Công nghệ phần mềm",
+      "credits": 3,
+      "cluster": "software_eng",
+      "groups": [
+        "software"
+      ],
+      "mean": 8.551,
+      "std": 0.522,
+      "n": 37
+    },
+    "S42": {
+      "name": "Lập trình mobile",
+      "credits": 3,
+      "cluster": "software_eng",
+      "groups": [
+        "software"
+      ],
+      "mean": 7.343,
+      "std": 0.534,
+      "n": 37
+    },
+    "S52": {
+      "name": "Kiểm thử phần mềm",
+      "credits": 2,
+      "cluster": "software_eng",
+      "groups": [
+        "software"
+      ],
+      "mean": 8.459,
+      "std": 0.958,
+      "n": 37
+    }
+  },
+  "groups": {
+    "pe": {
+      "label": "Nhóm thể chất",
+      "subjects": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "mean": 7.791,
+      "std": 0.631,
+      "n_subjects": 5,
+      "rule": "choose_one_path"
+    },
+    "defense": {
+      "label": "Nhóm quốc phòng",
+      "subjects": [
+        "S26",
+        "S27",
+        "S28",
+        "S29"
+      ],
+      "mean": 7.246,
+      "std": 0.44,
+      "n_subjects": 4
+    },
+    "english": {
+      "label": "Nhóm tiếng Anh",
+      "subjects": [
+        "S15",
+        "S20",
+        "S31",
+        "S36",
+        "S46"
+      ],
+      "mean": 6.799,
+      "std": 0.884,
+      "n_subjects": 5
+    },
+    "ai_iot": {
+      "label": "Nhóm học máy & IoT",
+      "subjects": [
+        "S11",
+        "S10",
+        "S17",
+        "S34",
+        "S33",
+        "S43",
+        "S38",
+        "S22",
+        "S44",
+        "S12"
+      ],
+      "mean": 7.411,
+      "std": 0.469,
+      "n_subjects": 10
+    },
+    "philosophy": {
+      "label": "Nhóm môn triết học",
+      "subjects": [
+        "S13",
+        "S07",
+        "S40",
+        "S35",
+        "S14",
+        "S45"
+      ],
+      "mean": 7.637,
+      "std": 0.371,
+      "n_subjects": 6
+    },
+    "software": {
+      "label": "Nhóm phần mềm",
+      "subjects": [
+        "S11",
+        "S10",
+        "S24",
+        "S19",
+        "S25",
+        "S32",
+        "S41",
+        "S42",
+        "S52"
+      ],
+      "mean": 7.149,
+      "std": 0.522,
+      "n_subjects": 9
+    },
+    "bigdata": {
+      "label": "Nhóm BigData",
+      "subjects": [
+        "S39",
+        "S43",
+        "S37"
+      ],
+      "mean": 7.557,
+      "std": 0.729,
+      "n_subjects": 3
+    },
+    "network": {
+      "label": "Nhóm Network",
+      "subjects": [
+        "S18",
+        "S23",
+        "S47",
+        "S50"
+      ],
+      "mean": 6.982,
+      "std": 0.62,
+      "n_subjects": 4
+    },
+    "internship": {
+      "label": "Nhóm thực tập",
+      "subjects": [
+        "S49",
+        "S51",
+        "S06"
+      ],
+      "mean": 8.219,
+      "std": 0.634,
+      "n_subjects": 3
+    },
+    "security": {
+      "label": "Nhóm security",
+      "subjects": [
+        "S48"
+      ],
+      "mean": 7.511,
+      "std": 0.549,
+      "n_subjects": 1
+    },
+    "soft_skills": {
+      "label": "Nhóm kỹ năng mềm",
+      "subjects": [
+        "S08",
+        "S30"
+      ],
+      "mean": 8.128,
+      "std": 0.407,
+      "n_subjects": 2
+    },
+    "math": {
+      "label": "Nhóm đại số",
+      "subjects": [
+        "S09",
+        "S21",
+        "S16",
+        "S17"
+      ],
+      "mean": 6.713,
+      "std": 0.65,
+      "n_subjects": 4
+    }
+  },
+  "models": {
+    "S02": {
+      "name": "Võ (Cơ bản)",
+      "features": [
+        "S01"
+      ],
+      "feature_names": [
+        "Lý luận và phương pháp Giáo dục thể chất 1"
+      ],
+      "feature_groups": [
+        [
+          "pe"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        -0.0421
+      ],
+      "intercept": 8.2098,
+      "r2": 0,
+      "n_train": 27,
+      "groups": [
+        "pe"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S01",
+          "name": "Lý luận và phương pháp Giáo dục thể chất 1",
+          "r": -0.018,
+          "same_group": true
+        }
+      ]
+    },
+    "S04": {
+      "name": "Zumba(Cơ bản)",
+      "features": [
+        "S01"
+      ],
+      "feature_names": [
+        "Lý luận và phương pháp Giáo dục thể chất 1"
+      ],
+      "feature_groups": [
+        [
+          "pe"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0
+      ],
+      "intercept": 8.9,
+      "r2": 0,
+      "n_train": 5,
+      "groups": [
+        "pe"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S01",
+          "name": "Lý luận và phương pháp Giáo dục thể chất 1",
+          "r": 0,
+          "same_group": true
+        }
+      ]
+    },
+    "S05": {
+      "name": "Zumba(Nâng cao)",
+      "features": [
+        "S04",
+        "S01"
+      ],
+      "feature_names": [
+        "Zumba(Cơ bản)",
+        "Lý luận và phương pháp Giáo dục thể chất 1"
+      ],
+      "feature_groups": [
+        [
+          "pe"
+        ],
+        [
+          "pe"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.5714,
+        0
+      ],
+      "intercept": 4.2143,
+      "r2": 0.49,
+      "n_train": 5,
+      "groups": [
+        "pe"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S04",
+          "name": "Zumba(Cơ bản)",
+          "r": 1,
+          "same_group": true
+        },
+        {
+          "subject_id": "S01",
+          "name": "Lý luận và phương pháp Giáo dục thể chất 1",
+          "r": 0,
+          "same_group": true
+        }
+      ]
+    },
+    "S30": {
+      "name": "Kỹ năng mềm nâng cao",
+      "features": [
+        "S08"
+      ],
+      "feature_names": [
+        "Kỹ năng mềm cơ bản"
+      ],
+      "feature_groups": [
+        [
+          "soft_skills"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.4723
+      ],
+      "intercept": 4.6771,
+      "r2": 0.173,
+      "n_train": 37,
+      "groups": [
+        "soft_skills"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S08",
+          "name": "Kỹ năng mềm cơ bản",
+          "r": 0.417,
+          "same_group": true
+        }
+      ]
+    },
+    "S06": {
+      "name": "Thực tập tốt nghiệp",
+      "features": [
+        "S51",
+        "S49"
+      ],
+      "feature_names": [
+        "Ứng dụng Công nghệ thông tin trong doanh nghiệp",
+        "Chuyển đổi số"
+      ],
+      "feature_groups": [
+        [
+          "internship"
+        ],
+        [
+          "internship"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.2048,
+        0.116
+      ],
+      "intercept": 6.6678,
+      "r2": 0.179,
+      "n_train": 35,
+      "groups": [
+        "internship"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S51",
+          "name": "Ứng dụng Công nghệ thông tin trong doanh nghiệp",
+          "r": 0.393,
+          "same_group": true
+        },
+        {
+          "subject_id": "S49",
+          "name": "Chuyển đổi số",
+          "r": 0.347,
+          "same_group": true
+        }
+      ]
+    },
+    "S19": {
+      "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+      "features": [
+        "S11",
+        "S10"
+      ],
+      "feature_names": [
+        "Lập trình cơ bản",
+        "Nhập môn công nghệ thông tin"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.415,
+        0.2771
+      ],
+      "intercept": 2.5404,
+      "r2": 0.191,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.399,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.22,
+          "same_group": true
+        }
+      ]
+    },
+    "S25": {
+      "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+      "features": [
+        "S11",
+        "S19",
+        "S10"
+      ],
+      "feature_names": [
+        "Lập trình cơ bản",
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+        "Nhập môn công nghệ thông tin"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.45,
+        0.2111,
+        -0.5669
+      ],
+      "intercept": 5.4462,
+      "r2": 0.386,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.478,
+          "same_group": true
+        },
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.308,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": -0.292,
+          "same_group": true
+        }
+      ]
+    },
+    "S44": {
+      "name": "Thực tập CNTT5: Triển khai ứng dụng AI, IoT",
+      "features": [
+        "S33",
+        "S38",
+        "S11",
+        "S17",
+        "S34"
+      ],
+      "feature_names": [
+        "Lập trình IoT",
+        "Học máy",
+        "Lập trình cơ bản",
+        "Xác suất thống kê và phân tích dữ liệu",
+        "Trí tuệ nhân tạo"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ],
+        [
+          "ai_iot"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3041,
+        0.0733,
+        -0.0105,
+        0.0982,
+        0.1517
+      ],
+      "intercept": 3.1992,
+      "r2": 0.371,
+      "n_train": 37,
+      "groups": [
+        "ai_iot"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S33",
+          "name": "Lập trình IoT",
+          "r": 0.541,
+          "same_group": true
+        },
+        {
+          "subject_id": "S38",
+          "name": "Học máy",
+          "r": 0.412,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.283,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.226,
+          "same_group": true
+        },
+        {
+          "subject_id": "S34",
+          "name": "Trí tuệ nhân tạo",
+          "r": 0.218,
+          "same_group": true
+        }
+      ]
+    },
+    "S47": {
+      "name": "Thực tập CNTT6: Cài đặt, cấu hình máy chủ, mạng, triển khai ứng dụng",
+      "features": [
+        "S18",
+        "S23"
+      ],
+      "feature_names": [
+        "Hệ thống thông tin địa lý",
+        "Mạng máy tính"
+      ],
+      "feature_groups": [
+        [
+          "network"
+        ],
+        [
+          "network"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.5223,
+        -0.0307
+      ],
+      "intercept": 3.5486,
+      "r2": 0.135,
+      "n_train": 37,
+      "groups": [
+        "network"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S18",
+          "name": "Hệ thống thông tin địa lý",
+          "r": 0.365,
+          "same_group": true
+        },
+        {
+          "subject_id": "S23",
+          "name": "Mạng máy tính",
+          "r": 0.019,
+          "same_group": true
+        }
+      ]
+    },
+    "S13": {
+      "name": "Triết học Mác - Lênin",
+      "features": [
+        "S07"
+      ],
+      "feature_names": [
+        "Pháp luật đại cương"
+      ],
+      "feature_groups": [
+        [
+          "philosophy"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3488
+      ],
+      "intercept": 4.3149,
+      "r2": 0.146,
+      "n_train": 37,
+      "groups": [
+        "philosophy"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S07",
+          "name": "Pháp luật đại cương",
+          "r": 0.382,
+          "same_group": true
+        }
+      ]
+    },
+    "S14": {
+      "name": "Kinh tế chính trị Mác - Lênin",
+      "features": [
+        "S07"
+      ],
+      "feature_names": [
+        "Pháp luật đại cương"
+      ],
+      "feature_groups": [
+        [
+          "philosophy"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3488
+      ],
+      "intercept": 4.4365,
+      "r2": 0.118,
+      "n_train": 37,
+      "groups": [
+        "philosophy"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S07",
+          "name": "Pháp luật đại cương",
+          "r": 0.343,
+          "same_group": true
+        }
+      ]
+    },
+    "S27": {
+      "name": "Giáo dục quốc phòng P2",
+      "features": [
+        "S26"
+      ],
+      "feature_names": [
+        "Giáo dục quốc phòng P1"
+      ],
+      "feature_groups": [
+        [
+          "defense"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.8701
+      ],
+      "intercept": 1.1023,
+      "r2": 0.324,
+      "n_train": 37,
+      "groups": [
+        "defense"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S26",
+          "name": "Giáo dục quốc phòng P1",
+          "r": 0.57,
+          "same_group": true
+        }
+      ]
+    },
+    "S28": {
+      "name": "Giáo dục quốc phòng P3",
+      "features": [
+        "S27",
+        "S26"
+      ],
+      "feature_names": [
+        "Giáo dục quốc phòng P2",
+        "Giáo dục quốc phòng P1"
+      ],
+      "feature_groups": [
+        [
+          "defense"
+        ],
+        [
+          "defense"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.2063,
+        0.2205
+      ],
+      "intercept": 3.5726,
+      "r2": 0.244,
+      "n_train": 37,
+      "groups": [
+        "defense"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S27",
+          "name": "Giáo dục quốc phòng P2",
+          "r": 0.457,
+          "same_group": true
+        },
+        {
+          "subject_id": "S26",
+          "name": "Giáo dục quốc phòng P1",
+          "r": 0.414,
+          "same_group": true
+        }
+      ]
+    },
+    "S29": {
+      "name": "Giáo dục quốc phòng P4",
+      "features": [
+        "S28",
+        "S26",
+        "S27"
+      ],
+      "feature_names": [
+        "Giáo dục quốc phòng P3",
+        "Giáo dục quốc phòng P1",
+        "Giáo dục quốc phòng P2"
+      ],
+      "feature_groups": [
+        [
+          "defense"
+        ],
+        [
+          "defense"
+        ],
+        [
+          "defense"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1141,
+        -0.2349,
+        0.1072
+      ],
+      "intercept": 7.3412,
+      "r2": 0.045,
+      "n_train": 37,
+      "groups": [
+        "defense"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S28",
+          "name": "Giáo dục quốc phòng P3",
+          "r": 0.091,
+          "same_group": true
+        },
+        {
+          "subject_id": "S26",
+          "name": "Giáo dục quốc phòng P1",
+          "r": -0.09,
+          "same_group": true
+        },
+        {
+          "subject_id": "S27",
+          "name": "Giáo dục quốc phòng P2",
+          "r": 0.084,
+          "same_group": true
+        }
+      ]
+    },
+    "S35": {
+      "name": "Chủ nghĩa xã hội khoa học",
+      "features": [
+        "S14",
+        "S13",
+        "S07"
+      ],
+      "feature_names": [
+        "Kinh tế chính trị Mác - Lênin",
+        "Triết học Mác - Lênin",
+        "Pháp luật đại cương"
+      ],
+      "feature_groups": [
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.0904,
+        0.0429,
+        -0.0558
+      ],
+      "intercept": 7.6251,
+      "r2": 0.025,
+      "n_train": 37,
+      "groups": [
+        "philosophy"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S14",
+          "name": "Kinh tế chính trị Mác - Lênin",
+          "r": 0.132,
+          "same_group": true
+        },
+        {
+          "subject_id": "S13",
+          "name": "Triết học Mác - Lênin",
+          "r": 0.06,
+          "same_group": true
+        },
+        {
+          "subject_id": "S07",
+          "name": "Pháp luật đại cương",
+          "r": -0.015,
+          "same_group": true
+        }
+      ]
+    },
+    "S40": {
+      "name": "Tư tưởng Hồ Chí Minh",
+      "features": [
+        "S35",
+        "S14",
+        "S07",
+        "S13"
+      ],
+      "feature_names": [
+        "Chủ nghĩa xã hội khoa học",
+        "Kinh tế chính trị Mác - Lênin",
+        "Pháp luật đại cương",
+        "Triết học Mác - Lênin"
+      ],
+      "feature_groups": [
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3615,
+        0.1188,
+        0.1476,
+        -0.1389
+      ],
+      "intercept": 4.49,
+      "r2": 0.143,
+      "n_train": 37,
+      "groups": [
+        "philosophy"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S35",
+          "name": "Chủ nghĩa xã hội khoa học",
+          "r": 0.286,
+          "same_group": true
+        },
+        {
+          "subject_id": "S14",
+          "name": "Kinh tế chính trị Mác - Lênin",
+          "r": 0.205,
+          "same_group": true
+        },
+        {
+          "subject_id": "S07",
+          "name": "Pháp luật đại cương",
+          "r": 0.159,
+          "same_group": true
+        },
+        {
+          "subject_id": "S13",
+          "name": "Triết học Mác - Lênin",
+          "r": -0.043,
+          "same_group": true
+        }
+      ]
+    },
+    "S45": {
+      "name": "Lịch sử Đảng Cộng sản Việt Nam",
+      "features": [
+        "S14",
+        "S07",
+        "S13",
+        "S40",
+        "S35"
+      ],
+      "feature_names": [
+        "Kinh tế chính trị Mác - Lênin",
+        "Pháp luật đại cương",
+        "Triết học Mác - Lênin",
+        "Tư tưởng Hồ Chí Minh",
+        "Chủ nghĩa xã hội khoa học"
+      ],
+      "feature_groups": [
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ],
+        [
+          "philosophy"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1085,
+        0.0961,
+        0.0402,
+        0.0583,
+        0.0213
+      ],
+      "intercept": 6.3434,
+      "r2": 0.144,
+      "n_train": 37,
+      "groups": [
+        "philosophy"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S14",
+          "name": "Kinh tế chính trị Mác - Lênin",
+          "r": 0.304,
+          "same_group": true
+        },
+        {
+          "subject_id": "S07",
+          "name": "Pháp luật đại cương",
+          "r": 0.289,
+          "same_group": true
+        },
+        {
+          "subject_id": "S13",
+          "name": "Triết học Mác - Lênin",
+          "r": 0.175,
+          "same_group": true
+        },
+        {
+          "subject_id": "S40",
+          "name": "Tư tưởng Hồ Chí Minh",
+          "r": 0.17,
+          "same_group": true
+        },
+        {
+          "subject_id": "S35",
+          "name": "Chủ nghĩa xã hội khoa học",
+          "r": 0.081,
+          "same_group": true
+        }
+      ]
+    },
+    "S16": {
+      "name": "Toán giải tích",
+      "features": [
+        "S09"
+      ],
+      "feature_names": [
+        "Đại số tuyến tính, tối ưu"
+      ],
+      "feature_groups": [
+        [
+          "math"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1185
+      ],
+      "intercept": 5.3578,
+      "r2": 0.014,
+      "n_train": 37,
+      "groups": [
+        "math"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S09",
+          "name": "Đại số tuyến tính, tối ưu",
+          "r": 0.118,
+          "same_group": true
+        }
+      ]
+    },
+    "S17": {
+      "name": "Xác suất thống kê và phân tích dữ liệu",
+      "features": [
+        "S09",
+        "S16",
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "feature_names": [
+        "Đại số tuyến tính, tối ưu",
+        "Toán giải tích",
+        "Lập trình cơ bản",
+        "Nhập môn công nghệ thông tin",
+        "Thực tập CNTT1: Hệ thống máy tính"
+      ],
+      "feature_groups": [
+        [
+          "math"
+        ],
+        [
+          "math"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.0739,
+        -0.2183,
+        0.3721,
+        0.0341,
+        -0.5557
+      ],
+      "intercept": 9.1911,
+      "r2": 0.18,
+      "n_train": 37,
+      "groups": [
+        "ai_iot",
+        "math"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S09",
+          "name": "Đại số tuyến tính, tối ưu",
+          "r": 0.061,
+          "same_group": true
+        },
+        {
+          "subject_id": "S16",
+          "name": "Toán giải tích",
+          "r": -0.153,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.272,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.137,
+          "same_group": true
+        },
+        {
+          "subject_id": "S12",
+          "name": "Thực tập CNTT1: Hệ thống máy tính",
+          "r": -0.063,
+          "same_group": true
+        }
+      ]
+    },
+    "S20": {
+      "name": "Tiếng Anh P2",
+      "features": [
+        "S15"
+      ],
+      "feature_names": [
+        "Tiếng Anh P1"
+      ],
+      "feature_groups": [
+        [
+          "english"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.7238
+      ],
+      "intercept": 1.8607,
+      "r2": 0.402,
+      "n_train": 36,
+      "groups": [
+        "english"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S15",
+          "name": "Tiếng Anh P1",
+          "r": 0.634,
+          "same_group": true
+        }
+      ]
+    },
+    "S21": {
+      "name": "Toán rời rạc",
+      "features": [
+        "S09",
+        "S17",
+        "S16"
+      ],
+      "feature_names": [
+        "Đại số tuyến tính, tối ưu",
+        "Xác suất thống kê và phân tích dữ liệu",
+        "Toán giải tích"
+      ],
+      "feature_groups": [
+        [
+          "math"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ],
+        [
+          "math"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.013,
+        0.1485,
+        0.0973
+      ],
+      "intercept": 5.1629,
+      "r2": 0.023,
+      "n_train": 37,
+      "groups": [
+        "math"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S09",
+          "name": "Đại số tuyến tính, tối ưu",
+          "r": 0.032,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.112,
+          "same_group": true
+        },
+        {
+          "subject_id": "S16",
+          "name": "Toán giải tích",
+          "r": 0.082,
+          "same_group": true
+        }
+      ]
+    },
+    "S22": {
+      "name": "Cấu trúc dữ liệu và giải thuật",
+      "features": [
+        "S10",
+        "S11",
+        "S12",
+        "S17"
+      ],
+      "feature_names": [
+        "Nhập môn công nghệ thông tin",
+        "Lập trình cơ bản",
+        "Thực tập CNTT1: Hệ thống máy tính",
+        "Xác suất thống kê và phân tích dữ liệu"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.2171,
+        0.1514,
+        -0.3646,
+        0.0129
+      ],
+      "intercept": 6.4411,
+      "r2": 0.081,
+      "n_train": 37,
+      "groups": [
+        "ai_iot"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.183,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.132,
+          "same_group": true
+        },
+        {
+          "subject_id": "S12",
+          "name": "Thực tập CNTT1: Hệ thống máy tính",
+          "r": -0.108,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.099,
+          "same_group": true
+        }
+      ]
+    },
+    "S23": {
+      "name": "Mạng máy tính",
+      "features": [
+        "S18"
+      ],
+      "feature_names": [
+        "Hệ thống thông tin địa lý"
+      ],
+      "feature_groups": [
+        [
+          "network"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.313
+      ],
+      "intercept": 4.3302,
+      "r2": 0.028,
+      "n_train": 37,
+      "groups": [
+        "network"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S18",
+          "name": "Hệ thống thông tin địa lý",
+          "r": 0.168,
+          "same_group": true
+        }
+      ]
+    },
+    "S24": {
+      "name": "Lập trình hướng đối tượng",
+      "features": [
+        "S10",
+        "S11",
+        "S19"
+      ],
+      "feature_names": [
+        "Nhập môn công nghệ thông tin",
+        "Lập trình cơ bản",
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3182,
+        0.0861,
+        0.0271
+      ],
+      "intercept": 4.6176,
+      "r2": 0.256,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.468,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.235,
+          "same_group": true
+        },
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.218,
+          "same_group": true
+        }
+      ]
+    },
+    "S31": {
+      "name": "Tiếng Anh P3",
+      "features": [
+        "S15",
+        "S20"
+      ],
+      "feature_names": [
+        "Tiếng Anh P1",
+        "Tiếng Anh P2"
+      ],
+      "feature_groups": [
+        [
+          "english"
+        ],
+        [
+          "english"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.9609,
+        -0.0184
+      ],
+      "intercept": 0.273,
+      "r2": 0.423,
+      "n_train": 35,
+      "groups": [
+        "english"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S15",
+          "name": "Tiếng Anh P1",
+          "r": 0.65,
+          "same_group": true
+        },
+        {
+          "subject_id": "S20",
+          "name": "Tiếng Anh P2",
+          "r": 0.444,
+          "same_group": true
+        }
+      ]
+    },
+    "S32": {
+      "name": "Lý thuyết, thiết kế cơ sở dữ liệu",
+      "features": [
+        "S25",
+        "S10",
+        "S11",
+        "S19",
+        "S24"
+      ],
+      "feature_names": [
+        "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+        "Nhập môn công nghệ thông tin",
+        "Lập trình cơ bản",
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+        "Lập trình hướng đối tượng"
+      ],
+      "feature_groups": [
+        [
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.6283,
+        -0.4176,
+        0.006,
+        0.0161,
+        0.4244
+      ],
+      "intercept": 1.6804,
+      "r2": 0.578,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S25",
+          "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+          "r": 0.714,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": -0.368,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.336,
+          "same_group": true
+        },
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.199,
+          "same_group": true
+        },
+        {
+          "subject_id": "S24",
+          "name": "Lập trình hướng đối tượng",
+          "r": 0.045,
+          "same_group": true
+        }
+      ]
+    },
+    "S33": {
+      "name": "Lập trình IoT",
+      "features": [
+        "S11",
+        "S10",
+        "S12",
+        "S17",
+        "S22"
+      ],
+      "feature_names": [
+        "Lập trình cơ bản",
+        "Nhập môn công nghệ thông tin",
+        "Thực tập CNTT1: Hệ thống máy tính",
+        "Xác suất thống kê và phân tích dữ liệu",
+        "Cấu trúc dữ liệu và giải thuật"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ],
+        [
+          "ai_iot"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.3812,
+        0.2202,
+        -0.044,
+        -0.0419,
+        0.0008
+      ],
+      "intercept": 5.6218,
+      "r2": 0.175,
+      "n_train": 37,
+      "groups": [
+        "ai_iot"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.388,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.193,
+          "same_group": true
+        },
+        {
+          "subject_id": "S12",
+          "name": "Thực tập CNTT1: Hệ thống máy tính",
+          "r": 0.146,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.088,
+          "same_group": true
+        },
+        {
+          "subject_id": "S22",
+          "name": "Cấu trúc dữ liệu và giải thuật",
+          "r": 0.078,
+          "same_group": true
+        }
+      ]
+    },
+    "S36": {
+      "name": "Tiếng Anh P4",
+      "features": [
+        "S20",
+        "S31",
+        "S15"
+      ],
+      "feature_names": [
+        "Tiếng Anh P2",
+        "Tiếng Anh P3",
+        "Tiếng Anh P1"
+      ],
+      "feature_groups": [
+        [
+          "english"
+        ],
+        [
+          "english"
+        ],
+        [
+          "english"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.344,
+        0.1982,
+        -0.2119
+      ],
+      "intercept": 4.8083,
+      "r2": 0.165,
+      "n_train": 35,
+      "groups": [
+        "english"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S20",
+          "name": "Tiếng Anh P2",
+          "r": 0.348,
+          "same_group": true
+        },
+        {
+          "subject_id": "S31",
+          "name": "Tiếng Anh P3",
+          "r": 0.305,
+          "same_group": true
+        },
+        {
+          "subject_id": "S15",
+          "name": "Tiếng Anh P1",
+          "r": 0.232,
+          "same_group": true
+        }
+      ]
+    },
+    "S46": {
+      "name": "Tiếng Anh P5",
+      "features": [
+        "S31",
+        "S15",
+        "S20",
+        "S36"
+      ],
+      "feature_names": [
+        "Tiếng Anh P3",
+        "Tiếng Anh P1",
+        "Tiếng Anh P2",
+        "Tiếng Anh P4"
+      ],
+      "feature_groups": [
+        [
+          "english"
+        ],
+        [
+          "english"
+        ],
+        [
+          "english"
+        ],
+        [
+          "english"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1565,
+        0.2423,
+        -0.0938,
+        0.0182
+      ],
+      "intercept": 4.9948,
+      "r2": 0.259,
+      "n_train": 36,
+      "groups": [
+        "english"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S31",
+          "name": "Tiếng Anh P3",
+          "r": 0.474,
+          "same_group": true
+        },
+        {
+          "subject_id": "S15",
+          "name": "Tiếng Anh P1",
+          "r": 0.442,
+          "same_group": true
+        },
+        {
+          "subject_id": "S20",
+          "name": "Tiếng Anh P2",
+          "r": 0.204,
+          "same_group": true
+        },
+        {
+          "subject_id": "S36",
+          "name": "Tiếng Anh P4",
+          "r": 0.136,
+          "same_group": true
+        }
+      ]
+    },
+    "S50": {
+      "name": "Lập trình mạng",
+      "features": [
+        "S47",
+        "S18",
+        "S23"
+      ],
+      "feature_names": [
+        "Thực tập CNTT6: Cài đặt, cấu hình máy chủ, mạng, triển khai ứng dụng",
+        "Hệ thống thông tin địa lý",
+        "Mạng máy tính"
+      ],
+      "feature_groups": [
+        [
+          "network"
+        ],
+        [
+          "network"
+        ],
+        [
+          "network"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.5177,
+        0.397,
+        0.0716
+      ],
+      "intercept": 1.1764,
+      "r2": 0.543,
+      "n_train": 37,
+      "groups": [
+        "network"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S47",
+          "name": "Thực tập CNTT6: Cài đặt, cấu hình máy chủ, mạng, triển khai ứng dụng",
+          "r": 0.668,
+          "same_group": true
+        },
+        {
+          "subject_id": "S18",
+          "name": "Hệ thống thông tin địa lý",
+          "r": 0.518,
+          "same_group": true
+        },
+        {
+          "subject_id": "S23",
+          "name": "Mạng máy tính",
+          "r": 0.161,
+          "same_group": true
+        }
+      ]
+    },
+    "S34": {
+      "name": "Trí tuệ nhân tạo",
+      "features": [
+        "S22",
+        "S11",
+        "S17",
+        "S10",
+        "S12"
+      ],
+      "feature_names": [
+        "Cấu trúc dữ liệu và giải thuật",
+        "Lập trình cơ bản",
+        "Xác suất thống kê và phân tích dữ liệu",
+        "Nhập môn công nghệ thông tin",
+        "Thực tập CNTT1: Hệ thống máy tính"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.2664,
+        0.0375,
+        0.0326,
+        -0.0175,
+        0.1222
+      ],
+      "intercept": 5.0226,
+      "r2": 0.128,
+      "n_train": 37,
+      "groups": [
+        "ai_iot"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S22",
+          "name": "Cấu trúc dữ liệu và giải thuật",
+          "r": 0.336,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.139,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.085,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.063,
+          "same_group": true
+        },
+        {
+          "subject_id": "S12",
+          "name": "Thực tập CNTT1: Hệ thống máy tính",
+          "r": 0.061,
+          "same_group": true
+        }
+      ]
+    },
+    "S38": {
+      "name": "Học máy",
+      "features": [
+        "S11",
+        "S34",
+        "S33",
+        "S22",
+        "S17"
+      ],
+      "feature_names": [
+        "Lập trình cơ bản",
+        "Trí tuệ nhân tạo",
+        "Lập trình IoT",
+        "Cấu trúc dữ liệu và giải thuật",
+        "Xác suất thống kê và phân tích dữ liệu"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot",
+          "math"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.2229,
+        0.3675,
+        0.191,
+        0.0508,
+        0.0654
+      ],
+      "intercept": 1.2027,
+      "r2": 0.566,
+      "n_train": 37,
+      "groups": [
+        "ai_iot"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.558,
+          "same_group": true
+        },
+        {
+          "subject_id": "S34",
+          "name": "Trí tuệ nhân tạo",
+          "r": 0.48,
+          "same_group": true
+        },
+        {
+          "subject_id": "S33",
+          "name": "Lập trình IoT",
+          "r": 0.445,
+          "same_group": true
+        },
+        {
+          "subject_id": "S22",
+          "name": "Cấu trúc dữ liệu và giải thuật",
+          "r": 0.28,
+          "same_group": true
+        },
+        {
+          "subject_id": "S17",
+          "name": "Xác suất thống kê và phân tích dữ liệu",
+          "r": 0.258,
+          "same_group": true
+        }
+      ]
+    },
+    "S43": {
+      "name": "Dữ liệu lớn",
+      "features": [
+        "S39",
+        "S37",
+        "S33",
+        "S34",
+        "S38"
+      ],
+      "feature_names": [
+        "Công nghệ dữ liệu",
+        "Phân tích, thiết kế hệ thống thông tin",
+        "Lập trình IoT",
+        "Trí tuệ nhân tạo",
+        "Học máy"
+      ],
+      "feature_groups": [
+        [
+          "bigdata"
+        ],
+        [
+          "bigdata"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot"
+        ],
+        [
+          "ai_iot"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1468,
+        0.1236,
+        0.2052,
+        0.3729,
+        -0.085
+      ],
+      "intercept": 1.7037,
+      "r2": 0.524,
+      "n_train": 37,
+      "groups": [
+        "ai_iot",
+        "bigdata"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S39",
+          "name": "Công nghệ dữ liệu",
+          "r": 0.507,
+          "same_group": true
+        },
+        {
+          "subject_id": "S37",
+          "name": "Phân tích, thiết kế hệ thống thông tin",
+          "r": 0.505,
+          "same_group": true
+        },
+        {
+          "subject_id": "S33",
+          "name": "Lập trình IoT",
+          "r": 0.487,
+          "same_group": true
+        },
+        {
+          "subject_id": "S34",
+          "name": "Trí tuệ nhân tạo",
+          "r": 0.48,
+          "same_group": true
+        },
+        {
+          "subject_id": "S38",
+          "name": "Học máy",
+          "r": 0.464,
+          "same_group": true
+        }
+      ]
+    },
+    "S41": {
+      "name": "Công nghệ phần mềm",
+      "features": [
+        "S11",
+        "S19",
+        "S25",
+        "S10",
+        "S32"
+      ],
+      "feature_names": [
+        "Lập trình cơ bản",
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+        "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+        "Nhập môn công nghệ thông tin",
+        "Lý thuyết, thiết kế cơ sở dữ liệu"
+      ],
+      "feature_groups": [
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1147,
+        0.046,
+        0.089,
+        0.0574,
+        -0.0545
+      ],
+      "intercept": 6.8959,
+      "r2": 0.174,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.365,
+          "same_group": true
+        },
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.271,
+          "same_group": true
+        },
+        {
+          "subject_id": "S25",
+          "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+          "r": 0.248,
+          "same_group": true
+        },
+        {
+          "subject_id": "S10",
+          "name": "Nhập môn công nghệ thông tin",
+          "r": 0.127,
+          "same_group": true
+        },
+        {
+          "subject_id": "S32",
+          "name": "Lý thuyết, thiết kế cơ sở dữ liệu",
+          "r": 0.095,
+          "same_group": true
+        }
+      ]
+    },
+    "S42": {
+      "name": "Lập trình mobile",
+      "features": [
+        "S19",
+        "S11",
+        "S32",
+        "S25",
+        "S24"
+      ],
+      "feature_names": [
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+        "Lập trình cơ bản",
+        "Lý thuyết, thiết kế cơ sở dữ liệu",
+        "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+        "Lập trình hướng đối tượng"
+      ],
+      "feature_groups": [
+        [
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.1352,
+        0.111,
+        0.1717,
+        -0.0498,
+        0.145
+      ],
+      "intercept": 3.8054,
+      "r2": 0.465,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.494,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.481,
+          "same_group": true
+        },
+        {
+          "subject_id": "S32",
+          "name": "Lý thuyết, thiết kế cơ sở dữ liệu",
+          "r": 0.46,
+          "same_group": true
+        },
+        {
+          "subject_id": "S25",
+          "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+          "r": 0.361,
+          "same_group": true
+        },
+        {
+          "subject_id": "S24",
+          "name": "Lập trình hướng đối tượng",
+          "r": 0.32,
+          "same_group": true
+        }
+      ]
+    },
+    "S52": {
+      "name": "Kiểm thử phần mềm",
+      "features": [
+        "S42",
+        "S41",
+        "S25",
+        "S11",
+        "S19"
+      ],
+      "feature_names": [
+        "Lập trình mobile",
+        "Công nghệ phần mềm",
+        "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+        "Lập trình cơ bản",
+        "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm"
+      ],
+      "feature_groups": [
+        [
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "software"
+        ],
+        [
+          "ai_iot",
+          "software"
+        ],
+        [
+          "software"
+        ]
+      ],
+      "uses_gpa": false,
+      "coeffs": [
+        0.822,
+        0.417,
+        0.0345,
+        -0.0819,
+        -0.0635
+      ],
+      "intercept": -0.3789,
+      "r2": 0.304,
+      "n_train": 37,
+      "groups": [
+        "software"
+      ],
+      "top_correlations": [
+        {
+          "subject_id": "S42",
+          "name": "Lập trình mobile",
+          "r": 0.502,
+          "same_group": true
+        },
+        {
+          "subject_id": "S41",
+          "name": "Công nghệ phần mềm",
+          "r": 0.381,
+          "same_group": true
+        },
+        {
+          "subject_id": "S25",
+          "name": "Thực tập CNTT3: Thiết kế, lập trình Front-End",
+          "r": 0.193,
+          "same_group": true
+        },
+        {
+          "subject_id": "S11",
+          "name": "Lập trình cơ bản",
+          "r": 0.192,
+          "same_group": true
+        },
+        {
+          "subject_id": "S19",
+          "name": "Thực tập CNTT2: Thiết kế web và triển khai hệ thống phần mềm",
+          "r": 0.178,
+          "same_group": true
+        }
+      ]
+    }
+  }
+}

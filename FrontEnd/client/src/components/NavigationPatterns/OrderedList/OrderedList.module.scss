@@ -1,0 +1,18 @@
+.root {
+  color: #8e98ad;
+}
+
+.itemMuted {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8e98ad;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.itemActive {
+  color: var(--mantine-color-blue-6);
+  font-size: 14px;
+  font-weight: 700;
+}

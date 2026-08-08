@@ -1,0 +1,16 @@
+{
+  "required": "This field is required",
+  "unauthorized": "You are not authorized",
+  "server_error": "Server error, try again later",
+  "prediction_failed": "Could not load prediction.",
+  "result_load_failed": "Could not load results.",
+  "exam_list_failed": "Failed to load exam list.",
+  "exam_force_submit_failed": "Failed to force-submit exam sessions.",
+  "user_list_failed": "Failed to load user list.",
+  "user_add_failed": "Failed to add user.",
+  "user_update_failed": "Failed to update user.",
+  "user_delete_failed": "Failed to delete user.",
+  "realtime_timeout": "Realtime connection timed out",
+  "realtime_connect_failed": "Could not connect to realtime server",
+  "realtime_error": "Realtime server error"
+}

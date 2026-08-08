@@ -1,0 +1,2535 @@
+{
+  "version": "1.0",
+  "source": "dainam_subjects.json",
+  "description": "Nhóm môn học theo chuyên ngành cho 4 ngành đào tạo theo dữ liệu gốc.",
+  "majors": [
+    {
+      "nganh": "Công nghệ kỹ thuật ô tô",
+      "total_subjects": 71,
+      "total_groups": 9,
+      "groups": [
+        {
+          "sort_order": 1,
+          "code": "dai_cuong",
+          "label": "Đại cương",
+          "subject_count": 25,
+          "subjects": [
+            {
+              "id": "007CQQPAN1",
+              "name": "Giáo dục quốc phòng P1",
+              "code": "007CQQPAN1",
+              "credits": 3,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN2",
+              "name": "Giáo dục quốc phòng P2",
+              "code": "007CQQPAN2",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN3",
+              "name": "Giáo dục quốc phòng P3",
+              "code": "007CQQPAN3",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN4",
+              "name": "Giáo dục quốc phòng P4",
+              "code": "007CQQPAN4",
+              "credits": 4,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "DNU1008",
+              "name": "Giáo dục thể chất 1",
+              "code": "DNU1008",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "DNU1009",
+              "name": "Giáo dục thể chất 2",
+              "code": "DNU1009",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "DNU1010",
+              "name": "Giáo dục thể chất 3",
+              "code": "DNU1010",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "047CQTA1",
+              "name": "Tiếng Anh P1",
+              "code": "047CQTA1",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "067CQ4bKNMCB",
+              "name": "Kỹ năng mềm cơ bản",
+              "code": "067CQ4bKNMCB",
+              "credits": 3,
+              "sub_category": "soft_skills"
+            },
+            {
+              "id": "TOEIC đầu vào",
+              "name": "Thi Tiếng Anh phân loại lớp",
+              "code": "TOEIC đầu vào",
+              "credits": 1,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "077CQTHDC",
+              "name": "Tin học đại cương",
+              "code": "077CQTHDC",
+              "credits": 3,
+              "sub_category": "computer_science"
+            },
+            {
+              "id": "077CQTCC(0)",
+              "name": "Toán cao cấp",
+              "code": "077CQTCC(0)",
+              "credits": 3,
+              "sub_category": "math_statistics"
+            },
+            {
+              "id": "087CQVALY",
+              "name": "Vật lý",
+              "code": "087CQVALY",
+              "credits": 3,
+              "sub_category": "physics"
+            },
+            {
+              "id": "007CQLLCT2",
+              "name": "Kinh tế chính trị Mác - Lênin",
+              "code": "007CQLLCT2",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "007CQLLCT1",
+              "name": "Triết học Mác - Lênin",
+              "code": "007CQLLCT1",
+              "credits": 3,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "007CQLLCT3",
+              "name": "Chủ nghĩa xã hội khoa học",
+              "code": "007CQLLCT3",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "047CQTAKP2",
+              "name": "Tiếng Anh P2",
+              "code": "047CQTAKP2",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "067CQ4bKNMNC",
+              "name": "Kỹ năng mềm nâng cao",
+              "code": "067CQ4bKNMNC",
+              "credits": 3,
+              "sub_category": "soft_skills"
+            },
+            {
+              "id": "047CQTA3",
+              "name": "Tiếng Anh P3",
+              "code": "047CQTA3",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "007CQLLCT5",
+              "name": "Tư tưởng Hồ Chí Minh",
+              "code": "007CQLLCT5",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "007CQLLCT4",
+              "name": "Lịch sử Đảng Cộng sản Việt Nam",
+              "code": "007CQLLCT4",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "107CQLDC2",
+              "name": "Pháp luật đại cương",
+              "code": "107CQLDC2",
+              "credits": 3,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "047CQTA4(X",
+              "name": "Tiếng Anh P4",
+              "code": "047CQTA4(X",
+              "credits": 3,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "077CQXSTK",
+              "name": "Xác suất thống kê",
+              "code": "077CQXSTK",
+              "credits": 3,
+              "sub_category": "math_statistics"
+            },
+            {
+              "id": "047CQTA5",
+              "name": "Tiếng Anh P5",
+              "code": "047CQTA5",
+              "credits": 3,
+              "sub_category": "english_seq"
+            }
+          ]
+        },
+        {
+          "sort_order": 2,
+          "code": "nen_tang_co_khi",
+          "label": "Nền tảng cơ khí",
+          "subject_count": 10,
+          "subjects": [
+            {
+              "id": "037CQ1bHHOA",
+              "name": "Hình họa",
+              "code": "037CQ1bHHOA",
+              "credits": 2,
+              "sub_category": "technical_drawing"
+            },
+            {
+              "id": "197CQ1bCLT",
+              "name": "Cơ lý thuyết",
+              "code": "197CQ1bCLT",
+              "credits": 2,
+              "sub_category": "foundation_mechanics"
+            },
+            {
+              "id": "197CQ1bCNKL",
+              "name": "Công nghệ kim loại",
+              "code": "197CQ1bCNKL",
+              "credits": 2,
+              "sub_category": "manufacturing"
+            },
+            {
+              "id": "197CQ1bVKT",
+              "name": "Vẽ kỹ thuật",
+              "code": "197CQ1bVKT",
+              "credits": 3,
+              "sub_category": "technical_drawing"
+            },
+            {
+              "id": "197CQ1bDSLG",
+              "name": "Dung sai lắp ghép và kỹ thuật đo",
+              "code": "197CQ1bDSLG",
+              "credits": 2,
+              "sub_category": "metrology_tolerance"
+            },
+            {
+              "id": "197CQ1bKTN",
+              "name": "Kỹ thuật nhiệt",
+              "code": "197CQ1bKTN",
+              "credits": 2,
+              "sub_category": "thermal_engineering"
+            },
+            {
+              "id": "197CQ1bNLMA",
+              "name": "Nguyên lý máy",
+              "code": "197CQ1bNLMA",
+              "credits": 2,
+              "sub_category": "foundation_mechanics"
+            },
+            {
+              "id": "197CQ1bSBVL",
+              "name": "Sức bền vật liệu",
+              "code": "197CQ1bSBVL",
+              "credits": 2,
+              "sub_category": "foundation_mechanics"
+            },
+            {
+              "id": "197CQ1bCTMA",
+              "name": "Chi tiết máy",
+              "code": "197CQ1bCTMA",
+              "credits": 2,
+              "sub_category": "foundation_mechanics"
+            },
+            {
+              "id": "197CQ2bCNPT",
+              "name": "Công nghệ chế tạo phụ tùng",
+              "code": "197CQ2bCNPT",
+              "credits": 2,
+              "sub_category": "automotive_parts_manufacturing"
+            }
+          ]
+        },
+        {
+          "sort_order": 3,
+          "code": "cau_tao_tinh_toan_o_to",
+          "label": "Cấu tạo - tính toán ô tô",
+          "subject_count": 5,
+          "subjects": [
+            {
+              "id": "NMCNOTO",
+              "name": "Nhập môn ngành ô tô",
+              "code": "NMCNOTO",
+              "credits": 2,
+              "sub_category": "automotive_structure_chain"
+            },
+            {
+              "id": "197CQ2bCTAO",
+              "name": "Cấu tạo ô tô",
+              "code": "197CQ2bCTAO",
+              "credits": 3,
+              "sub_category": "automotive_structure_chain"
+            },
+            {
+              "id": "197CQ2bLTOT",
+              "name": "Lý thuyết ô tô",
+              "code": "197CQ2bLTOT",
+              "credits": 3,
+              "sub_category": "automotive_structure_chain"
+            },
+            {
+              "id": "197CQ2bXCDU",
+              "name": "Xe chuyên dùng",
+              "code": "197CQ2bXCDU",
+              "credits": 2,
+              "sub_category": "automotive_specialized_vehicles"
+            },
+            {
+              "id": "197CQ2bKCTT",
+              "name": "Kết cấu tính toán ô tô",
+              "code": "197CQ2bKCTT",
+              "credits": 4,
+              "sub_category": "automotive_structure_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 4,
+          "code": "dong_co_nhien_lieu",
+          "label": "Động cơ - nhiên liệu",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "197CQ3cKSKX",
+              "name": "Kiểm soát khí xả động cơ",
+              "code": "197CQ3cKSKX",
+              "credits": 2,
+              "sub_category": "automotive_emission_chain"
+            },
+            {
+              "id": "197CQ2bĐCĐT",
+              "name": "Động cơ đốt trong",
+              "code": "197CQ2bĐCĐT",
+              "credits": 2,
+              "sub_category": "automotive_engine_chain"
+            },
+            {
+              "id": "197CQ2bKCĐT",
+              "name": "Kết cấu tính toán động cơ đốt trong",
+              "code": "197CQ2bKCĐT",
+              "credits": 3,
+              "sub_category": "automotive_engine_chain"
+            },
+            {
+              "id": "197CQ3cHPNL",
+              "name": "Hệ thống phun nhiện liệu điều khiển điện tử động cơ đốt trong",
+              "code": "197CQ3cHPNL",
+              "credits": 2,
+              "sub_category": "automotive_fuel_injection_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 5,
+          "code": "dien_dien_tu_dieu_khien",
+          "label": "Điện - điện tử - điều khiển",
+          "subject_count": 8,
+          "subjects": [
+            {
+              "id": "197CQ3cCƠĐT",
+              "name": "Cơ điện tử trên ô tô",
+              "code": "197CQ3cCƠĐT",
+              "credits": 2,
+              "sub_category": "automotive_mechatronics_chain"
+            },
+            {
+              "id": "197CQ1bKCUĐ",
+              "name": "Khí cụ điện",
+              "code": "197CQ1bKCUĐ",
+              "credits": 2,
+              "sub_category": "automotive_electrical_chain"
+            },
+            {
+              "id": "197CQ1bKĐĐT",
+              "name": "Kỹ thuật điện điện tử",
+              "code": "197CQ1bKĐĐT",
+              "credits": 3,
+              "sub_category": "automotive_electrical_chain"
+            },
+            {
+              "id": "197CQ2bTBĐK",
+              "name": "Trang bị điện và thiết bị điều khiển tự động trên ô tô",
+              "code": "197CQ2bTBĐK",
+              "credits": 4,
+              "sub_category": "automotive_electrical_chain"
+            },
+            {
+              "id": "197CQ1bVĐKƯ",
+              "name": "Vi điều khiển và ứng dụng",
+              "code": "197CQ1bVĐKƯ",
+              "credits": 2,
+              "sub_category": "automotive_control_chain"
+            },
+            {
+              "id": "197CQ2bTHƯD",
+              "name": "Tin học ứng dụng trong ô tô",
+              "code": "197CQ2bTHƯD",
+              "credits": 3,
+              "sub_category": "computer_science"
+            },
+            {
+              "id": "197CQ3cCBCH",
+              "name": "Cảm biến và cơ cấu chấp hành trong hệ thống cơ điện tử trên ô tô",
+              "code": "197CQ3cCBCH",
+              "credits": 2,
+              "sub_category": "automotive_control_chain"
+            },
+            {
+              "id": "197CQ3cCNXĐ",
+              "name": "Công nghệ xe điện và xe Hybrid",
+              "code": "197CQ3cCNXĐ",
+              "credits": 2,
+              "sub_category": "automotive_electric_hybrid_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 6,
+          "code": "truyen_dong_thuy_luc",
+          "label": "Truyền động - thủy lực",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "197CQ2cPABS",
+              "name": "Hệ thống phanh ABS và các liên hợp",
+              "code": "197CQ2cPABS",
+              "credits": 2,
+              "sub_category": "automotive_braking_chain"
+            },
+            {
+              "id": "197CQ1bTLML",
+              "name": "Thủy lực và máy thủy lực",
+              "code": "197CQ1bTLML",
+              "credits": 2,
+              "sub_category": "automotive_hydraulic_chain"
+            },
+            {
+              "id": "197CQ2bTLKN",
+              "name": "Truyền động thủy lực khí nén trên ô tô",
+              "code": "197CQ2bTLKN",
+              "credits": 3,
+              "sub_category": "automotive_hydraulic_chain"
+            },
+            {
+              "id": "197CQ3cHSTĐ",
+              "name": "Hộp số tự động trên ô tô",
+              "code": "197CQ3cHSTĐ",
+              "credits": 2,
+              "sub_category": "automotive_transmission_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 7,
+          "code": "bao_duong_chan_doan_sua_chua",
+          "label": "Bảo dưỡng - chẩn đoán - sửa chữa",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "197CQ3cSCKV",
+              "name": "Công nghệ sửa chữa khung vỏ ô tô",
+              "code": "197CQ3cSCKV",
+              "credits": 2,
+              "sub_category": "automotive_body_repair_chain"
+            },
+            {
+              "id": "197CQ2bCĐKĐ",
+              "name": "Chẩn đoán và kiểm định kỹ thuật ô tô",
+              "code": "197CQ2bCĐKĐ",
+              "credits": 2,
+              "sub_category": "automotive_diagnosis_chain"
+            },
+            {
+              "id": "197CQ2bCNBS",
+              "name": "Công nghệ bảo dưỡng, sửa chữa ô tô",
+              "code": "197CQ2bCNBS",
+              "credits": 2,
+              "sub_category": "automotive_maintenance_chain"
+            },
+            {
+              "id": "197CQ2bTNOT",
+              "name": "Thí nghiệm ô tô",
+              "code": "197CQ2bTNOT",
+              "credits": 2,
+              "sub_category": "automotive_diagnosis_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 8,
+          "code": "van_hanh_quan_ly_kinh_te",
+          "label": "Vận hành - quản lý - kinh tế",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "197CQ3cKTVT",
+              "name": "Kinh tế vận tải ô tô",
+              "code": "197CQ3cKTVT",
+              "credits": 2,
+              "sub_category": "automotive_transport_economics"
+            },
+            {
+              "id": "197CQ3cTKXG",
+              "name": "Thiết kế xưởng và ga ra ô tô",
+              "code": "197CQ3cTKXG",
+              "credits": 2,
+              "sub_category": "automotive_workshop_design"
+            },
+            {
+              "id": "197CQ2bCNLR",
+              "name": "Công nghệ lắp ráp ô tô",
+              "code": "197CQ2bCNLR",
+              "credits": 2,
+              "sub_category": "automotive_assembly_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 9,
+          "code": "thuc_tap_do_an",
+          "label": "Thực tập - đồ án",
+          "subject_count": 8,
+          "subjects": [
+            {
+              "id": "197CQ5ĐATN",
+              "name": "Khoá luận/học phần thay thế",
+              "code": "197CQ5ĐATN",
+              "credits": 10,
+              "sub_category": "thesis"
+            },
+            {
+              "id": "197CQ5TTTN",
+              "name": "Thực tập tốt nghiệp",
+              "code": "197CQ5TTTN",
+              "credits": 4,
+              "sub_category": "thesis"
+            },
+            {
+              "id": "197CQ2bTTNM",
+              "name": "Thực tập nhập môn cơ khí",
+              "code": "197CQ2bTTNM",
+              "credits": 2,
+              "sub_category": "mechanical_intro_practice"
+            },
+            {
+              "id": "197CQ1bĐAMA",
+              "name": "Đồ án chi tiết máy",
+              "code": "197CQ1bĐAMA",
+              "credits": 1,
+              "sub_category": "foundation_mechanics"
+            },
+            {
+              "id": "197CQ2bTTBS",
+              "name": "Thực tập bảo dưỡng, sửa chữa ô tô",
+              "code": "197CQ2bTTBS",
+              "credits": 3,
+              "sub_category": "automotive_maintenance_chain"
+            },
+            {
+              "id": "197CQ2bTTCT",
+              "name": "Thực tập cấu tạo ô tô",
+              "code": "197CQ2bTTCT",
+              "credits": 4,
+              "sub_category": "automotive_structure_chain"
+            },
+            {
+              "id": "197CQ2bĐALT",
+              "name": "Đồ án lý thuyết ô tô",
+              "code": "197CQ2bĐALT",
+              "credits": 1,
+              "sub_category": "automotive_structure_chain"
+            },
+            {
+              "id": "197CQ2bĐAKC",
+              "name": "Đồ án kết cấu tính toán ô tô",
+              "code": "197CQ2bĐAKC",
+              "credits": 1,
+              "sub_category": "automotive_structure_chain"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nganh": "Luật kinh tế",
+      "total_subjects": 67,
+      "total_groups": 11,
+      "groups": [
+        {
+          "sort_order": 1,
+          "code": "dai_cuong",
+          "label": "Đại cương",
+          "subject_count": 21,
+          "subjects": [
+            {
+              "id": "007CQQPAN1",
+              "name": "Giáo dục quốc phòng P1",
+              "code": "007CQQPAN1",
+              "credits": 3,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN2",
+              "name": "Giáo dục quốc phòng P2",
+              "code": "007CQQPAN2",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN3",
+              "name": "Giáo dục quốc phòng P3",
+              "code": "007CQQPAN3",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN4",
+              "name": "Giáo dục quốc phòng P4",
+              "code": "007CQQPAN4",
+              "credits": 4,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "DNU1008",
+              "name": "Giáo dục thể chất 1",
+              "code": "DNU1008",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "DNU1009",
+              "name": "Giáo dục thể chất 2",
+              "code": "DNU1009",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "DNU1010",
+              "name": "Giáo dục thể chất 3",
+              "code": "DNU1010",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "067CQ4bKNMCB",
+              "name": "Kỹ năng mềm cơ bản",
+              "code": "067CQ4bKNMCB",
+              "credits": 3,
+              "sub_category": "soft_skills"
+            },
+            {
+              "id": "007CQLLCT1",
+              "name": "Triết học Mác - Lênin",
+              "code": "007CQLLCT1",
+              "credits": 3,
+              "sub_category": "political_ideology"
+            },
+            {
+              "id": "007CQLLCT3",
+              "name": "Chủ nghĩa xã hội khoa học",
+              "code": "007CQLLCT3",
+              "credits": 2,
+              "sub_category": "political_ideology"
+            },
+            {
+              "id": "007CQLLCT2",
+              "name": "Kinh tế chính trị Mác - Lênin",
+              "code": "007CQLLCT2",
+              "credits": 2,
+              "sub_category": "political_ideology"
+            },
+            {
+              "id": "047CQTA1",
+              "name": "Tiếng Anh P1",
+              "code": "047CQTA1",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "077CQTHDC",
+              "name": "Tin học đại cương",
+              "code": "077CQTHDC",
+              "credits": 3,
+              "sub_category": "it_basics"
+            },
+            {
+              "id": "007CQLLCT4",
+              "name": "Lịch sử Đảng Cộng sản Việt Nam",
+              "code": "007CQLLCT4",
+              "credits": 2,
+              "sub_category": "political_ideology"
+            },
+            {
+              "id": "047CQTA2",
+              "name": "Tiếng Anh P2",
+              "code": "047CQTA2",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "077CQTHVP",
+              "name": "Tin học văn phòng",
+              "code": "077CQTHVP",
+              "credits": 3,
+              "sub_category": "it_basics"
+            },
+            {
+              "id": "007CQLLCT5",
+              "name": "Tư tưởng Hồ Chí Minh",
+              "code": "007CQLLCT5",
+              "credits": 2,
+              "sub_category": "political_ideology"
+            },
+            {
+              "id": "067CQ4bKNMNC",
+              "name": "Kỹ năng mềm nâng cao",
+              "code": "067CQ4bKNMNC",
+              "credits": 3,
+              "sub_category": "soft_skills"
+            },
+            {
+              "id": "047CQTA3",
+              "name": "Tiếng Anh P3",
+              "code": "047CQTA3",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "047CQTA4 (",
+              "name": "Tiếng Anh P4",
+              "code": "047CQTA4 (",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "047CQTA5 (X)",
+              "name": "Tiếng anh chuyên ngành",
+              "code": "047CQTA5 (X)",
+              "credits": 4,
+              "sub_category": "english_professional"
+            }
+          ]
+        },
+        {
+          "sort_order": 2,
+          "code": "nen_tang_phap_ly",
+          "label": "Nền tảng pháp lý",
+          "subject_count": 5,
+          "subjects": [
+            {
+              "id": "107CQ1cNPTG",
+              "name": "Lịch sử Nhà nước và Pháp luật Thế giới",
+              "code": "107CQ1cNPTG",
+              "credits": 2,
+              "sub_category": "history_state_law_chain"
+            },
+            {
+              "id": "107CQ1cNPVN",
+              "name": "Lịch sử Nhà nước và Pháp luật Việt Nam",
+              "code": "107CQ1cNPVN",
+              "credits": 2,
+              "sub_category": "history_state_law_chain"
+            },
+            {
+              "id": "107CQ1bLNPL",
+              "name": "Lý luận chung về Nhà nước và Pháp luật",
+              "code": "107CQ1bLNPL",
+              "credits": 3,
+              "sub_category": "general_legal_theory"
+            },
+            {
+              "id": "107CQ1bLGH",
+              "name": "Logic học",
+              "code": "107CQ1bLGH",
+              "credits": 2,
+              "sub_category": "logic_legal_reasoning"
+            },
+            {
+              "id": "107CQ1cLHSS",
+              "name": "Luật học so sánh",
+              "code": "107CQ1cLHSS",
+              "credits": 2,
+              "sub_category": "comparative_legal_studies"
+            }
+          ]
+        },
+        {
+          "sort_order": 3,
+          "code": "kinh_te_quan_tri",
+          "label": "Kinh tế - quản trị",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "067CQ1cQTHC1",
+              "name": "Quản trị học",
+              "code": "067CQ1cQTHC1",
+              "credits": 2,
+              "sub_category": "business_management"
+            },
+            {
+              "id": "067CQ1bKTHO",
+              "name": "Kinh tế học",
+              "code": "067CQ1bKTHO",
+              "credits": 3,
+              "sub_category": "economics_foundation"
+            },
+            {
+              "id": "067CQ1cMaCB",
+              "name": "Marketing căn bản",
+              "code": "067CQ1cMaCB",
+              "credits": 3,
+              "sub_category": "marketing_basics"
+            }
+          ]
+        },
+        {
+          "sort_order": 4,
+          "code": "luat_cong",
+          "label": "Luật công",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "107CQ1bHPVN",
+              "name": "Luật Hiến pháp Việt Nam",
+              "code": "107CQ1bHPVN",
+              "credits": 3,
+              "sub_category": "constitutional_legal_chain"
+            },
+            {
+              "id": "107CQ1bHCVN",
+              "name": "Luật Hành chính Việt Nam",
+              "code": "107CQ1bHCVN",
+              "credits": 3,
+              "sub_category": "administrative_legal_chain"
+            },
+            {
+              "id": "LAW3006",
+              "name": "Pháp luật phòng chống tham nhũng",
+              "code": "LAW3006",
+              "credits": 2,
+              "sub_category": "anti_corruption_law"
+            }
+          ]
+        },
+        {
+          "sort_order": 5,
+          "code": "luat_dan_su_gia_dinh_dat_dai",
+          "label": "Luật dân sự - gia đình - đất đai",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "107CQ3cTCHD",
+              "name": "Kỹ năng giao kết hợp đồng và giải quyết tranh chấp hợp đồng dân sự",
+              "code": "107CQ3cTCHD",
+              "credits": 2,
+              "sub_category": "contract_dispute_resolution_chain"
+            },
+            {
+              "id": "107CQ1bDSVN1",
+              "name": "Luật Dân sự Việt Nam 1",
+              "code": "107CQ1bDSVN1",
+              "credits": 3,
+              "sub_category": "civil_legal_chain"
+            },
+            {
+              "id": "107CQ1bDSVN2",
+              "name": "Luật Dân sự Việt Nam 2",
+              "code": "107CQ1bDSVN2",
+              "credits": 3,
+              "sub_category": "civil_legal_chain"
+            },
+            {
+              "id": "107CQ2bLĐĐI",
+              "name": "Luật Đất đai",
+              "code": "107CQ2bLĐĐI",
+              "credits": 2,
+              "sub_category": "land_legal_chain"
+            },
+            {
+              "id": "107CQ2bHNGĐ",
+              "name": "Luật Hôn nhân và Gia đình",
+              "code": "107CQ2bHNGĐ",
+              "credits": 2,
+              "sub_category": "family_legal_chain"
+            },
+            {
+              "id": "107CQ2bLBĐS",
+              "name": "Pháp luật thị trường bất động sản",
+              "code": "107CQ2bLBĐS",
+              "credits": 2,
+              "sub_category": "real_estate_legal_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 6,
+          "code": "luat_hinh_su_to_tung",
+          "label": "Luật hình sự - tố tụng",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "107CQ2bHSVN",
+              "name": "Luật Hình sự Việt Nam",
+              "code": "107CQ2bHSVN",
+              "credits": 2,
+              "sub_category": "criminal_legal_chain"
+            },
+            {
+              "id": "107CQ2bTDVN",
+              "name": "Luật Tố tụng dân sự Việt Nam",
+              "code": "107CQ2bTDVN",
+              "credits": 3,
+              "sub_category": "civil_procedure_legal_chain"
+            },
+            {
+              "id": "107CQ2bTTHS",
+              "name": "Luật Tố tụng hình sự",
+              "code": "107CQ2bTTHS",
+              "credits": 2,
+              "sub_category": "criminal_procedure_legal_chain"
+            },
+            {
+              "id": "107CQbTLTP",
+              "name": "Tâm lý học tư pháp",
+              "code": "107CQbTLTP",
+              "credits": 2,
+              "sub_category": "judicial_psychology_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 7,
+          "code": "luat_thuong_mai_doanh_nghiep",
+          "label": "Luật thương mại - doanh nghiệp",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "107CQ3bLTMVN1",
+              "name": "Luật Thương mại Việt Nam 1",
+              "code": "107CQ3bLTMVN1",
+              "credits": 3,
+              "sub_category": "commercial_legal_chain"
+            },
+            {
+              "id": "107CQ3bLTMVN2",
+              "name": "Luật Thương mại Việt Nam 2",
+              "code": "107CQ3bLTMVN2",
+              "credits": 3,
+              "sub_category": "commercial_legal_chain"
+            },
+            {
+              "id": "107CQ2bLCBQL",
+              "name": "Luật Cạnh tranh và bảo vệ quyền lợi người tiêu dùng",
+              "code": "107CQ2bLCBQL",
+              "credits": 3,
+              "sub_category": "competition_consumer_legal_chain"
+            },
+            {
+              "id": "107CQ5HPTN2",
+              "name": "Pháp luật về giải quyết tranh chấp kinh doanh thương mại",
+              "code": "107CQ5HPTN2",
+              "credits": 3,
+              "sub_category": "commercial_dispute_legal_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 8,
+          "code": "tai_chinh_ngan_hang",
+          "label": "Tài chính - ngân hàng",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "027CQ2cTQTE1",
+              "name": "Thanh toán quốc tế",
+              "code": "027CQ2cTQTE1",
+              "credits": 2,
+              "sub_category": "financial_international_chain"
+            },
+            {
+              "id": "027CQ1bTCTT1",
+              "name": "Lý thuyết tài chính - Tiền tệ",
+              "code": "027CQ1bTCTT1",
+              "credits": 2,
+              "sub_category": "finance_foundation"
+            },
+            {
+              "id": "107CQ3bLNHA",
+              "name": "Luật Ngân hàng",
+              "code": "107CQ3bLNHA",
+              "credits": 2,
+              "sub_category": "banking_legal_chain"
+            },
+            {
+              "id": "107CQ3bLTCH",
+              "name": "Luật Tài chính",
+              "code": "107CQ3bLTCH",
+              "credits": 2,
+              "sub_category": "financial_legal_chain"
+            },
+            {
+              "id": "107CQ3cLCKH",
+              "name": "Luật Chứng khoán",
+              "code": "107CQ3cLCKH",
+              "credits": 2,
+              "sub_category": "securities_legal_chain"
+            },
+            {
+              "id": "107CQ1cLKBH",
+              "name": "Luật kinh doanh bảo hiểm",
+              "code": "107CQ1cLKBH",
+              "credits": 2,
+              "sub_category": "insurance_legal_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 9,
+          "code": "dau_tu_quoc_te_so_huu_tri_tue",
+          "label": "Đầu tư - quốc tế - sở hữu trí tuệ",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "107CQ3bLĐTƯ",
+              "name": "Luật Đầu tư",
+              "code": "107CQ3bLĐTƯ",
+              "credits": 2,
+              "sub_category": "investment_legal_chain"
+            },
+            {
+              "id": "107CQ2bLQTE",
+              "name": "Luật Quốc tế",
+              "code": "107CQ2bLQTE",
+              "credits": 3,
+              "sub_category": "international_legal_chain"
+            },
+            {
+              "id": "107CQ3bTMQT",
+              "name": "Luật Thương mại quốc tế",
+              "code": "107CQ3bTMQT",
+              "credits": 2,
+              "sub_category": "international_trade_legal_chain"
+            },
+            {
+              "id": "107CQ3cSHTT",
+              "name": "Luật Sở hữu trí tuệ",
+              "code": "107CQ3cSHTT",
+              "credits": 2,
+              "sub_category": "intellectual_property_legal_chain"
+            },
+            {
+              "id": "107CQ3bHĐQT",
+              "name": "Kỹ năng đàm phán hợp đồng Thương mại Quốc tế",
+              "code": "107CQ3bHĐQT",
+              "credits": 2,
+              "sub_category": "international_contract_negotiation_chain"
+            },
+            {
+              "id": "107CQ2bASEAN",
+              "name": "Pháp luật cộng đồng ASEAN",
+              "code": "107CQ2bASEAN",
+              "credits": 2,
+              "sub_category": "asean_community_legal_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 10,
+          "code": "lao_dong_an_sinh_moi_truong",
+          "label": "Lao động - an sinh - môi trường",
+          "subject_count": 5,
+          "subjects": [
+            {
+              "id": "107CQ3bTCLĐ",
+              "name": "Kỹ năng giao kết hợp đồng lao động và giải quyết các tranh chấp lao động",
+              "code": "107CQ3bTCLĐ",
+              "credits": 2,
+              "sub_category": "contract_dispute_resolution_chain"
+            },
+            {
+              "id": "107CQ2bLĐVN",
+              "name": "Luật Lao động Việt Nam",
+              "code": "107CQ2bLĐVN",
+              "credits": 3,
+              "sub_category": "labor_legal_chain"
+            },
+            {
+              "id": "107CQ2bLMTR",
+              "name": "Luật Môi trường",
+              "code": "107CQ2bLMTR",
+              "credits": 2,
+              "sub_category": "environmental_legal_chain"
+            },
+            {
+              "id": "107CQ3cLAXH",
+              "name": "Pháp luật an sinh xã hội",
+              "code": "107CQ3cLAXH",
+              "credits": 2,
+              "sub_category": "social_security_legal_chain"
+            },
+            {
+              "id": "107CQ5HPTN1",
+              "name": "Pháp luật về môi trường trong kinh doanh thương mại điện tử",
+              "code": "107CQ5HPTN1",
+              "credits": 3,
+              "sub_category": "ecommerce_environmental_legal_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 11,
+          "code": "thuc_hanh_tot_nghiep",
+          "label": "Thực hành & tốt nghiệp",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "107CQ3bSVPL",
+              "name": "Kỹ thuật soạn thảo văn bản pháp luật",
+              "code": "107CQ3bSVPL",
+              "credits": 3,
+              "sub_category": "legal_document_drafting"
+            },
+            {
+              "id": "107CQ3bTHPL",
+              "name": "Thực hành pháp luật",
+              "code": "107CQ3bTHPL",
+              "credits": 3,
+              "sub_category": "legal_practice"
+            },
+            {
+              "id": "107CQ5TTTN1",
+              "name": "Thực tập tốt nghiệp",
+              "code": "107CQ5TTTN1",
+              "credits": 4,
+              "sub_category": "internship_legal"
+            },
+            {
+              "id": "107CQ5KLTN",
+              "name": "Khoá luận",
+              "code": "107CQ5KLTN",
+              "credits": 6,
+              "sub_category": "thesis"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nganh": "Quản trị dịch vụ du lịch và lữ hành",
+      "total_subjects": 80,
+      "total_groups": 12,
+      "groups": [
+        {
+          "sort_order": 1,
+          "code": "dai_cuong_chinh_tri",
+          "label": "Đại cương/chính trị",
+          "subject_count": 12,
+          "subjects": [
+            {
+              "id": "007CQQPAN1",
+              "name": "Giáo dục quốc phòng P1",
+              "code": "007CQQPAN1",
+              "credits": 3,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN2",
+              "name": "Giáo dục quốc phòng P2",
+              "code": "007CQQPAN2",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN3",
+              "name": "Giáo dục quốc phòng P3",
+              "code": "007CQQPAN3",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN4",
+              "name": "Giáo dục quốc phòng P4",
+              "code": "007CQQPAN4",
+              "credits": 4,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQGDTC1",
+              "name": "Giáo dục thể chất P1",
+              "code": "007CQGDTC1",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "007CQGDTC2",
+              "name": "Giáo dục thể chất P2",
+              "code": "007CQGDTC2",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "007CQGDTC3",
+              "name": "Giáo dục thể chất P3",
+              "code": "007CQGDTC3",
+              "credits": 1,
+              "sub_category": "physical_education_seq"
+            },
+            {
+              "id": "007CQLLCT2",
+              "name": "Kinh tế chính trị Mác - Lênin",
+              "code": "007CQLLCT2",
+              "credits": 2,
+              "sub_category": "political_theory_seq"
+            },
+            {
+              "id": "007CQLLCT1",
+              "name": "Triết học Mác - Lênin",
+              "code": "007CQLLCT1",
+              "credits": 3,
+              "sub_category": "political_theory_seq"
+            },
+            {
+              "id": "007CQLLCT3",
+              "name": "Chủ nghĩa xã hội khoa học",
+              "code": "007CQLLCT3",
+              "credits": 2,
+              "sub_category": "political_theory_seq"
+            },
+            {
+              "id": "007CQLLCT4",
+              "name": "Lịch sử Đảng Cộng sản Việt Nam",
+              "code": "007CQLLCT4",
+              "credits": 2,
+              "sub_category": "political_theory_seq"
+            },
+            {
+              "id": "007CQLLCT5",
+              "name": "Tư tưởng Hồ Chí Minh",
+              "code": "007CQLLCT5",
+              "credits": 2,
+              "sub_category": "political_theory_seq"
+            }
+          ]
+        },
+        {
+          "sort_order": 2,
+          "code": "co_so_nganh_du_lich",
+          "label": "Cơ sở ngành du lịch",
+          "subject_count": 8,
+          "subjects": [
+            {
+              "id": "117CQ1cNCTT",
+              "name": "Nghiên cứu thị trường du lịch",
+              "code": "117CQ1cNCTT",
+              "credits": 2,
+              "sub_category": "tourism_management_foundation"
+            },
+            {
+              "id": "117CQ2bTLDL",
+              "name": "Tâm lý khách du lịch",
+              "code": "117CQ2bTLDL",
+              "credits": 3,
+              "sub_category": "tourism_management_foundation"
+            },
+            {
+              "id": "117CQ2bTQDL",
+              "name": "Tổng quan Du lịch",
+              "code": "117CQ2bTQDL",
+              "credits": 3,
+              "sub_category": "tourism_management_foundation"
+            },
+            {
+              "id": "117CQ2bDNTN",
+              "name": "Du lịch có trách nhiệm",
+              "code": "117CQ2bDNTN",
+              "credits": 2,
+              "sub_category": "responsible_tourism"
+            },
+            {
+              "id": "067C2bQDTH",
+              "name": "Quản trị học",
+              "code": "067C2bQDTH",
+              "credits": 3,
+              "sub_category": "tourism_management_foundation"
+            },
+            {
+              "id": "117CQ3cDLCĐ",
+              "name": "Du lịch cộng đồng",
+              "code": "117CQ3cDLCĐ",
+              "credits": 2,
+              "sub_category": "responsible_tourism"
+            },
+            {
+              "id": "017CQ1bTKDL",
+              "name": "Thống kê du lịch",
+              "code": "017CQ1bTKDL",
+              "credits": 3,
+              "sub_category": "tourism_statistics"
+            },
+            {
+              "id": "117CQ1cQTNS",
+              "name": "Quản trị nguồn nhân lực du lịch",
+              "code": "117CQ1cQTNS",
+              "credits": 2,
+              "sub_category": "tourism_hr_management"
+            }
+          ]
+        },
+        {
+          "sort_order": 3,
+          "code": "van_hoa_di_san",
+          "label": "Văn hóa - di sản",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "117CQ1cTTLS",
+              "name": "Tiến trình lịch sử Việt Nam",
+              "code": "117CQ1cTTLS",
+              "credits": 2,
+              "sub_category": "vietnamese_culture_heritage"
+            },
+            {
+              "id": "117CQ1bCSVH",
+              "name": "Cơ sở văn hóa Việt Nam",
+              "code": "117CQ1bCSVH",
+              "credits": 3,
+              "sub_category": "vietnamese_culture_heritage"
+            },
+            {
+              "id": "117CQ2bPTLH",
+              "name": "Phong tục tập quán và lễ hội truyền thống Việt Nam",
+              "code": "117CQ2bPTLH",
+              "credits": 2,
+              "sub_category": "vietnamese_culture_heritage"
+            },
+            {
+              "id": "117CQ2bNTAT",
+              "name": "Văn hóa và nghệ thuật ẩm thực Việt Nam",
+              "code": "117CQ2bNTAT",
+              "credits": 2,
+              "sub_category": "vietnamese_culture_heritage"
+            }
+          ]
+        },
+        {
+          "sort_order": 4,
+          "code": "dia_ly_diem_den",
+          "label": "Địa lý - điểm đến",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "117CQ2cQTĐĐ",
+              "name": "Quản trị điểm đến du lịch",
+              "code": "117CQ2cQTĐĐ",
+              "credits": 2,
+              "sub_category": "tourism_geography_destination_chain"
+            },
+            {
+              "id": "117CQ1bĐLDL",
+              "name": "Địa lý du lịch Việt Nam",
+              "code": "117CQ1bĐLDL",
+              "credits": 3,
+              "sub_category": "tourism_geography_destination_chain"
+            },
+            {
+              "id": "117CQ3bTĐDL",
+              "name": "Tuyến điểm du lịch Việt Nam",
+              "code": "117CQ3bTĐDL",
+              "credits": 2,
+              "sub_category": "tourism_geography_destination_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 5,
+          "code": "khach_san_luu_tru",
+          "label": "Khách sạn - lưu trú",
+          "subject_count": 8,
+          "subjects": [
+            {
+              "id": "117CQ2aVHLT",
+              "name": "Vận hành Cơ sở lưu trú nhỏ",
+              "code": "117CQ2aVHLT",
+              "credits": 3,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ2cQTND",
+              "name": "Quản trị kinh doanh khu nghỉ dưỡng",
+              "code": "117CQ2cQTND",
+              "credits": 2,
+              "sub_category": "resort_management_chain"
+            },
+            {
+              "id": "117CQ2cQTKH",
+              "name": "Quản trị quan hệ khách hàng",
+              "code": "117CQ2cQTKH",
+              "credits": 2,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ3cNVĐC",
+              "name": "Nghiệp vụ đặt giữ buồng khách sạn",
+              "code": "117CQ3cNVĐC",
+              "credits": 2,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ3cNVQL",
+              "name": "Nghiệp vụ quản lý khách sạn",
+              "code": "117CQ3cNVQL",
+              "credits": 2,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ3bNVBP",
+              "name": "Nghiệp vụ buồng phòng",
+              "code": "117CQ3bNVBP",
+              "credits": 3,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ3bNVLT",
+              "name": "Nghiệp vụ lễ tân",
+              "code": "117CQ3bNVLT",
+              "credits": 3,
+              "sub_category": "khach_san_management_chain"
+            },
+            {
+              "id": "117CQ3bQTKS",
+              "name": "Quản trị kinh doanh khách sạn",
+              "code": "117CQ3bQTKS",
+              "credits": 4,
+              "sub_category": "khach_san_management_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 6,
+          "code": "lu_hanh_huong_dan",
+          "label": "Lữ hành - hướng dẫn",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "117CQ2aKNNA",
+              "name": "Kỹ thuật nhiếp ảnh trong du lịch",
+              "code": "117CQ2aKNNA",
+              "credits": 3,
+              "sub_category": "tour_guide_operations_chain"
+            },
+            {
+              "id": "117CQ2cNVĐL",
+              "name": "Nghiệp vụ đại lý lữ hành",
+              "code": "117CQ2cNVĐL",
+              "credits": 2,
+              "sub_category": "travel_agency_management_chain"
+            },
+            {
+              "id": "117CQ2bMarDL",
+              "name": "Marketing du lịch",
+              "code": "117CQ2bMarDL",
+              "credits": 3,
+              "sub_category": "travel_agency_management_chain"
+            },
+            {
+              "id": "117CQ2bNVĐH",
+              "name": "Nghiệp vụ điều hành tour",
+              "code": "117CQ2bNVĐH",
+              "credits": 2,
+              "sub_category": "travel_agency_management_chain"
+            },
+            {
+              "id": "117CQ3bNVHD",
+              "name": "Nghiệp vụ hướng dẫn du lịch",
+              "code": "117CQ3bNVHD",
+              "credits": 3,
+              "sub_category": "tour_guide_operations_chain"
+            },
+            {
+              "id": "117CQ3bQKLH",
+              "name": "Quản trị kinh doanh lữ hành",
+              "code": "117CQ3bQKLH",
+              "credits": 4,
+              "sub_category": "travel_agency_management_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 7,
+          "code": "nha_hang_am_thuc",
+          "label": "Nhà hàng - ẩm thực",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "117CQ2aKTPC",
+              "name": "Kỹ thuật pha chế thức uống",
+              "code": "117CQ2aKTPC",
+              "credits": 3,
+              "sub_category": "food_beverage_service_chain"
+            },
+            {
+              "id": "117CQ3cQTNH",
+              "name": "Quản trị nhà hàng và dịch vụ ăn uống",
+              "code": "117CQ3cQTNH",
+              "credits": 2,
+              "sub_category": "food_beverage_service_chain"
+            },
+            {
+              "id": "117CQ2bNVNH",
+              "name": "Nghiệp vụ nhà hàng",
+              "code": "117CQ2bNVNH",
+              "credits": 3,
+              "sub_category": "food_beverage_service_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 8,
+          "code": "van_chuyen_du_lich",
+          "label": "Vận chuyển du lịch",
+          "subject_count": 2,
+          "subjects": [
+            {
+              "id": "117CQ2aPVTT",
+              "name": "Phục vụ trên tàu thủy du lịch",
+              "code": "117CQ2aPVTT",
+              "credits": 3,
+              "sub_category": "transportation_cruise_service_chain"
+            },
+            {
+              "id": "117CQ3cQTDV",
+              "name": "Quản trị dịch vụ vận chuyển du lịch",
+              "code": "117CQ3cQTDV",
+              "credits": 2,
+              "sub_category": "transportation_cruise_service_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 9,
+          "code": "luat_an_toan_du_lich",
+          "label": "Luật - an toàn du lịch",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "117CQ2cYTDL",
+              "name": "Y tế trong Du lịch",
+              "code": "117CQ2cYTDL",
+              "credits": 2,
+              "sub_category": "tourism_health_safety"
+            },
+            {
+              "id": "107CQLDC2",
+              "name": "Pháp luật đại cương",
+              "code": "107CQLDC2",
+              "credits": 3,
+              "sub_category": "tourism_law_regulations"
+            },
+            {
+              "id": "117CQ2bLDLI2",
+              "name": "Luật du lịch",
+              "code": "117CQ2bLDLI2",
+              "credits": 2,
+              "sub_category": "tourism_law_regulations"
+            }
+          ]
+        },
+        {
+          "sort_order": 10,
+          "code": "ngoai_ngu",
+          "label": "Ngoại ngữ",
+          "subject_count": 14,
+          "subjects": [
+            {
+              "id": "167CQTH1",
+              "name": "Tiếng Hàn Quốc P1",
+              "code": "167CQTH1",
+              "credits": 3,
+              "sub_category": "korean_language_seq"
+            },
+            {
+              "id": "147CQTN1",
+              "name": "Tiếng Nhật Bản P1",
+              "code": "147CQTN1",
+              "credits": 3,
+              "sub_category": "japanese_language_seq"
+            },
+            {
+              "id": "147CQTN2",
+              "name": "Tiếng Nhật Bản P2",
+              "code": "147CQTN2",
+              "credits": 3,
+              "sub_category": "japanese_language_seq"
+            },
+            {
+              "id": "147CQTN3",
+              "name": "Tiếng Nhật Bản P3",
+              "code": "147CQTN3",
+              "credits": 3,
+              "sub_category": "japanese_language_seq"
+            },
+            {
+              "id": "047CQTA1",
+              "name": "Tiếng Anh P1",
+              "code": "047CQTA1",
+              "credits": 4,
+              "sub_category": "english_language_seq"
+            },
+            {
+              "id": "047CQTA2",
+              "name": "Tiếng Anh P2",
+              "code": "047CQTA2",
+              "credits": 4,
+              "sub_category": "english_language_seq"
+            },
+            {
+              "id": "047CQTA3",
+              "name": "Tiếng Anh P3",
+              "code": "047CQTA3",
+              "credits": 4,
+              "sub_category": "english_language_seq"
+            },
+            {
+              "id": "057CQTT1",
+              "name": "Tiếng Trung Quốc P1",
+              "code": "057CQTT1",
+              "credits": 3,
+              "sub_category": "chinese_language_seq"
+            },
+            {
+              "id": "167CQTH2",
+              "name": "Tiếng Hàn Quốc P2",
+              "code": "167CQTH2",
+              "credits": 3,
+              "sub_category": "korean_language_seq"
+            },
+            {
+              "id": "047CQTA4",
+              "name": "Tiếng Anh P4",
+              "code": "047CQTA4",
+              "credits": 4,
+              "sub_category": "english_language_seq"
+            },
+            {
+              "id": "057CQTT2",
+              "name": "Tiếng Trung Quốc P2",
+              "code": "057CQTT2",
+              "credits": 3,
+              "sub_category": "chinese_language_seq"
+            },
+            {
+              "id": "057CQTT3",
+              "name": "Tiếng Trung Quốc P3",
+              "code": "057CQTT3",
+              "credits": 3,
+              "sub_category": "chinese_language_seq"
+            },
+            {
+              "id": "047CQTA5",
+              "name": "Tiếng Anh P5",
+              "code": "047CQTA5",
+              "credits": 4,
+              "sub_category": "english_language_seq"
+            },
+            {
+              "id": "167CQTH3",
+              "name": "Tiếng Hàn Quốc P3",
+              "code": "167CQTH3",
+              "credits": 3,
+              "sub_category": "korean_language_seq"
+            }
+          ]
+        },
+        {
+          "sort_order": 11,
+          "code": "cong_nghe_ky_nang",
+          "label": "Công nghệ & kỹ năng",
+          "subject_count": 11,
+          "subjects": [
+            {
+              "id": "117CQ3cTHƯD",
+              "name": "Tin học ứng dụng trong Khách sạn - Du lịch",
+              "code": "117CQ3cTHƯD",
+              "credits": 2,
+              "sub_category": "information_technology_seq"
+            },
+            {
+              "id": "067CQ4bKNMCB",
+              "name": "Kỹ năng mềm cơ bản",
+              "code": "067CQ4bKNMCB",
+              "credits": 3,
+              "sub_category": "soft_skills_seq"
+            },
+            {
+              "id": "077CQTHDC",
+              "name": "Tin học đại cương",
+              "code": "077CQTHDC",
+              "credits": 3,
+              "sub_category": "information_technology_seq"
+            },
+            {
+              "id": "117CQ3bGTDL",
+              "name": "Kỹ năng giao tiếp ứng xử trong du lịch",
+              "code": "117CQ3bGTDL",
+              "credits": 2,
+              "sub_category": "soft_skills_seq"
+            },
+            {
+              "id": "067CQ4bKNMNC",
+              "name": "Kỹ năng mềm nâng cao",
+              "code": "067CQ4bKNMNC",
+              "credits": 3,
+              "sub_category": "soft_skills_seq"
+            },
+            {
+              "id": "117CQ1bKTST",
+              "name": "Kỹ thuật soạn thảo văn bản",
+              "code": "117CQ1bKTST",
+              "credits": 2,
+              "sub_category": "document_drafting_skills"
+            },
+            {
+              "id": "117CQ2cKNKS",
+              "name": "Kỹ năng khởi sự doanh nghiệp",
+              "code": "117CQ2cKNKS",
+              "credits": 2,
+              "sub_category": "entrepreneurship_skills"
+            },
+            {
+              "id": "117CQ3cQTSK",
+              "name": "Quản trị sự kiện",
+              "code": "117CQ3cQTSK",
+              "credits": 2,
+              "sub_category": "event_management"
+            },
+            {
+              "id": "117CQĐGNLTT",
+              "name": "Kỹ năng đánh giá năng lực nghề nghiệp",
+              "code": "117CQĐGNLTT",
+              "credits": 3,
+              "sub_category": "career_competency_skills"
+            },
+            {
+              "id": "117CQĐGTHTN",
+              "name": "Kỹ năng thực hành năng lực nghề nghiệp",
+              "code": "117CQĐGTHTN",
+              "credits": 3,
+              "sub_category": "career_competency_skills"
+            },
+            {
+              "id": "117CQ2aKNHN",
+              "name": "Kỹ năng hoạt náo trong du lịch",
+              "code": "117CQ2aKNHN",
+              "credits": 3,
+              "sub_category": "animation_activities_skills"
+            }
+          ]
+        },
+        {
+          "sort_order": 12,
+          "code": "thuc_tap_tot_nghiep",
+          "label": "Thực tập & tốt nghiệp",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "117CQ3bTHKS1",
+              "name": "Chuyên đề thực tập khảo sát tour, tuyến 1",
+              "code": "117CQ3bTHKS1",
+              "credits": 2,
+              "sub_category": "tour_guide_internship_chain"
+            },
+            {
+              "id": "117CQTTNV1",
+              "name": "Chuyên đề thực tập nghiệp vụ khách sạn 1",
+              "code": "117CQTTNV1",
+              "credits": 3,
+              "sub_category": "khach_san_internship_chain"
+            },
+            {
+              "id": "117CQ3bTHKS2",
+              "name": "Chuyên đề thực tập khảo sát tour, tuyến 2",
+              "code": "117CQ3bTHKS2",
+              "credits": 2,
+              "sub_category": "tour_guide_internship_chain"
+            },
+            {
+              "id": "117CQTTNV2",
+              "name": "Chuyên đề thực tập nghiệp vụ khách sạn 2",
+              "code": "117CQTTNV2",
+              "credits": 3,
+              "sub_category": "khach_san_internship_chain"
+            },
+            {
+              "id": "117CQ3bTHKS3",
+              "name": "Chuyên đề thực tập tổng hợp",
+              "code": "117CQ3bTHKS3",
+              "credits": 3,
+              "sub_category": "capstone_internship"
+            },
+            {
+              "id": "117CQBCTN",
+              "name": "Báo cáo thực tập tốt nghiệp",
+              "code": "117CQBCTN",
+              "credits": 4,
+              "sub_category": "thesis"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nganh": "Y Khoa",
+      "total_subjects": 90,
+      "total_groups": 11,
+      "groups": [
+        {
+          "sort_order": 1,
+          "code": "dai_cuong",
+          "label": "Đại cương",
+          "subject_count": 21,
+          "subjects": [
+            {
+              "id": "007CQLLCT3",
+              "name": "Chủ nghĩa xã hội khoa học",
+              "code": "007CQLLCT3",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "007CQQPAN1",
+              "name": "Giáo dục quốc phòng P1",
+              "code": "007CQQPAN1",
+              "credits": 3,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN2",
+              "name": "Giáo dục quốc phòng P2",
+              "code": "007CQQPAN2",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN3",
+              "name": "Giáo dục quốc phòng P3",
+              "code": "007CQQPAN3",
+              "credits": 2,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "007CQQPAN4",
+              "name": "Giáo dục quốc phòng P4",
+              "code": "007CQQPAN4",
+              "credits": 4,
+              "sub_category": "national_defense_seq"
+            },
+            {
+              "id": "DNU1008",
+              "name": "Giáo dục thể chất 1",
+              "code": "DNU1008",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "DNU1009",
+              "name": "Giáo dục thể chất 2",
+              "code": "DNU1009",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "DNU1010",
+              "name": "Giáo dục thể chất 3",
+              "code": "DNU1010",
+              "credits": 1,
+              "sub_category": "pe"
+            },
+            {
+              "id": "007CQLLCT2",
+              "name": "Kinh tế chính trị Mác - Lênin",
+              "code": "007CQLLCT2",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "067CQKNM1",
+              "name": "Kỹ năng mềm 01",
+              "code": "067CQKNM1",
+              "credits": 3,
+              "sub_category": "soft_skills"
+            },
+            {
+              "id": "NNCĐR",
+              "name": "Ngoại ngữ chuẩn đầu ra",
+              "code": "NNCĐR",
+              "credits": 3,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "TOEIC đầu vào",
+              "name": "Thi Tiếng Anh phân loại lớp",
+              "code": "TOEIC đầu vào",
+              "credits": 1,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "047CQTA4",
+              "name": "Tiếng Anh P4",
+              "code": "047CQTA4",
+              "credits": 3,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "007CQLLCT1",
+              "name": "Triết học Mác - Lênin",
+              "code": "007CQLLCT1",
+              "credits": 3,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "107CQLDC2",
+              "name": "Pháp luật đại cương",
+              "code": "107CQLDC2",
+              "credits": 3,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "077CQTHDC",
+              "name": "Tin học đại cương",
+              "code": "077CQTHDC",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "047CQTA1",
+              "name": "Tiếng Anh P1",
+              "code": "047CQTA1",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "007CQLLCT5",
+              "name": "Tư tưởng Hồ Chí Minh",
+              "code": "007CQLLCT5",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "047CQTA2",
+              "name": "Tiếng Anh P2",
+              "code": "047CQTA2",
+              "credits": 4,
+              "sub_category": "english_seq"
+            },
+            {
+              "id": "007CQLLCT4",
+              "name": "Lịch sử Đảng Cộng sản Việt Nam",
+              "code": "007CQLLCT4",
+              "credits": 2,
+              "sub_category": "political_social"
+            },
+            {
+              "id": "047CQTA3",
+              "name": "Tiếng Anh P3",
+              "code": "047CQTA3",
+              "credits": 4,
+              "sub_category": "english_seq"
+            }
+          ]
+        },
+        {
+          "sort_order": 2,
+          "code": "co_so_y_hoc",
+          "label": "Cơ sở y học",
+          "subject_count": 15,
+          "subjects": [
+            {
+              "id": "137CQ2b ĐDCB",
+              "name": "Điều dưỡng cơ bản",
+              "code": "137CQ2b ĐDCB",
+              "credits": 3,
+              "sub_category": "clinical_foundation"
+            },
+            {
+              "id": "157CQ1b GPB",
+              "name": "Giải phẫu bệnh",
+              "code": "157CQ1b GPB",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "087CQ1b HSH",
+              "name": "Hoá sinh",
+              "code": "087CQ1b HSH",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bLYSH",
+              "name": "Lý sinh Y học",
+              "code": "157CQ1bLYSH",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bMOHC",
+              "name": "Mô học - phôi thai học",
+              "code": "157CQ1bMOHC",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bGIPA1",
+              "name": "Giải phẫu 1",
+              "code": "157CQ1bGIPA1",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bSHPT",
+              "name": "Y sinh phân tử và di truyền y học",
+              "code": "157CQ1bSHPT",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bGIPA2",
+              "name": "Giải phẫu 2",
+              "code": "157CQ1bGIPA2",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bSILH",
+              "name": "Sinh lý học",
+              "code": "157CQ1bSILH",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "087CQ1bDLH",
+              "name": "Dược lý",
+              "code": "087CQ1bDLH",
+              "credits": 3,
+              "sub_category": "clinical_pharma_chain"
+            },
+            {
+              "id": "157CQ1b KIST",
+              "name": "Ký sinh trùng",
+              "code": "157CQ1b KIST",
+              "credits": 2,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bMDIH",
+              "name": "Miễn dịch",
+              "code": "157CQ1bMDIH",
+              "credits": 2,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ1bSLB",
+              "name": "Sinh lý bệnh",
+              "code": "157CQ1bSLB",
+              "credits": 3,
+              "sub_category": "clinical_pharma_chain"
+            },
+            {
+              "id": "157CQ1b VISV",
+              "name": "Vi sinh",
+              "code": "157CQ1b VISV",
+              "credits": 3,
+              "sub_category": "medical_sciences_found"
+            },
+            {
+              "id": "157CQ2bHLKN",
+              "name": "Huấn luyện kỹ năng y khoa",
+              "code": "157CQ2bHLKN",
+              "credits": 3,
+              "sub_category": "clinical_foundation"
+            }
+          ]
+        },
+        {
+          "sort_order": 3,
+          "code": "y_te_cong_cong_quan_ly",
+          "label": "Y tế công cộng & quản lý",
+          "subject_count": 11,
+          "subjects": [
+            {
+              "id": "157CQ2b DTEH",
+              "name": "Dịch tễ học",
+              "code": "157CQ2b DTEH",
+              "credits": 3,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2bTHCĐ",
+              "name": "Thực hành cộng đồng",
+              "code": "157CQ2bTHCĐ",
+              "credits": 2,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2cKTYT",
+              "name": "Kinh tế y tế - Bảo hiểm y tế",
+              "code": "157CQ2cKTYT",
+              "credits": 2,
+              "sub_category": "healthcare_management"
+            },
+            {
+              "id": "157CQ2cQTBV",
+              "name": "Quản trị bệnh viện",
+              "code": "157CQ2cQTBV",
+              "credits": 2,
+              "sub_category": "healthcare_management"
+            },
+            {
+              "id": "157CQ2cSKTN",
+              "name": "Sức khỏe vị thành niên",
+              "code": "157CQ2cSKTN",
+              "credits": 2,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2cYHGĐ",
+              "name": "Y học gia đình",
+              "code": "157CQ2cYHGĐ",
+              "credits": 2,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2cATTP",
+              "name": "Dinh dưỡng và an toàn thực phẩm",
+              "code": "157CQ2cATTP",
+              "credits": 2,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ1b GDSK",
+              "name": "Giáo dục sức khỏe - Y đức",
+              "code": "157CQ1b GDSK",
+              "credits": 3,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2cSKMT",
+              "name": "Sức khỏe môi trường và sức khỏe nghề nghiệp",
+              "code": "157CQ2cSKMT",
+              "credits": 2,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ2bĐDTH",
+              "name": "Dịch tễ",
+              "code": "157CQ2bĐDTH",
+              "credits": 3,
+              "sub_category": "epidemiology_community_chain"
+            },
+            {
+              "id": "157CQ1b NCKH",
+              "name": "Phương pháp Nghiên cứu khoa học Y học",
+              "code": "157CQ1b NCKH",
+              "credits": 3,
+              "sub_category": "medical_research"
+            }
+          ]
+        },
+        {
+          "sort_order": 4,
+          "code": "noi_khoa",
+          "label": "Nội khoa",
+          "subject_count": 8,
+          "subjects": [
+            {
+              "id": "157CQ2bLAOP",
+              "name": "Lao và bệnh phổi",
+              "code": "157CQ2bLAOP",
+              "credits": 2,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bLNBL1",
+              "name": "Nội bệnh lý 1 lý thuyết",
+              "code": "157CQ2bLNBL1",
+              "credits": 3,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bLNBL2",
+              "name": "Nội bệnh lý 2 lý thuyết",
+              "code": "157CQ2bLNBL2",
+              "credits": 3,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bTNBL2",
+              "name": "Nội bệnh lý 2 thực hành",
+              "code": "157CQ2bTNBL2",
+              "credits": 4,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bLNCS",
+              "name": "Nội khoa cơ sở lý thuyết",
+              "code": "157CQ2bLNCS",
+              "credits": 4,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bTNCS",
+              "name": "Nội khoa cơ sở thực hành",
+              "code": "157CQ2bTNCS",
+              "credits": 4,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2b TNBL1",
+              "name": "Nội bệnh lý 1 thực hành",
+              "code": "157CQ2b TNBL1",
+              "credits": 4,
+              "sub_category": "internal_medicine_chain"
+            },
+            {
+              "id": "157CQ2bTRYN",
+              "name": "Truyền nhiễm",
+              "code": "157CQ2bTRYN",
+              "credits": 3,
+              "sub_category": "internal_medicine_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 5,
+          "code": "ngoai_khoa",
+          "label": "Ngoại khoa",
+          "subject_count": 6,
+          "subjects": [
+            {
+              "id": "157CQ2bLGBL2",
+              "name": "Ngoại bệnh lý 2 lý thuyết",
+              "code": "157CQ2bLGBL2",
+              "credits": 3,
+              "sub_category": "surgery_chain"
+            },
+            {
+              "id": "157CQ2bTGBL2",
+              "name": "Ngoại bệnh lý 2 thực hành",
+              "code": "157CQ2bTGBL2",
+              "credits": 4,
+              "sub_category": "surgery_chain"
+            },
+            {
+              "id": "157CQ2bLGCS",
+              "name": "Ngoại cơ sở lý thuyết",
+              "code": "157CQ2bLGCS",
+              "credits": 3,
+              "sub_category": "surgery_chain"
+            },
+            {
+              "id": "157CQ2bTGCS",
+              "name": "Ngoại cơ sở thực hành",
+              "code": "157CQ2bTGCS",
+              "credits": 4,
+              "sub_category": "surgery_chain"
+            },
+            {
+              "id": "157CQ2b LGBL1",
+              "name": "Ngoại bệnh lý 1 lý thuyết",
+              "code": "157CQ2b LGBL1",
+              "credits": 3,
+              "sub_category": "surgery_chain"
+            },
+            {
+              "id": "157CQ2bTGBL1",
+              "name": "Ngoại bệnh lý 1 thực hành",
+              "code": "157CQ2bTGBL1",
+              "credits": 4,
+              "sub_category": "surgery_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 6,
+          "code": "nhi_khoa",
+          "label": "Nhi khoa",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "157CQ2bLNIK2",
+              "name": "Nhi khoa 2 lý thuyết",
+              "code": "157CQ2bLNIK2",
+              "credits": 3,
+              "sub_category": "pediatrics_chain"
+            },
+            {
+              "id": "157CQ2b TNIK2",
+              "name": "Nhi khoa 2 TH",
+              "code": "157CQ2b TNIK2",
+              "credits": 3,
+              "sub_category": "pediatrics_chain"
+            },
+            {
+              "id": "157CQ2bLNIK1",
+              "name": "Nhi khoa 1 lý thuyết",
+              "code": "157CQ2bLNIK1",
+              "credits": 3,
+              "sub_category": "pediatrics_chain"
+            },
+            {
+              "id": "157CQ2bTNIK1",
+              "name": "Nhi khoa 1 thực hành",
+              "code": "157CQ2bTNIK1",
+              "credits": 4,
+              "sub_category": "pediatrics_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 7,
+          "code": "san_phu_khoa",
+          "label": "Sản - phụ khoa",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "157CQ2bLSPK2",
+              "name": "Sản phụ khoa 2 lý thuyết",
+              "code": "157CQ2bLSPK2",
+              "credits": 2,
+              "sub_category": "obgyn_chain"
+            },
+            {
+              "id": "157CQ2bTSPK2",
+              "name": "Sản phụ khoa 2 thực hành",
+              "code": "157CQ2bTSPK2",
+              "credits": 3,
+              "sub_category": "obgyn_chain"
+            },
+            {
+              "id": "157CQ2bLSPK1",
+              "name": "Sản phụ khoa 1 lý thuyết",
+              "code": "157CQ2bLSPK1",
+              "credits": 3,
+              "sub_category": "obgyn_chain"
+            },
+            {
+              "id": "157CQ2bTSPK1",
+              "name": "Sản phụ khoa 1 thực hành",
+              "code": "157CQ2bTSPK1",
+              "credits": 4,
+              "sub_category": "obgyn_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 8,
+          "code": "chuyen_khoa_le",
+          "label": "Chuyên khoa lẻ",
+          "subject_count": 12,
+          "subjects": [
+            {
+              "id": "157CQ2bTHMO",
+              "name": "Tai mũi họng",
+              "code": "157CQ2bTHMO",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bUNGT",
+              "name": "Ung thư",
+              "code": "157CQ2bUNGT",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2cDALI",
+              "name": "Da liễu",
+              "code": "157CQ2cDALI",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2cDLAS",
+              "name": "Dược lâm sàng",
+              "code": "157CQ2cDLAS",
+              "credits": 2,
+              "sub_category": "clinical_pharma_chain"
+            },
+            {
+              "id": "157CQ2cGMHS",
+              "name": "Gây mê hồi sức",
+              "code": "157CQ2cGMHS",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bNHAN",
+              "name": "Nhãn khoa",
+              "code": "157CQ2bNHAN",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bRHMA",
+              "name": "Răng hàm mặt",
+              "code": "157CQ2bRHMA",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2cYHHN",
+              "name": "Y học hạt nhân",
+              "code": "157CQ2cYHHN",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bCĐHA",
+              "name": "Chẩn đoán hình ảnh",
+              "code": "157CQ2bCĐHA",
+              "credits": 3,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bHCCS",
+              "name": "Hồi sức cấp cứu",
+              "code": "157CQ2bHCCS",
+              "credits": 3,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bPHCN",
+              "name": "Phục hồi chức năng",
+              "code": "157CQ2bPHCN",
+              "credits": 2,
+              "sub_category": "specialized_clinical"
+            },
+            {
+              "id": "157CQ2bYHCT",
+              "name": "Y học cổ truyền",
+              "code": "157CQ2bYHCT",
+              "credits": 3,
+              "sub_category": "specialized_clinical"
+            }
+          ]
+        },
+        {
+          "sort_order": 9,
+          "code": "tam_than_than_kinh",
+          "label": "Tâm thần - thần kinh",
+          "subject_count": 3,
+          "subjects": [
+            {
+              "id": "157CQ2bTTHC",
+              "name": "Tâm thần học",
+              "code": "157CQ2bTTHC",
+              "credits": 2,
+              "sub_category": "mental_health_chain"
+            },
+            {
+              "id": "157CQ2bTKIN22",
+              "name": "Thần kinh",
+              "code": "157CQ2bTKIN22",
+              "credits": 2,
+              "sub_category": "mental_health_chain"
+            },
+            {
+              "id": "157CQ2cTLLS",
+              "name": "Tâm lý lâm sàng",
+              "code": "157CQ2cTLLS",
+              "credits": 2,
+              "sub_category": "mental_health_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 10,
+          "code": "lam_sang_nang_cao",
+          "label": "Lâm sàng nâng cao",
+          "subject_count": 4,
+          "subjects": [
+            {
+              "id": "157CQ5bTGNC",
+              "name": "Lâm sàng Ngoại khoa nâng cao",
+              "code": "157CQ5bTGNC",
+              "credits": 4,
+              "sub_category": "advanced_clinical_chain"
+            },
+            {
+              "id": "157CQ5bTNHC",
+              "name": "Lâm sàng Nội khoa nâng cao",
+              "code": "157CQ5bTNHC",
+              "credits": 4,
+              "sub_category": "advanced_clinical_chain"
+            },
+            {
+              "id": "157CQ5bLGNC",
+              "name": "Lý thuyết Ngoại khoa nâng cao",
+              "code": "157CQ5bLGNC",
+              "credits": 2,
+              "sub_category": "advanced_clinical_chain"
+            },
+            {
+              "id": "157CQ5bLNNC",
+              "name": "Lý thuyết Nội khoa nâng cao",
+              "code": "157CQ5bLNNC",
+              "credits": 2,
+              "sub_category": "advanced_clinical_chain"
+            }
+          ]
+        },
+        {
+          "sort_order": 11,
+          "code": "thuc_tap_tot_nghiep",
+          "label": "Thực tập & tốt nghiệp",
+          "subject_count": 2,
+          "subjects": [
+            {
+              "id": "157CQ5b TTTN",
+              "name": "Thực tập tốt nghiệp",
+              "code": "157CQ5b TTTN",
+              "credits": 4,
+              "sub_category": "internship"
+            },
+            {
+              "id": "157CQ5b KLTN",
+              "name": "Khóa luận tốt nghiệp",
+              "code": "157CQ5b KLTN",
+              "credits": 6,
+              "sub_category": "thesis"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

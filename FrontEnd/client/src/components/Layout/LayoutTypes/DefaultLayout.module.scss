@@ -1,0 +1,49 @@
+.wrapper {
+  background-color: #F5F5F5;
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+
+}
+
+// .main {
+//   flex-grow: 1;
+//   margin-right: 8px;
+//   @include smaller-than(1240px) {
+//     margin-left: 96px;
+//     width: calc(100% - 96px);
+//   }
+//   @include smaller-than(576px) {
+//     margin: 0 8px;
+//   }
+//   @include smaller-than(375px) {
+//     margin: 0;
+//   }
+// }
+
+.scrollArea {
+  min-height: 100vh;
+  overflow-y: auto;
+  width: 100%;
+}
+
+// .container {
+//   width: calc(100% - 112px);
+//   max-width: 1024px;
+//   margin: 0 auto;
+
+//   @include smaller-than(1496px) {
+//     margin: 0 56px;
+//   }
+//   @include smaller-than(576px) {
+//     width: 100%;
+//     margin: 0;
+//   }
+//   @include smaller-than(375px) {
+//     width: calc(100vw - 16px);
+//     margin: 0 8px;
+//   }
+// }

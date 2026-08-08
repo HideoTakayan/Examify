@@ -1,0 +1,28 @@
+.inputField {
+  border: 1px solid var(--mantine-color-gray-3);
+
+  @mixin light {
+    background-color: white;
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-neutral-8);
+  }
+
+  &:hover {
+    border-color: var(--mantine-color-gray-4);
+  }
+
+  &:focus,
+  &:focus-within {
+    border: 1px solid var(--mantine-color-primary-6);
+  }
+
+  &[data-error] {
+    border: 1px solid var(--mantine-color-error-6);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

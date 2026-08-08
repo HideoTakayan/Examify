@@ -1,0 +1,20 @@
+{
+  "required": "Trường này là bắt buộc",
+  "unauthorized": "Bạn không có quyền truy cập",
+  "server_error": "Lỗi máy chủ, vui lòng thử lại sau",
+  "prediction_failed": "Không lấy được dự đoán điểm.",
+  "result_load_failed": "Không tải được kết quả.",
+  "exam_list_failed": "Lấy danh sách bài thi thất bại.",
+  "exam_force_submit_failed": "Force-submit bài thi thất bại.",
+  "user_list_failed": "Không tải được danh sách người dùng.",
+  "user_add_failed": "Thêm user thất bại.",
+  "user_update_failed": "Cập nhật user thất bại.",
+  "user_delete_failed": "Xóa user thất bại.",
+  "realtime_timeout": "Hết thời gian chờ kết nối realtime",
+  "realtime_connect_failed": "Không kết nối được tới máy chủ realtime",
+  "realtime_error": "Lỗi realtime từ máy chủ",
+  "change_password_failed": "Đổi mật khẩu thất bại. Vui lòng kiểm tra mật khẩu hiện tại.",
+  "grading_load_failed": "Không tải được thông tin chấm điểm.",
+  "grading_save_failed": "Lưu điểm thất bại.",
+  "session_list_failed": "Không tải được danh sách phiên thi."
+}

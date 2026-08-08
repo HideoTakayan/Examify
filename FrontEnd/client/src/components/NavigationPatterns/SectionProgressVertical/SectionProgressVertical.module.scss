@@ -1,0 +1,50 @@
+.root {
+  width: 100%;
+}
+
+.iconDone {
+  background-color: var(--mantine-color-blue-6);
+  color: var(--mantine-color-white);
+}
+
+.iconCurrent {
+  background-color: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-6);
+  border: 1px solid var(--mantine-color-blue-2);
+}
+
+.iconLocked {
+  background-color: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-6);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.titleDone {
+  font-weight: 700;
+  color: var(--mantine-color-gray-9);
+}
+
+.metaDone {
+  color: var(--mantine-color-gray-6);
+  font-size: 14px;
+}
+
+.titleCurrent {
+  font-weight: 700;
+  color: var(--mantine-color-blue-6);
+}
+
+.metaCurrent {
+  color: var(--mantine-color-blue-6);
+  font-size: 14px;
+}
+
+.titleLocked {
+  font-weight: 700;
+  color: var(--mantine-color-gray-6);
+}
+
+.metaLocked {
+  color: var(--mantine-color-gray-6);
+  font-size: 14px;
+}

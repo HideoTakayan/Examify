@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.radio {
+  border: 2px solid var(--mantine-color-gray-4);
+  background-color: white;
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-6);
+  }
+
+  &[data-checked] {
+    border-color: var(--mantine-color-primary-6);
+    background-color: var(--mantine-color-primary-6);
+  }
+
+  &:disabled {
+    border-color: var(--mantine-color-gray-3);
+    background-color: var(--mantine-color-gray-2);
+  }
+}
+
+.icon {
+  color: white;
+}
+

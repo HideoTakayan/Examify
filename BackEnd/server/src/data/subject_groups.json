@@ -1,0 +1,76 @@
+{
+  "version": "2.1",
+  "description": "Phân nhóm môn học DEMO-CLASS — đúng cấu trúc admin (12 nhóm). Một môn có thể thuộc nhiều nhóm.",
+  "groups": {
+    "pe": {
+      "label": "Nhóm thể chất",
+      "subjects": ["S01", "S02", "S03", "S04", "S05"],
+      "rule": "choose_one_path",
+      "paths": [
+        { "name": "Võ", "required": ["S01", "S02"] },
+        { "name": "Yoga", "required": ["S01", "S03"] },
+        { "name": "Zumba", "required": ["S01", "S04", "S05"] }
+      ],
+      "note": "SV chọn 1 trong 3 lộ trình (Võ / Yoga / Zumba). Zumba gồm cơ bản + nâng cao."
+    },
+    "defense": {
+      "label": "Nhóm quốc phòng",
+      "subjects": ["S26", "S27", "S28", "S29"],
+      "ordered": true,
+      "note": "Tuần tự P1 → P4."
+    },
+    "english": {
+      "label": "Nhóm tiếng Anh",
+      "subjects": ["S15", "S20", "S31", "S36", "S46"],
+      "ordered": true,
+      "note": "Tuần tự P1 → P5."
+    },
+    "ai_iot": {
+      "label": "Nhóm học máy & IoT",
+      "subjects": ["S11", "S10", "S17", "S34", "S33", "S43", "S38", "S22", "S44", "S12"]
+    },
+    "philosophy": {
+      "label": "Nhóm môn triết học",
+      "subjects": ["S13", "S07", "S40", "S35", "S14", "S45"]
+    },
+    "software": {
+      "label": "Nhóm phần mềm",
+      "subjects": ["S11", "S10", "S24", "S19", "S25", "S32", "S41", "S42", "S52"],
+      "missing_in_dataset": ["S53"],
+      "note": "S53 (Thực tập CNTT4: Back-End) khi có dữ liệu."
+    },
+    "bigdata": {
+      "label": "Nhóm BigData",
+      "subjects": ["S39", "S43", "S37"]
+    },
+    "network": {
+      "label": "Nhóm Network",
+      "subjects": ["S18", "S23", "S47", "S50"]
+    },
+    "internship": {
+      "label": "Nhóm thực tập",
+      "subjects": ["S49", "S51", "S06"]
+    },
+    "security": {
+      "label": "Nhóm security",
+      "subjects": ["S48"]
+    },
+    "soft_skills": {
+      "label": "Nhóm kỹ năng mềm",
+      "subjects": ["S08", "S30"],
+      "ordered": true
+    },
+    "math": {
+      "label": "Nhóm đại số",
+      "subjects": ["S09", "S21", "S16", "S17"],
+      "ordered": true,
+      "note": "Đại số TT → Giải tích → Rời rạc → XSTK"
+    }
+  },
+  "overlap_subjects": {
+    "S11": ["ai_iot", "software"],
+    "S10": ["ai_iot", "software"],
+    "S17": ["ai_iot", "math"],
+    "S43": ["ai_iot", "bigdata"]
+  }
+}
