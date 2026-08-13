@@ -2,13 +2,11 @@
 
 > **学者は手に持つ。** *"Người học thức giấc trong tay."*
 
-**Cập nhật:** 2026-05-13
 
 ---
 
 ## Tài liệu đồ án & tiến độ (đọc trước)
 
-**[DO_AN_MASTER.md](./DO_AN_MASTER.md)** — tài liệu **tổng hợp duy nhất**: kiến trúc, tiến độ module, Item 1–13, kiểm thử nhanh, rủi ro, liên kết API/OpenAPI.
 
 ---
 

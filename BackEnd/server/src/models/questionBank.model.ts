@@ -271,3 +271,36 @@ export const importToExam = async (
 
   return { question_id: result.rows[0].id };
 };
+
+export const importRandomToExam = async (
+  examId: string,
+  numQuestions: number,
+  opts?: { subjectId?: string; versionIndex?: number }
+): Promise<{ imported_count: number }> => {
+  const versionIndex = Math.max(0, Math.min(3, Number(opts?.versionIndex ?? 0)));
+  
+  let query = `SELECT id FROM question_bank`;
+  const params: any[] = [];
+  if (opts?.subjectId) {
+    query += ` WHERE subject_id = $1`;
+    params.push(opts.subjectId);
+  }
+  query += ` ORDER BY RANDOM() LIMIT $${params.length + 1}`;
+  params.push(numQuestions);
+
+  const result = await pool.query(query, params);
+  const qbIds = result.rows.map(row => row.id);
+
+  let importedCount = 0;
+  for (const qbId of qbIds) {
+    try {
+      await importToExam(qbId, examId, { versionIndex });
+      importedCount++;
+    } catch (err) {
+      // Ignore if a question cannot be imported (e.g. invalid chapter)
+      console.warn(`Failed to import random question ${qbId}:`, err);
+    }
+  }
+
+  return { imported_count: importedCount };
+};

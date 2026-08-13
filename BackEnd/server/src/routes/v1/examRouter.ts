@@ -20,21 +20,20 @@ import {
   forceSubmitSessionController,
   startExamRuntimeController,
   getMySubmissionController,
-  getSessionGradingController,
   getSessionReviewController,
-  gradeSessionController,
   getExamProctoringController,
+  saveOfflineGradesController,
   postIntegrityEventsController,
   postAutosaveController,
   downloadWordImportTemplateController,
   previewWordImportController,
   commitWordImportController,
-  aiRecomposeExamController,
   uploadExamMediaController,
   getIntegrityEventsController,
   getProctorPresenceController,
   getProctorLogsController,
   reportViolationController,
+  cloneExamController,
 } from "~/controllers/exam.controller";
 import {
   grantRetakeController,
@@ -69,16 +68,7 @@ examRouter.post(
   roleMiddleware(["admin", "teacher"]),
   forceSubmitSessionController
 );
-examRouter.get(
-  "/sessions/:sessionId/grading",
-  roleMiddleware(["admin", "teacher"]),
-  getSessionGradingController
-);
-examRouter.patch(
-  "/sessions/:sessionId/grade",
-  roleMiddleware(["admin", "teacher"]),
-  gradeSessionController
-);
+examRouter.post("/:examId/offline-grades", roleMiddleware(["admin", "teacher"]), saveOfflineGradesController);
 examRouter.get(
   "/sessions/:sessionId/review",
   roleMiddleware(["student"]),
@@ -118,15 +108,7 @@ examRouter.post(
   roleMiddleware(["admin", "teacher"]),
   commitWordImportController
 );
-examRouter.post(
-  "/import-word/ai-recompose",
-  roleMiddleware(["admin", "teacher"]),
-  wordImportUpload.fields([
-    { name: "file", maxCount: 1 },
-    { name: "mediaArchive", maxCount: 1 },
-  ]),
-  aiRecomposeExamController
-);
+
 examRouter.post(
   "/upload-media",
   roleMiddleware(["admin", "teacher"]),
@@ -137,7 +119,7 @@ examRouter.get("/:id", roleMiddleware(["admin", "teacher", "student"]), getExamC
 examRouter.patch("/:id", roleMiddleware(["admin", "teacher"]), updateExamController);
 examRouter.delete("/:id", roleMiddleware(["admin", "teacher"]), deleteExamController);
 
-examRouter.get("/:examId/questions", roleMiddleware(["admin", "teacher", "student"]), getQuestionsController);
+examRouter.get("/:examId/questions", roleMiddleware(["admin", "teacher"]), getQuestionsController);
 examRouter.post("/:examId/questions", roleMiddleware(["admin", "teacher"]), addQuestionController);
 examRouter.patch(
   "/:examId/questions/:questionId",
@@ -195,6 +177,13 @@ examRouter.get(
   "/:examId/proctor-logs",
   roleMiddleware(["admin", "teacher"]),
   getProctorLogsController
+);
+
+// Clone exam — nhân bản bài thi sang lớp/lịch khác
+examRouter.post(
+  "/clone",
+  roleMiddleware(["admin", "teacher"]),
+  cloneExamController
 );
 
 export default examRouter;

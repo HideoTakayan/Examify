@@ -7,13 +7,10 @@ import { useTranslation } from 'react-i18next';
 import examApi from '@/services/examApi';
 import type { GradingPayload } from '@/services/examApi';
 import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';
-import InputNumber from '@/components/Input/InputNumber/InputNumber';
-import InputTextarea from '@/components/Input/InputTextarea/InputTextarea';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import { answerKey } from '@/utils/gradingMcq';
 
-type GradeDraft = Record<string, { points_awarded: number; comment?: string }>;
-
+// GradeDraft removed
 const Grading = () => {
   const { t } = useTranslation();
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -21,9 +18,6 @@ const Grading = () => {
   const [data, setData] = useState<GradingPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState('');
-  const [draft, setDraft] = useState<GradeDraft>({});
   const [expandedMcq, setExpandedMcq] = useState<Set<string>>(new Set());
 
   const toggleMcqQuestion = (questionId: string) => {
@@ -42,17 +36,6 @@ const Grading = () => {
         setLoading(true);
         const d = await examApi.getSessionGrading(sessionId);
         setData(d);
-        // Initialize draft from existing grades
-        const init: GradeDraft = {};
-        d.graded_details.forEach((detail) => {
-          if (detail.question_type === 'essay') {
-            init[detail.question_id] = {
-              points_awarded: detail.points_earned ?? 0,
-              comment: detail.teacher_comment ?? '',
-            };
-          }
-        });
-        setDraft(init);
       } catch {
         setError(t('errors.grading_load_failed'));
       } finally {
@@ -61,50 +44,6 @@ const Grading = () => {
     };
     load();
   }, [sessionId, t]);
-
-  const handleGradeChange = (questionId: string, field: 'points_awarded' | 'comment', value: number | string) => {
-    setDraft((prev) => ({
-      ...prev,
-      [questionId]: {
-        ...prev[questionId],
-        [field]: value,
-      },
-    }));
-  };
-
-  const handleSave = async () => {
-    if (!sessionId || !data) return;
-    const essayIds = new Set(
-      data.graded_details.filter((d) => d.question_type === 'essay').map((d) => d.question_id)
-    );
-    const essayGrades: GradeDraft = {};
-    for (const [qid, g] of Object.entries(draft)) {
-      if (essayIds.has(qid)) essayGrades[qid] = g;
-    }
-    if (Object.keys(essayGrades).length === 0) return;
-    try {
-      setSaving(true);
-      await examApi.gradeSession(sessionId, essayGrades);
-      const refreshed = await examApi.getSessionGrading(sessionId);
-      setData(refreshed);
-      const init: GradeDraft = {};
-      refreshed.graded_details.forEach((detail) => {
-        if (detail.question_type === 'essay') {
-          init[detail.question_id] = {
-            points_awarded: detail.points_earned ?? 0,
-            comment: detail.teacher_comment ?? '',
-          };
-        }
-      });
-      setDraft(init);
-      setSaveMsg(t('grading.saved'));
-      setTimeout(() => setSaveMsg(''), 3000);
-    } catch (err: any) {
-      setSaveMsg(err?.response?.data?.message || t('errors.grading_save_failed'));
-    } finally {
-      setSaving(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -123,9 +62,7 @@ const Grading = () => {
     );
   }
 
-  const essayQuestions = data.graded_details.filter((d) => d.question_type === 'essay');
   const mcqQuestions = data.graded_details.filter((d) => d.question_type === 'mcq');
-  const hasPendingEssay = essayQuestions.some((d) => d.pending_grading);
 
   return (
     <Box className="max-w-[1100px] mx-auto p-4">
@@ -154,7 +91,9 @@ const Grading = () => {
               <Text fw={700} size="lg">
                 {data.session.score != null
                   ? (() => {
-                      const val = (data.session.score / data.session.max_points) * 10;
+                      const score = Number(data.session.score ?? 0);
+                      const maxPoints = Number(data.session.max_points || 1);
+                      const val = (score / maxPoints) * 10;
                       const formatted = val.toFixed(2);
                       return `${formatted.padStart(4, '0')} / 10`;
                     })()
@@ -333,90 +272,7 @@ const Grading = () => {
           </Paper>
         )}
 
-        {/* Essay grading */}
-        {essayQuestions.length > 0 && (
-          <Paper withBorder radius="md" p="md">
-            <Text fw={600} mb="md">{t('grading.essay_grading')}</Text>
-            <Stack gap="lg">
-              {essayQuestions.map((detail, idx) => {
-                const q = data.questions.find((question) => question.id === detail.question_id);
-                return (
-                  <Box key={detail.question_id} p="md" style={{ border: '1px solid var(--mantine-color-gray-3)', borderRadius: 8 }}>
-                    <Group justify="space-between" mb="xs">
-                      <Group gap="xs">
-                        <Badge variant="light" color="blue">
-                          {t('grading.essay_question', { n: idx + 1 })}
-                        </Badge>
-                        <Text size="sm" c="dimmed">{t('grading.max_points')}: {detail.max_points}</Text>
-                      </Group>
-                      {detail.pending_grading && (
-                        <Badge color="yellow" variant="light">{t('grading.pending')}</Badge>
-                      )}
-                    </Group>
-
-                    <Text fw={500} mb="xs">{q?.content}</Text>
-
-                    {/* Student answer */}
-                    <Box mb="sm" p="xs" style={{ background: 'var(--mantine-color-gray-0)', borderRadius: 4 }}>
-                      <Text size="sm" c="dimmed" mb={4}>{t('grading.student_answer')}:</Text>
-                      <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
-                        {detail.submitted || t('grading.not_answered')}
-                      </Text>
-                    </Box>
-
-                    {/* Grading inputs */}
-                    {detail.pending_grading ? (
-                      <Group grow align="flex-start">
-                        <InputNumber
-                          label={t('grading.points_awarded')}
-                          value={draft[detail.question_id]?.points_awarded ?? detail.points_earned ?? 0}
-                          min={0}
-                          max={detail.max_points}
-                          onChange={(val) => handleGradeChange(detail.question_id, 'points_awarded', typeof val === 'number' ? val : 0)}
-                          suffix={` / ${detail.max_points}`}
-                        />
-                        <InputTextarea
-                          label={t('grading.teacher_comment')}
-                          value={draft[detail.question_id]?.comment ?? detail.teacher_comment ?? ''}
-                          onChange={(e) => handleGradeChange(detail.question_id, 'comment', e.currentTarget.value)}
-                          minRows={2}
-                        />
-                      </Group>
-                    ) : (
-                      <Group gap="md" pt="xs">
-                        <Text size="sm" c="dimmed">
-                          {t('grading.points_awarded')}: <Text span fw={700}>{detail.points_earned ?? 0}</Text> / {detail.max_points}
-                        </Text>
-                        {detail.teacher_comment && (
-                          <Text size="sm" c="dimmed">
-                            {t('grading.teacher_comment')}: {detail.teacher_comment}
-                          </Text>
-                        )}
-                      </Group>
-                    )}
-                  </Box>
-                );
-              })}
-            </Stack>
-
-            {saveMsg && (
-              <Alert color={saveMsg.includes(t('grading.saved')) ? 'green' : 'red'} variant="light" mt="md">
-                {saveMsg}
-              </Alert>
-            )}
-
-            {hasPendingEssay && (
-              <ButtonFilled
-                label={t('grading.save_grades')}
-                style={{ marginTop: 16 }}
-                loading={saving}
-                onClick={handleSave}
-              />
-            )}
-          </Paper>
-        )}
-
-        {essayQuestions.length === 0 && mcqQuestions.length === 0 && (
+        {mcqQuestions.length === 0 && (
           <Alert color="blue" variant="light">{t('grading.no_questions')}</Alert>
         )}
 

@@ -11,7 +11,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
 import { DatesProvider } from '@mantine/dates';
 import { theme } from './theme';
-import { colorSchemeManager } from '@/configs/colorScheme';
 import { Layout } from '@/components/Layout/Layout';
 import store, { persistor } from '@/store';
 import appConfig from './configs/app.config';

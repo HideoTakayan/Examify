@@ -9,16 +9,9 @@ import examApi from '@/services/examApi';
 import type { SessionReview } from '@/services/examApi';
 import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';
 import {
-  countFullyCorrectQuestions,
-  getEssayGradeState,
-  getFullyCorrectPercent,
   getQuestionStatusColor,
   getQuestionStatusIcon,
-  getSummaryResultTone,
-  hasPartialCreditEssay,
   isQuestionFullyCorrect,
-  sumEssayScore,
-  sumMcqScore,
 } from './examResultDisplay';
 import { formatScoreScale10Pair, scoreToPointPercent } from '@/utils/formatExamScore';
 
@@ -112,24 +105,23 @@ const ExamResult = () => {
   }
 
   const questions = review.questions;
-  const mcqQuestions = questions.filter((q) => q.question_type === 'mcq');
-  const essayQuestions = questions.filter((q) => q.question_type === 'essay');
-  const hasEssay = essayQuestions.length > 0;
-  const hasPendingEssay =
-    review.grading_status === 'pending_manual' && hasEssay;
-  const totalQuestions = questions.length;
-  const fullyCorrectCount = countFullyCorrectQuestions(questions);
-  const { earned: mcqScore, max: mcqMax } = sumMcqScore(questions);
-  const essayScore = sumEssayScore(questions);
-  const fullyCorrectPct = getFullyCorrectPercent(questions);
+
+  const totalQuestions = review.total_questions;
+  const fullyCorrectCount = review.correct_count;
+  const mcqScore = review.score ?? 0;
+  const mcqMax = review.max_points ?? 0;
+  
+  const fullyCorrectPct = totalQuestions > 0 ? (fullyCorrectCount / totalQuestions) * 100 : null;
   const pointPercent =
-    review.score != null && review.max_points != null
+    review.score != null && review.max_points != null && review.max_points > 0
       ? scoreToPointPercent(review.score, review.max_points)
-      : hasPendingEssay && mcqMax > 0
+      : mcqMax > 0
         ? scoreToPointPercent(mcqScore, mcqMax)
         : null;
-  const summaryTone = getSummaryResultTone(questions);
-  const partialEssay = hasPartialCreditEssay(questions);
+  let summaryTone: 'all_correct' | 'mixed' | 'all_wrong' = 'mixed';
+  if (fullyCorrectPct === 100) summaryTone = 'all_correct';
+  else if (fullyCorrectPct === 0) summaryTone = 'all_wrong';
+
   const learningSummary = review.learning_assessment_summary;
   const topWeakChapters = learningSummary?.chapter_summary.slice(0, 3) ?? [];
   const scoreColor =
@@ -137,9 +129,14 @@ const ExamResult = () => {
       ? 'green'
       : summaryTone === 'mixed'
         ? 'yellow'
-        : fullyCorrectPct != null && fullyCorrectPct >= 50
-          ? 'yellow'
-          : 'red';
+        : 'red';
+
+  // Essay helpers — system is MCQ-only, these are always false/null
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getEssayGradeState = (_q: (typeof questions)[0]) => null;
+  const hasEssay = questions.some((q) => q.question_type !== 'mcq');
+  const hasPendingEssay = questions.some((q) => q.question_type !== 'mcq' && q.pending_grading);
+  const partialEssay = questions.some((q) => q.question_type !== 'mcq' && !q.pending_grading && q.points_earned != null);
 
   const renderStatusIcon = (q: (typeof questions)[0]) => {
     const kind = getQuestionStatusIcon(q);
@@ -197,15 +194,10 @@ const ExamResult = () => {
             <Text fw={700} size="xl">
               {review.score != null && review.max_points != null
                 ? formatScoreScale10Pair(review.score, review.max_points)
-                : hasPendingEssay && mcqMax > 0
+                : mcqMax > 0
                   ? formatScoreScale10Pair(mcqScore, mcqMax)
                   : t('exam_result.pending_score')}
             </Text>
-            {hasPendingEssay && review.score == null && (
-              <Text size="xs" c="dimmed" mt={4}>
-                {t('exam_result.total_score_after_essay')}
-              </Text>
-            )}
           </Paper>
           <Paper withBorder radius="md" p="md">
             <Text size="sm" c="dimmed">{t('exam_result.point_percent_label')}</Text>
@@ -220,14 +212,6 @@ const ExamResult = () => {
             {fullyCorrectPct != null && (
               <Text size="xs" c="dimmed" mt={4}>
                 {t('exam_result.question_correct_percent', { pct: fullyCorrectPct })}
-              </Text>
-            )}
-            {hasEssay && !hasPendingEssay && essayScore.earned != null && (
-              <Text size="xs" c="dimmed" mt={4}>
-                {t('exam_result.essay_score_summary', {
-                  earned: essayScore.earned,
-                  max: essayScore.max,
-                })}
               </Text>
             )}
           </Paper>
@@ -319,11 +303,29 @@ const ExamResult = () => {
           </Alert>
         ) : null}
 
-        <Paper withBorder radius="md" p="md">
+        {questions.length === 0 ? (
+          <Paper withBorder radius="md" p="xl" style={{ textAlign: 'center', background: 'var(--mantine-color-gray-0)' }}>
+            <Stack align="center" gap="sm">
+              <ThemeIcon size={56} radius="xl" color="teal" variant="light">
+                <IconCheck size={28} />
+              </ThemeIcon>
+              <Title order={3}>Kết quả đã ghi nhận!</Title>
+              <Text c="dimmed" size="sm" maw={400}>
+                {review.exam.exam_category === 'practice'
+                  ? 'Bài thi thử này được cấu hình chỉ hiển thị điểm. Giáo viên không cho xem lại chi tiết đáp án.'
+                  : 'Bài thi giữa kỳ / cuối kỳ không hiển thị chi tiết đáp án để đảm bảo tính bảo mật của đề thi.'}
+              </Text>
+              <ButtonFilled
+                style={{ marginTop: 8 }}
+                label={t('common.back_exam_list')}
+                disabled={false}
+                onClick={() => navigate('/exams')}
+              />
+            </Stack>
+          </Paper>
+        ) : (
+          <Paper withBorder radius="md" p="md">
           <Title order={4} mb="md">{t('exam_result.review_title')}</Title>
-          {questions.length === 0 ? (
-            <Text c="dimmed">{t('exam_result.no_questions')}</Text>
-          ) : (
             <Accordion variant="separated" radius="md" defaultValue={undefined}>
               {questions.map((q, idx) => {
                 const isMcq = q.question_type === 'mcq';
@@ -553,15 +555,11 @@ const ExamResult = () => {
                 );
               })}
             </Accordion>
-          )}
-        </Paper>
+          </Paper>
+        )}
 
         <Group>
-          <ButtonFilled
-            label={t('exam_result.view_prediction')}
-            disabled={false}
-            onClick={() => navigate('/prediction')}
-          />
+
           <ButtonFilled
             label={t('common.back_exam_list')}
             color="gray"

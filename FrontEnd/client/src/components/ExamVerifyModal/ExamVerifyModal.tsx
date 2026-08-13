@@ -9,29 +9,20 @@ import {
   Badge,
   Button,
   Paper,
-  Table,
   TextInput,
   NumberInput,
   Select,
   Textarea,
   Alert,
   Progress,
-  Divider,
   ScrollArea,
-  SimpleGrid,
-  ActionIcon,
-  Loader,
-  AspectRatio,
 } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { ExamImportPreview, ImportedQuestionDraft } from '@/services/examApi';
-import examApi from '@/services/examApi';
 
 interface ExamVerifyModalProps {
   preview: ExamImportPreview | null;
   onConfirm: (questions: ImportedQuestionDraft[]) => void;
   onClose: () => void;
-  onRecompose?: (result: ExamImportPreview) => void;
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -60,14 +51,11 @@ function QuestionCard({
   q,
   selected,
   onSelect,
-  onChange,
 }: {
   q: ImportedQuestionDraft;
   selected: boolean;
   onSelect: () => void;
-  onChange: (updated: ImportedQuestionDraft) => void;
 }) {
-  const { t } = useTranslation();
 
   return (
     <Paper
@@ -126,9 +114,7 @@ function QuestionDetail({
   q: ImportedQuestionDraft;
   onChange: (updated: ImportedQuestionDraft) => void;
 }) {
-  const { t } = useTranslation();
-
-  const update = (field: keyof ImportedQuestionDraft, value: any) => {
+  const update = (field: keyof ImportedQuestionDraft, value: ImportedQuestionDraft[keyof ImportedQuestionDraft]) => {
     onChange({ ...q, [field]: value });
   };
 
@@ -227,14 +213,10 @@ export default function ExamVerifyModal({
   preview,
   onConfirm,
   onClose,
-  onRecompose,
 }: ExamVerifyModalProps) {
-  const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [questions, setQuestions] = useState<ImportedQuestionDraft[]>(preview?.questions || []);
   const [filter, setFilter] = useState<'all' | 'review' | 'ok'>('all');
-  const [recomposing, setRecomposing] = useState(false);
-  const [recomposeError, setRecomposeError] = useState('');
 
   if (!preview) return null;
 
@@ -249,20 +231,7 @@ export default function ExamVerifyModal({
   const needsReviewCount = questions.filter((q) => q.needs_review).length;
   const canConfirm = needsReviewCount === 0;
 
-  const handleRecompose = async () => {
-    setRecomposing(true);
-    setRecomposeError('');
-    try {
-      const result = await examApi.aiRecomposeExam({ questions, examInfo: preview.exam });
-      setQuestions(result.questions);
-      setSelectedIndex(0);
-      if (onRecompose) onRecompose(result);
-    } catch (err: any) {
-      setRecomposeError(err?.message || 'AI xử lý thất bại. Thử lại.');
-    } finally {
-      setRecomposing(false);
-    }
-  };
+
 
   const handleConfirm = () => {
     onConfirm(questions);
@@ -296,15 +265,6 @@ export default function ExamVerifyModal({
             </Box>
             <Group gap="sm">
               <Button
-                variant="white"
-                color="blue"
-                leftSection={recomposing ? <Loader size={14} /> : '🤖'}
-                onClick={handleRecompose}
-                disabled={recomposing}
-              >
-                AI Sửa Lại
-              </Button>
-              <Button
                 color="green"
                 disabled={!canConfirm}
                 onClick={handleConfirm}
@@ -314,7 +274,6 @@ export default function ExamVerifyModal({
               <Button variant="white" color="gray" onClick={onClose}>Hủy</Button>
             </Group>
           </Group>
-          {recomposeError && <Alert color="red" mt="sm">{recomposeError}</Alert>}
         </Box>
 
         {/* Body */}
@@ -337,7 +296,7 @@ export default function ExamVerifyModal({
               {filteredQuestions.length === 0 ? (
                 <Text c="dimmed" size="sm" ta="center" mt="md">Không có câu nào.</Text>
               ) : (
-                filteredQuestions.map((q, i) => {
+                filteredQuestions.map((q) => {
                   const globalIdx = questions.indexOf(q);
                   return (
                     <QuestionCard
@@ -345,7 +304,6 @@ export default function ExamVerifyModal({
                       q={q}
                       selected={globalIdx === selectedIndex}
                       onSelect={() => setSelectedIndex(globalIdx)}
-                      onChange={(updated) => updateQuestion(globalIdx, updated)}
                     />
                   );
                 })

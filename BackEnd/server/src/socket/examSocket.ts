@@ -663,7 +663,12 @@ export async function startExamRuntimeFromServer(
     if (endAt != null && Number.isFinite(endAt) && endAt <= nowMs) {
       throw new Error("Bài thi đã hết giờ kết thúc");
     }
-    state = startExamRuntime(ioInstance, examId, durationMin);
+    let windowMin = durationMin;
+    if (endAt != null && Number.isFinite(endAt)) {
+      const remainingMin = Math.max(1, Math.ceil((endAt - nowMs) / 60_000));
+      windowMin = Math.min(durationMin, remainingMin);
+    }
+    state = startExamRuntime(ioInstance, examId, windowMin);
   }
 
   console.log(

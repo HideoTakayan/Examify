@@ -81,7 +81,7 @@ export interface StudentTranscript {
 }
 
 const teacherStudentsApi = {
-  list: (params: ListQueryParams = {}): Promise<PaginatedList<StudentItem>> =>
+  list: (params: ListQueryParams & { subject_id?: string } = {}): Promise<PaginatedList<StudentItem>> =>
     fetchPaginatedList<StudentItem>('/teacher-students', params),
 
   add: async (body: {

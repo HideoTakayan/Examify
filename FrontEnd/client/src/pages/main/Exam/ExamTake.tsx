@@ -1,6 +1,6 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Button, Paper, Stack, Text, Alert } from '@mantine/core';
+import { Box, Button, Stack, Text, Alert } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconArrowLeft, IconArrowRight, IconArrowsMaximize } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,6 @@ import type { MockExamQuestion } from '@/components/ExamTake/types';
 import appConfig from '@/configs/app.config';
 import examApi, {
   type Exam,
-  type Question as ApiQuestion,
-  type StartSessionData,
   type SubmitResult,
 } from '@/services/examApi';
 import {
@@ -35,7 +33,6 @@ import {
 } from '@/services/examAutosaveClient';
 import { flushIntegrityQueue, trackIntegrityEvent } from '@/services/examIntegrityClient';
 import {
-  clearStrikes,
   loadStrikes,
   MAX_INTEGRITY_STRIKES,
   registerStrike,
@@ -62,7 +59,7 @@ const ExamTake = () => {
   /** GV đã bật thi (socket) — có thể trước khi startSession API xong */
   const [teacherRuntimeLive, setTeacherRuntimeLive] = useState(false);
   const [examSchedule, setExamSchedule] =
-    useState<Pick<Exam, 'opens_at' | 'ends_at' | 'runtime_is_active'> | null>(null);
+    useState<Pick<Exam, 'opens_at' | 'ends_at' | 'runtime_is_active' | 'require_seb'> | null>(null);
   const examScheduleRef = useRef(examSchedule);
   const [waitNowMs, setWaitNowMs] = useState(() => Date.now());
   const rootRef = useRef<HTMLDivElement>(null);
@@ -107,7 +104,7 @@ const ExamTake = () => {
       currentNumber,
       setCurrentNumber,
     },
-    boot: { sessionId, setSessionId, bootLoading, setBootLoading, bootError, setBootError, versionCode, setVersionCode, deadlineAt, setDeadlineAt },
+    boot: { sessionId, setSessionId, bootLoading, setBootLoading, bootError, setBootError, versionCode, setVersionCode, setDeadlineAt },
     runtime: {
       remainingSeconds,
       setRemainingSeconds,
@@ -198,6 +195,7 @@ const ExamTake = () => {
       void flushAutosaveQueue(activeExamId);
       void flushIntegrityQueue(activeExamId);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeExamId]
   );
 
@@ -245,6 +243,7 @@ const ExamTake = () => {
         setViolationLocked(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       activeExamId,
       answers,
@@ -300,6 +299,7 @@ const ExamTake = () => {
       sessionStartingRef.current = false;
       setSessionLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     activeExamId,
     examId,
@@ -351,6 +351,7 @@ const ExamTake = () => {
       return;
     }
     void submitCurrentSession('auto');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSubmitted, sessionId, submitting, submitCurrentSession]);
 
   const handlersRef = useRef<RealtimeHandlers>({});
@@ -625,6 +626,7 @@ const ExamTake = () => {
           opens_at: examData.opens_at ?? null,
           ends_at: examData.ends_at ?? null,
           runtime_is_active: examData.runtime_is_active ?? false,
+          require_seb: examData.require_seb ?? false,
         });
         setTeacherRuntimeLive(Boolean(examData.runtime_is_active));
       } catch {
@@ -640,6 +642,7 @@ const ExamTake = () => {
     return () => {
       canceled = true;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeExamId, examId]);
 
   useEffect(() => {
@@ -658,6 +661,7 @@ const ExamTake = () => {
           opens_at: e.opens_at ?? null,
           ends_at: e.ends_at ?? null,
           runtime_is_active: e.runtime_is_active ?? false,
+          require_seb: e.require_seb ?? false,
         });
         if (e.runtime_is_active) markTeacherRuntimeLive();
       } catch {
@@ -683,6 +687,7 @@ const ExamTake = () => {
     if (currentNumber > maxQuestionIndex) {
       setCurrentNumber(1);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNumber, maxQuestionIndex]);
 
   // P0 Fix: Restore violation state from sessionStorage on mount/reload
@@ -713,7 +718,7 @@ const ExamTake = () => {
       // Server hasn't confirmed yet — retry reporting
       setRealtimeMessage('Đang xác nhận vi phạm với server...');
       void examApi.reportViolation(sessionId, {
-        violation_type: savedViolation.violationType as any,
+        violation_type: savedViolation.violationType as 'other',
         reason: savedViolation.reason,
         client_at: new Date(savedViolation.at).toISOString(),
         auto_submit: true,
@@ -732,6 +737,7 @@ const ExamTake = () => {
         setRealtimeMessage('Không thể xác nhận vi phạm. Bài thi sẽ bị khóa.');
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeExamId, integrityDisabled, sessionId, setAutoSubmitted, setLockReason, setRealtimeMessage, setViolationLocked, submitCurrentSession]);
 
   useEffect(() => {
@@ -740,6 +746,7 @@ const ExamTake = () => {
       setRemainingSeconds((s) => Math.max(0, s - 1));
     }, 1000);
     return () => window.clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examStarted, autoSubmitted]);
 
   // P0 Fix: Fullscreen change with 3-second grace period
@@ -809,6 +816,7 @@ const ExamTake = () => {
         graceTimerRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeExamId, autoSubmitted, examStarted, handleIntegrityStrike, integrityDisabled, isFullscreen, setIsFullscreen, setRealtimeMessage, setViolationLocked, t]);
 
   useEffect(() => {
@@ -875,6 +883,7 @@ const ExamTake = () => {
       document.removeEventListener('contextmenu', onContextMenu);
       document.removeEventListener('keydown', onKeyDown, true);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeExamId, autoSubmitted, examStarted, handleIntegrityStrike, integrityDisabled]);
   useEffect(() => {
     if (!examStarted || !sessionId || autoSubmitted) return;
@@ -963,6 +972,7 @@ const ExamTake = () => {
       setAutoSubmitCountdown((v) => v - 1);
     }, 1000);
     return () => window.clearTimeout(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [violationLocked, autoSubmitCountdown, autoSubmitted, forceAutoSubmit, sessionId]);
 
   useEffect(() => {
@@ -995,7 +1005,7 @@ const ExamTake = () => {
     return s;
   })();
 
-  const setAnswer = (key: string, value: string) => {
+  const setAnswer = (key: string, value: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -1106,6 +1116,9 @@ const ExamTake = () => {
     !violationLocked &&
     (teacherRuntimeLive || (examStarted && total > 0));
 
+  const isSeb = /safeexambrowser|seb/i.test(navigator.userAgent);
+  const sebWarning = examSchedule?.require_seb && !isSeb;
+
   const canShowExamShell =
     examStarted && total > 0 && (integrityDisabled || inBrowserFullscreen);
 
@@ -1140,18 +1153,17 @@ const ExamTake = () => {
           {!submitFailed && submitResult && (
             <Box mt="md" ta="left">
               {(() => {
-                const mcq = submitResult.details.filter((d) => d.question_type === 'mcq');
                 const essays = submitResult.details.filter((d) => d.question_type === 'essay');
-                const mcqScore = mcq.reduce((s, d) => s + (d.points_earned ?? 0), 0);
-                const mcqMax = mcq.reduce((s, d) => s + d.max_points, 0);
-                const mcqCorrect = mcq.filter((d) => d.is_correct).length;
+                const mcqScore = submitResult.score;
+                const mcqMax = submitResult.session.max_points ?? 10;
+                const mcqCorrect = submitResult.correct_count;
                 return (
                   <Stack gap={6}>
                     <Text size="sm" fw={600}>{t('exam_take.submit_mcq_graded')}</Text>
                     <Text size="sm">
                       {t('exam_take.submit_mcq_summary', {
                         correct: mcqCorrect,
-                        total: mcq.length,
+                        total: submitResult.total_questions,
                         score: formatExamScore(mcqScore),
                         max: formatExamScore(mcqMax),
                       })}
@@ -1215,14 +1227,16 @@ const ExamTake = () => {
               {fullscreenError}
             </Text>
           )}
-          <Button
-            size="md"
-            color="teal"
-            leftSection={<IconArrowsMaximize size={18} />}
-            onClick={() => void requestFullscreen()}
-          >
-            {t('exam_take.exam_started_fullscreen_button')}
-          </Button>
+          {!sebWarning && (
+            <Button
+              size="md"
+              color="teal"
+              leftSection={<IconArrowsMaximize size={18} />}
+              onClick={() => void requestFullscreen()}
+            >
+              {t('exam_take.exam_started_fullscreen_button')}
+            </Button>
+          )}
         </ExamTakeGateCard>
       )}
       {!autoSubmitted && !violationLocked && !showFullscreenRequired && sessionLoading && (
@@ -1250,13 +1264,15 @@ const ExamTake = () => {
                   {fullscreenError}
                 </Text>
               )}
-              <Button
-                color="blue"
-                leftSection={<IconArrowsMaximize size={16} />}
-                onClick={() => void requestFullscreen()}
-              >
-                {t('exam_take.fullscreen_button')}
-              </Button>
+              {!sebWarning && (
+                <Button
+                  color="blue"
+                  leftSection={<IconArrowsMaximize size={16} />}
+                  onClick={() => void requestFullscreen()}
+                >
+                  {t('exam_take.fullscreen_button')}
+                </Button>
+              )}
             </Stack>
           )}
           <Text fw={700} size="lg" mb={8}>
@@ -1279,6 +1295,12 @@ const ExamTake = () => {
                   })
                 : t('exam_take.waiting_teacher_desc')}
           </Text>
+          {sebWarning && (
+            <Alert color="red" title="Yêu cầu Trình duyệt Chống gian lận" mb="md" variant="filled">
+              Bạn phải tải và mở link này bằng phần mềm <strong>Safe Exam Browser (SEB)</strong> để làm bài thi.
+              Trình duyệt hiện tại của bạn không được hỗ trợ.
+            </Alert>
+          )}
           <Button
             variant="subtle"
             color="gray"

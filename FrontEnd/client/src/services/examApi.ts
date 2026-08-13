@@ -15,10 +15,12 @@ export interface Exam {
   description: string | null;
   class_id?: string | null;
   admin_class_id?: string | null;
-  num_versions?: number;
+  dynamic_num_questions?: number | null;
   subject_id?: string | null;
   created_by: string;
   duration_min: number;
+  exam_type?: 'mcq' | 'essay' | 'msq' | 'fib' | 'mixed';
+  exam_category?: 'midterm' | 'final' | 'practice';
   /** @deprecated dùng ends_at */
   closes_at?: string | null;
   /** Giờ mở thi (ISO) — hệ thống tự mở phiên */
@@ -26,6 +28,9 @@ export interface Exam {
   /** Giờ kết thúc / tự nộp (ISO) */
   ends_at?: string | null;
   created_at: string;
+  require_seb?: boolean;
+  /** Hiển thị đáp án chi tiết sau khi thi xong (chỉ có hiệu lực với bài thi thử) */
+  review_mode_detailed?: boolean;
   subject_name?: string;
   subject_code?: string | null;
   admin_class_name?: string | null;
@@ -36,7 +41,7 @@ export interface Exam {
   runtime_is_active?: boolean;
 }
 
-export type QuestionType = 'mcq' | 'essay';
+export type QuestionType = 'mcq' | 'essay' | 'msq' | 'fib';
 export type QuestionDifficulty = 'DE' | 'TRUNGBINH' | 'KHO';
 
 export interface Question {
@@ -173,8 +178,8 @@ export interface SubmitResult {
     question_type: QuestionType;
     submitted: string | string[] | null;
     correct?: string | string[] | null;
-    is_correct: boolean;
-    points_earned: number | null;
+    is_correct?: boolean;
+    points_earned?: number | null;
     max_points: number;
     pending_grading?: boolean;
   }>;
@@ -237,6 +242,8 @@ export interface SessionReview {
   score: number | null;
   max_points: number | null;
   grading_status: 'pending_manual' | 'complete' | null;
+  correct_count: number;
+  total_questions: number;
   learning_assessment_summary?: SubmitResult['learning_assessment_summary'];
   questions: Array<{
     question_id: string;
@@ -321,92 +328,6 @@ export interface MediaUploadResult {
   format?: string | null;
 }
 
-export interface PredictionSubject {
-  subject: string;
-  semester: number;
-  credits: number;
-  predicted_score: number;
-  grade: string;
-  confidence: number;
-  trend: 'up' | 'stable' | 'down';
-  correlation_r: number;
-  reasoning: string;
-}
-
-export interface JustCompleted {
-  subject: string;
-  score: number;
-  grade: string;
-  vs_class_avg?: string;
-  analysis?: string;
-}
-
-export interface WrongItemSummary {
-  q: number;
-  stem: string;
-  chapter?: number | null;
-  chapter_label?: string | null;
-  explanation_short?: string;
-}
-
-export interface ChapterInsightSummary {
-  chapter: number | null;
-  label: string;
-  wrong_count: number;
-  question_numbers: number[];
-}
-
-export interface PredictionEligibility {
-  eligible: boolean;
-  target_subject: string;
-  target_id: string | null;
-  group_labels: string[];
-  missing_prerequisites: string[];
-  scored_in_group: string[];
-  message: string;
-}
-
-export interface PredictionHistoryRow {
-  subject_id: string | null;
-  subject: string;
-  semester: number | null;
-  score: number;
-  grade: string;
-  submitted_at: string | null;
-}
-
-export interface LearningAssessment {
-  remark: string;
-  weaknesses: string[];
-  advice: string[];
-  comparison: string;
-  quantitative?: {
-    predicted_score: number;
-    class_avg: number;
-    percentile: number;
-    predicted_grade: string;
-  };
-}
-
-export interface PredictionResult {
-  target_subject?: string;
-  target_subject_id?: string;
-  just_completed: JustCompleted;
-  predictions: PredictionSubject[];
-  learning_assessment?: LearningAssessment;
-  overall_advice: string;
-  weak_chapters?: ChapterInsightSummary[];
-  wrong_summary?: WrongItemSummary[];
-  improvement?: string[];
-}
-
-export interface PredictionRecomputeSummary {
-  total_students: number;
-  computed: number;
-  skipped_no_data: number;
-  failed: number;
-  errors: string[];
-}
 
 const examApi = {
   listExams: async (params: ListQueryParams & { class_id?: string; admin_class_id?: string } = {}): Promise<PaginatedList<Exam>> => {
@@ -449,7 +370,7 @@ const examApi = {
 
   updateExam: async (
     id: string,
-    payload: Partial<Pick<Exam, 'title' | 'description' | 'duration_min' | 'closes_at' | 'opens_at' | 'ends_at' | 'num_versions'>>
+    payload: Partial<Pick<Exam, 'title' | 'description' | 'duration_min' | 'closes_at' | 'opens_at' | 'ends_at' | 'dynamic_num_questions' | 'exam_type' | 'exam_category' | 'review_mode_detailed' | 'require_seb'>>
   ): Promise<Exam> => {
     const res = await apiClient.patch<{ success: boolean; data: Exam }>(`/exams/${id}`, payload);
     return res.data.data;
@@ -541,12 +462,17 @@ const examApi = {
     admin_class_id: string;
     subject_id: string;
     class_id?: string | null;
-    duration_min: number;
+    duration_min?: number | null;
+    exam_type?: 'mcq' | 'essay';
+    exam_category: 'midterm' | 'final' | 'practice';
+    dynamic_num_questions: number | null;
+    review_mode_detailed: boolean;
+    require_seb: boolean;
+    created_at: string;
     description?: string | null;
     closes_at?: string | null;
     opens_at?: string | null;
     ends_at?: string | null;
-    num_versions?: number;
     questions: ImportedQuestionDraft[];
   }): Promise<{ exam: Exam; questions: Question[] }> => {
     const res = await apiClient.post<{
@@ -556,31 +482,6 @@ const examApi = {
     return res.data.data;
   },
 
-  aiRecomposeExam: async (payload:
-    | {
-        file: File;
-        mediaArchive?: File | null;
-        examInfo: { title?: string; duration_min?: number; description?: string };
-      }
-    | {
-        questions: ImportedQuestionDraft[];
-        examInfo: { title?: string; duration_min?: number; description?: string };
-      }
-  ): Promise<ExamImportPreview> => {
-    if (!('file' in payload)) {
-      throw new Error('AI recompose trong luồng này yêu cầu file .docx để phân tích lại.');
-    }
-    const formData = new FormData();
-    formData.append('file', payload.file);
-    if (payload.mediaArchive) formData.append('mediaArchive', payload.mediaArchive);
-    formData.append('examInfo', JSON.stringify(payload.examInfo));
-    const res = await apiClient.post<{ success: boolean; data: ExamImportPreview }>(
-      '/exams/import-word/ai-recompose',
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 180000 }
-    );
-    return res.data.data;
-  },
 
   uploadExamMedia: async (
     file: File,
@@ -774,52 +675,12 @@ const examApi = {
   },
 
   /** Sinh viên / admin: đọc cache dự đoán đã lưu. */
-  getMyPredictionCache: async (): Promise<PredictionResult | null> => {
-    const res = await apiClient.get<{ success: boolean; data: PredictionResult | null }>(
-      '/prediction/me'
-    );
+
+  saveOfflineGrades: async (examId: string, grades: { student_id: string; score: number }[]) => {
+    const res = await apiClient.post(`/exams/${examId}/offline-grades`, { grades });
     return res.data.data;
   },
 
-  /** Rời trang prediction — xóa cache server (phiên đánh giá mới mỗi lần vào). */
-  clearMyPredictionCache: async (): Promise<void> => {
-    await apiClient.delete('/prediction/me');
-  },
-
-  getMyPredictionHistory: async (): Promise<PredictionHistoryRow[]> => {
-    const res = await apiClient.get<{ success: boolean; data: PredictionHistoryRow[] }>(
-      '/prediction/me/history'
-    );
-    return res.data.data ?? [];
-  },
-
-  getPredictionEligibility: async (targetSubjectId: string): Promise<PredictionEligibility> => {
-    const res = await apiClient.get<{ success: boolean; data: PredictionEligibility }>(
-      '/prediction/me/eligibility',
-      { params: { target_subject_id: targetSubjectId } }
-    );
-    return res.data.data;
-  },
-
-  /** Sinh viên: dự đoán một môn đã chọn (5 song song, timeout 120s). */
-  generateMyPrediction: async (targetSubjectId: string): Promise<PredictionResult> => {
-    const res = await apiClient.post<{ success: boolean; data: PredictionResult }>(
-      '/prediction/me/generate',
-      { target_subject_id: targetSubjectId },
-      { timeout: 125_000 }
-    );
-    return res.data.data;
-  },
-
-  /** Admin: tính lại dự đoán cho mọi sinh viên có dữ liệu, ghi cache. */
-  adminRecomputeAllPredictions: async (): Promise<PredictionRecomputeSummary> => {
-    const res = await apiClient.post<{ success: boolean; data: PredictionRecomputeSummary }>(
-      '/prediction/admin/recompute-all',
-      {},
-      { timeout: 300_000 }
-    );
-    return res.data.data;
-  },
 };
 
 export default examApi;

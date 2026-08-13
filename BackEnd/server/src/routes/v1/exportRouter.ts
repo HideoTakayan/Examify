@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "~/middlewares/auth.middleware";
 import { roleMiddleware } from "~/middlewares/role.middleware";
 import pool from "~/config/db";
+import { assertTeacherCanManageExam } from "~/services/exam.service";
 
 const router = Router();
 
@@ -178,14 +179,20 @@ xmlns="http://www.w3.org/TR/REC-html40">
 router.get("/exam-results", async (req, res, next) => {
   try {
     const { exam_id, class_id, format = "csv" } = req.query;
+    if (!exam_id || typeof exam_id !== "string") {
+      return res.status(400).json({ success: false, error: "exam_id là bắt buộc" });
+    }
+
+    const userId = (req as any).user?.userId;
+    const userRole = (req as any).user?.role;
+    await assertTeacherCanManageExam(exam_id, userId, userRole);
+
     const params: unknown[] = [];
     let idx = 1;
     const conditions: string[] = [];
 
-    if (exam_id) {
-      conditions.push(`es.exam_id = $${idx++}`);
-      params.push(exam_id);
-    }
+    conditions.push(`es.exam_id = $${idx++}`);
+    params.push(exam_id);
     if (class_id) {
       conditions.push(`e.class_id = $${idx++}`);
       params.push(class_id);
@@ -200,24 +207,27 @@ router.get("/exam-results", async (req, res, next) => {
          a.full_name AS student_name,
          a.email AS student_email,
          e.title AS exam_title,
-         c.name AS class_name,
+         COALESCE(c.name, ac.display_name, tso.id::text) AS class_name,
          es.score,
          es.max_points,
          CASE WHEN es.max_points > 0 AND es.score IS NOT NULL
               THEN (es.score / es.max_points * 100)
               ELSE NULL
          END AS percentage,
-         (SELECT COUNT(*)::int FROM jsonb_array_text(es.graded_details->'correct_answers') AS ca
-          WHERE ca::text = 'true') AS correct_count,
-         (es.graded_details->'total_questions')::int AS total_questions,
+         (SELECT COUNT(*)::int FROM jsonb_array_elements(es.graded_details) AS ca
+          WHERE (ca->>'is_correct')::boolean = true) AS correct_count,
+         jsonb_array_length(es.graded_details) AS total_questions,
          es.status,
          es.submitted_at,
-         es.graded_details->>'graded_at' AS graded_at,
+         NULL AS graded_at,
          es.grading_status,
-         es.graded_details->>'teacher_comment' AS teacher_comment
+         (SELECT string_agg(ca->>'teacher_comment', '; ') FROM jsonb_array_elements(es.graded_details) AS ca
+          WHERE ca->>'teacher_comment' IS NOT NULL AND ca->>'teacher_comment' <> '') AS teacher_comment
        FROM exam_sessions es
        JOIN exams e ON e.id = es.exam_id
-       JOIN classes c ON c.id = e.class_id
+       LEFT JOIN classes c ON c.id = e.class_id
+       LEFT JOIN admin_classes ac ON ac.id = e.admin_class_id
+       LEFT JOIN term_subject_offerings tso ON tso.id = e.class_id
        JOIN accounts a ON a.id = es.student_id
        ${where}
        ORDER BY e.title, a.full_name`,
@@ -252,6 +262,10 @@ router.get("/exam-results", async (req, res, next) => {
 // GET /v1/exports/exam-results/:examId/summary — summary stats only
 router.get("/exam-results/:examId/summary", async (req, res, next) => {
   try {
+    const userId = (req as any).user?.userId;
+    const userRole = (req as any).user?.role;
+    await assertTeacherCanManageExam(req.params.examId, userId, userRole);
+
     const result = await pool.query(
       `SELECT
          COUNT(*) FILTER (WHERE status = 'submitted') AS total_submitted,

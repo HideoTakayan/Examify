@@ -23,7 +23,7 @@ export function useExamTakeState(activeExamId: string) {
   const [submitting, setSubmitting] = useState(false);
   const [submitFailed, setSubmitFailed] = useState(false);
   const [serverForceSummaryText, setServerForceSummaryText] = useState('');
-  const [answers, setAnswers] = useState<Record<string, string>>(() => readDraftAnswers(activeExamId));
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>(() => readDraftAnswers(activeExamId));
   const [flagged, setFlagged] = useState<Set<number>>(() => new Set());
   const [navFilter, setNavFilter] = useState<QuestionNavigatorFilter>('all');
   const [versionCode, setVersionCode] = useState<string | null>(null);
@@ -36,6 +36,7 @@ export function useExamTakeState(activeExamId: string) {
   const lastViolationAtRef = useRef(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAnswers(readDraftAnswers(activeExamId));
     setFlagged(new Set());
     setNavFilter('all');

@@ -12,7 +12,10 @@ export type IntegrityEventType =
   | "copy_attempt"
   | "paste_attempt"
   | "context_menu"
-  | "before_unload";
+  | "before_unload"
+  | "tab_switch"
+  | "devtools_open"
+  | "other";
 
 export interface IntegrityEventInput {
   type: IntegrityEventType;

@@ -3,9 +3,11 @@ import {
   getExamScoreDistribution,
   getSubjectOptions,
   getSubjectScoreAnalytics,
+  getItemAnalysis,
   resolveAdminClassIdForAnalytics,
   assertTeacherCanAccessClass,
 } from "~/services/scoreAnalytics.service";
+import { assertTeacherCanManageExam } from "~/services/exam.service";
 
 function getAuthUser(req: Request) {
   return (req as { user?: { role?: string; userId?: string } }).user;
@@ -17,6 +19,10 @@ export const getExamScoreDistributionController = async (
   next: NextFunction
 ) => {
   try {
+    const user = getAuthUser(req);
+    if (user && user.userId && user.role) {
+      await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    }
     const data = await getExamScoreDistribution(req.params.examId);
     res.json({ success: true, data });
   } catch (err: unknown) {
@@ -83,6 +89,23 @@ export const getSubjectScoreAnalyticsController = async (
     await assertTeacherCanAccessClass(user?.role, user?.userId, adminClassId);
 
     const data = await getSubjectScoreAnalytics(adminClassId, subjectId);
+    res.json({ success: true, data });
+  } catch (err: unknown) {
+    next(err);
+  }
+};
+
+export const getItemAnalysisController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = getAuthUser(req);
+    if (user && user.userId && user.role) {
+      await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    }
+    const data = await getItemAnalysis(req.params.examId);
     res.json({ success: true, data });
   } catch (err: unknown) {
     next(err);

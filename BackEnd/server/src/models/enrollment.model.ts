@@ -30,6 +30,14 @@ export const findEnrollment = async (
   classId: string,
   studentId: string
 ): Promise<Enrollment | null> => {
+  // Check term_student_enrollments first
+  const termRes = await pool.query(
+    "SELECT id, term_offering_id as class_id, student_id, enrolled_at FROM term_student_enrollments WHERE term_offering_id = $1 AND student_id = $2",
+    [classId, studentId]
+  );
+  if (termRes.rows.length > 0) return termRes.rows[0];
+
+  // Fallback to legacy enrollments
   const result = await pool.query(
     "SELECT * FROM enrollments WHERE class_id = $1 AND student_id = $2",
     [classId, studentId]

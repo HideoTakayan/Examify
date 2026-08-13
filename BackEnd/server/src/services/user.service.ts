@@ -48,7 +48,7 @@ export const createUserService = async (
 
   const hashed = await bcrypt.hash(password, 12);
   const storePlain = role === "student" || role === "teacher";
-  const user = await createUser(email, username, hashed, role, fullName, storePlain ? password : null, {
+  const user = await createUser(email, username, hashed, role, fullName, {
     first_login: storePlain,
     admin_class_id: role === "student" ? adminClassId ?? null : null,
   });
@@ -71,7 +71,6 @@ export async function bulkCreateStudentsForImport(
     email: string;
     full_name?: string;
     hashed: string;
-    password: string;
   };
   const prepared: Prepared[] = [];
 
@@ -79,9 +78,9 @@ export async function bulkCreateStudentsForImport(
     const chunk = rows.slice(i, i + IMPORT_HASH_CONCURRENCY);
     const hashedChunk = await Promise.all(
       chunk.map(async (row) => {
-        const password = generateRandomPassword(10);
+        const password = `${row.username}@123`;
         const hashed = await bcrypt.hash(password, IMPORT_BCRYPT_ROUNDS);
-        return { ...row, hashed, password };
+        return { ...row, hashed };
       })
     );
     prepared.push(...hashedChunk);
@@ -95,9 +94,9 @@ export async function bulkCreateStudentsForImport(
     for (const p of prepared) {
       try {
         await client.query(
-          `INSERT INTO accounts (email, username, hashed_password, password_plain, role, full_name, first_login, admin_class_id)
-           VALUES ($1, $2, $3, $4, 'student', $5, true, $6)`,
-          [p.email, p.username, p.hashed, p.password, p.full_name ?? null, classId]
+          `INSERT INTO accounts (email, username, hashed_password, role, full_name, first_login, admin_class_id)
+           VALUES ($1, $2, $3, 'student', $4, true, $5)`,
+          [p.email, p.username, p.hashed, p.full_name ?? null, classId]
         );
         created += 1;
       } catch (err: unknown) {
@@ -122,7 +121,7 @@ export async function bulkCreateStudentsForImport(
 
 export const adminResetPasswordService = async (
   userId: string
-): Promise<{ email_sent: boolean }> => {
+): Promise<{ email_sent: boolean; tempPassword: string }> => {
   const user = await getUserById(userId);
   if (!user) throw new Error("Không tìm thấy người dùng");
   if (user.role !== "student" && user.role !== "teacher" && user.role !== "admin") {
@@ -133,7 +132,6 @@ export const adminResetPasswordService = async (
   const hashed = await bcrypt.hash(tempPassword, 12);
   await updateUser(userId, {
     hashed_password: hashed,
-    password_plain: tempPassword,
     first_login: true,
   });
   await invalidateAllUserTokens(userId);
@@ -145,7 +143,7 @@ export const adminResetPasswordService = async (
   } catch {
     email_sent = false;
   }
-  return { email_sent };
+  return { email_sent, tempPassword };
 };
 
 export const updateUserService = async (
@@ -177,7 +175,6 @@ export const updateUserService = async (
   if (fields.email !== undefined) patch.email = fields.email;
   if (fields.password !== undefined && String(fields.password).length > 0) {
     patch.hashed_password = await bcrypt.hash(String(fields.password), 12);
-    patch.password_plain = String(fields.password);
     if (existing.role === "student" || existing.role === "teacher") {
       patch.first_login = true;
     }

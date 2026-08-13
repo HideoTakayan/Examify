@@ -18,7 +18,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import image from '@/assets/img/login.jpg';
 import classes from './Login.module.scss';
 import appConfig from '@/configs/app.config';
-import { login, saveSession, forgotPassword as forgotPasswordApi, resetPassword as resetPasswordApi } from '@/services/authApi';
+import { login, saveSession, forgotPassword as forgotPasswordApi } from '@/services/authApi';
 import InputText from '@/components/Input/InputText/InputText';
 import InputPassword from '@/components/Input/InputPassword/InputPassword';
 import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';

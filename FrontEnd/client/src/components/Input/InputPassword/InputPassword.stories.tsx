@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+﻿import type { Meta, StoryObj } from "@storybook/react-vite";
 import InputPassword from "./InputPassword";
 import { IconLock } from "@tabler/icons-react";
 

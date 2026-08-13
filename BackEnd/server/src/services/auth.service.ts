@@ -150,9 +150,9 @@ export const changePasswordService = async (
   const hashed = await bcrypt.hash(newPassword, 12);
   await pool.query(
     `UPDATE accounts
-     SET hashed_password = $1, password_plain = $2, first_login = false, updated_at = NOW()
-     WHERE id = $3`,
-    [hashed, newPassword, userId]
+     SET hashed_password = $1, first_login = false, updated_at = NOW()
+     WHERE id = $2`,
+    [hashed, userId]
   );
 
   await invalidateAllUserTokens(userId);

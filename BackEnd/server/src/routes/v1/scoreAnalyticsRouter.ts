@@ -5,6 +5,7 @@ import {
   getExamScoreDistributionController,
   getSubjectOptionsController,
   getSubjectScoreAnalyticsController,
+  getItemAnalysisController,
 } from "~/controllers/scoreAnalytics.controller";
 
 const scoreAnalyticsRouter = Router();
@@ -27,6 +28,12 @@ scoreAnalyticsRouter.get(
   "/by-subject",
   roleMiddleware(["admin", "teacher"]),
   getSubjectScoreAnalyticsController
+);
+
+scoreAnalyticsRouter.get(
+  "/exam/:examId/item-analysis",
+  roleMiddleware(["admin", "teacher"]),
+  getItemAnalysisController
 );
 
 export default scoreAnalyticsRouter;

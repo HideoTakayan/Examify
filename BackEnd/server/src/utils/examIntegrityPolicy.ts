@@ -9,7 +9,6 @@ export const STRIKE_EVENT_TYPES = [
   "fullscreen_exit",
   "visibility_hidden",
   "window_blur",
-  "window_focus",
   "tab_switch",
   "devtools_open",
   "copy_attempt",

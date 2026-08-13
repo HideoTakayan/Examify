@@ -4,9 +4,11 @@ import { type ReactNode } from "react";
 import style from './ButtonLight.module.scss'
 
 interface ButtonLightProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    disabled: boolean;
+    disabled?: boolean;
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
+    leftSection?: ReactNode;
+    rightSection?: ReactNode;
     label?: string;
     fontWeight?: number;
     loading?: boolean;
@@ -19,6 +21,8 @@ interface ButtonLightProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 const ButtonLight: React.FC<ButtonLightProps> = ({
     leftIcon,
     rightIcon,
+    leftSection,
+    rightSection,
     label,
     disabled,
     loading,
@@ -28,8 +32,8 @@ const ButtonLight: React.FC<ButtonLightProps> = ({
     <Button
         variant="light"
         color={color || 'primary'}
-        leftSection={leftIcon}
-        rightSection={rightIcon}
+        leftSection={leftIcon || leftSection}
+        rightSection={rightIcon || rightSection}
         disabled={disabled}
         loading={loading}
         {...props}

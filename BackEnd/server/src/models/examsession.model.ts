@@ -266,3 +266,30 @@ export const querySessionsByExamPaginated = async (
   );
   return { items: result.rows as SessionWithStudent[], total };
 };
+
+export const upsertOfflineGrade = async (
+  examId: string,
+  studentId: string,
+  score: number
+): Promise<ExamSession> => {
+  const existing = await pool.query(
+    `SELECT id FROM exam_sessions WHERE exam_id = $1 AND student_id = $2 AND voided_at IS NULL ORDER BY created_at DESC LIMIT 1`,
+    [examId, studentId]
+  );
+  if (existing.rows.length > 0) {
+    const result = await pool.query(
+      `UPDATE exam_sessions
+       SET score = $2, max_points = 10, status = 'submitted', submitted_at = NOW(), grading_status = 'complete'
+       WHERE id = $1 RETURNING *`,
+      [existing.rows[0].id, score]
+    );
+    return result.rows[0] as ExamSession;
+  } else {
+    const result = await pool.query(
+      `INSERT INTO exam_sessions (exam_id, student_id, status, score, max_points, submitted_at, grading_status)
+       VALUES ($1, $2, 'submitted', $3, 10, NOW(), 'complete') RETURNING *`,
+      [examId, studentId, score]
+    );
+    return result.rows[0] as ExamSession;
+  }
+};

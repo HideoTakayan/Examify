@@ -20,20 +20,19 @@ function httpError(status: number, message: string) {
   return Object.assign(new Error(message), { status });
 }
 
+import { assertTeacherCanManageExam } from "~/services/exam.service";
+
 export async function canManageExamRetake(
   examId: string,
   userId: string,
   role: string
 ): Promise<boolean> {
-  if (role === "admin") return true;
-  if (role !== "teacher") return false;
-  if (await canAccessExam(examId, userId)) return true;
-
-  const exam = await getExamById(examId);
-  if (exam?.admin_class_id) {
-    return teacherManagesClass(userId, exam.admin_class_id);
+  try {
+    await assertTeacherCanManageExam(examId, userId, role);
+    return true;
+  } catch {
+    return false;
   }
-  return false;
 }
 
 export async function grantRetakeService(payload: {

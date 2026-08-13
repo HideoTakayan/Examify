@@ -16,6 +16,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  // @ts-expect-error Vitest injects the test property but Vite types don't include it
   test: {
     reporters: [
       'default',

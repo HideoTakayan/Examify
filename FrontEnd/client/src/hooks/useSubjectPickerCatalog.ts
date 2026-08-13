@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  catalogToPickerGroups,
-  type SubjectPickerCatalogGroupDto,
-} from '@/components/Input/SubjectCategoryPicker/predictionSubjectGrouping';
-import type { SubjectCategoryGroup } from '@/components/Input/SubjectCategoryPicker/subjectGrouping';
-import type { SubjectDto, SubjectPickerCatalogOptions } from '@/services/subjectApi';
+import type { SubjectDto, SubjectPickerCatalogOptions, SubjectPickerCatalogGroup } from '@/services/subjectApi';
 import { getSubjectPickerCatalog } from '@/services/subjectApi';
+
+export type SubjectCategoryGroup = {
+  category: string;
+  label: string;
+  subjects: SubjectDto[];
+};
 
 export function useSubjectPickerCatalog(options?: SubjectPickerCatalogOptions) {
   const programId = options?.programId;
   const programCode = options?.programCode;
   const adminClassId = options?.adminClassId;
 
-  const [catalog, setCatalog] = useState<SubjectPickerCatalogGroupDto[]>([]);
+  const [catalog, setCatalog] = useState<SubjectPickerCatalogGroup[]>([]);
   const [programMeta, setProgramMeta] = useState<{
     program_id: string;
     program_code: string;
@@ -23,6 +24,7 @@ export function useSubjectPickerCatalog(options?: SubjectPickerCatalogOptions) {
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError('');
     const hasAdminScope = Boolean(programId || programCode || adminClassId);
@@ -54,7 +56,13 @@ export function useSubjectPickerCatalog(options?: SubjectPickerCatalogOptions) {
     };
   }, [programId, programCode, adminClassId]);
 
-  const groups = useMemo(() => catalogToPickerGroups(catalog), [catalog]);
+  const groups = useMemo<SubjectCategoryGroup[]>(() => {
+    return catalog.map(g => ({
+      category: g.code,
+      label: g.label,
+      subjects: g.subjects as unknown as SubjectDto[]
+    }));
+  }, [catalog]);
 
   const subjects = useMemo(
     () => dedupeSubjectsById(groups.flatMap((g) => g.subjects)),
@@ -74,5 +82,3 @@ function dedupeSubjectsById(list: SubjectDto[]): SubjectDto[] {
   }
   return out;
 }
-
-export type { SubjectCategoryGroup };

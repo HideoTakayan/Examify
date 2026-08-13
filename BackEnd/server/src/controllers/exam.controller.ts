@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Request, Response, NextFunction } from "express";
+import pool from "~/config/db";
 import { tryStartScheduledExamById } from "~/jobs/examScheduledRuntime.job";
 import {
   listExamsPaginated,
@@ -8,6 +9,7 @@ import {
   createExamService,
   updateExamService,
   deleteExamService,
+  cloneExamService,
   getQuestionsForStudent,
   getQuestionsForTeacher,
   addQuestion,
@@ -18,8 +20,6 @@ import {
   getStudentSessions,
   getExamSessions,
   getMySubmissionForExam,
-  getSessionGradingView,
-  gradeEssaySessionService,
   forceSubmitActiveSessionsByExamService,
   forceSubmitSessionService,
   getExamProctoringData,
@@ -29,8 +29,11 @@ import {
   createExamWithQuestionsService,
   getSessionReview,
   reportViolationService,
+  saveOfflineGradesService,
+  assertTeacherCanManageExam,
+  assertNoActiveOrSubmittedSessions,
 } from "~/services/exam.service";
-import { parseExamImportDocx, aiRecomposeExam } from "~/services/examImport.service";
+import { parseExamImportDocx } from "~/services/examImport.service";
 import { getIntegrityEventsByExam } from "~/models/examIntegrity.model";
 import { getActivePresenceByExam, queryProctorLogsByExamPaginated } from "~/models/examProctor.model";
 import { querySessionsByExamPaginated } from "~/models/examsession.model";
@@ -46,6 +49,7 @@ import { emitForceSubmitNotification, startExamRuntimeFromServer, emitViolationC
 import { auditGradeSession, auditForceSubmit } from "~/services/auditHelpers";
 import type { QuestionType } from "~/models/question.model";
 import { getProgramSubjectIds, resolveProgramForPickerQuery } from "~/services/subjectCatalog.service";
+import { syncExamGrades } from "~/services/grading.service";
 
 export const getExamListController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -71,8 +75,13 @@ export const getExamListController = async (req: Request, res: Response, next: N
       }
     }
 
+    let enrollment_student_id: string | undefined;
+    if (user?.role === "student") {
+      enrollment_student_id = user.userId;
+    }
+
     const result = await listExamsPaginated(
-      { class_id, admin_class_id, search, subject_ids },
+      { class_id, admin_class_id, search, subject_ids, enrollment_student_id },
       limit,
       offset
     );
@@ -98,12 +107,12 @@ export const getExamController = async (req: Request, res: Response, next: NextF
 
 export const createExamController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, admin_class_id, subject_id, class_id, duration_min, description, closes_at, opens_at, ends_at, num_versions } =
+    const { title, admin_class_id, subject_id, class_id, duration_min, description, closes_at, opens_at, ends_at, num_versions, exam_type, exam_category, dynamic_num_questions, review_mode_detailed, require_seb } =
       req.body;
-    if (!title || !admin_class_id || !subject_id || !duration_min) {
+    if (!title || !subject_id || !duration_min || (!admin_class_id && !class_id)) {
       return res.status(400).json({
         success: false,
-        message: "title/admin_class_id/subject_id/duration_min là bắt buộc",
+        message: "Cần title, subject_id, duration_min và (admin_class_id hoặc class_id)",
       });
     }
     const user = (req as any).user;
@@ -117,7 +126,12 @@ export const createExamController = async (req: Request, res: Response, next: Ne
       closes_at,
       num_versions ? Number(num_versions) : 2,
       opens_at,
-      ends_at
+      ends_at,
+      exam_type,
+      exam_category,
+      dynamic_num_questions ? Number(dynamic_num_questions) : null,
+      review_mode_detailed === true || review_mode_detailed === 'true',
+      require_seb === true || require_seb === 'true'
     );
     res.status(201).json({ success: true, data: exam });
   } catch (err) {
@@ -186,8 +200,24 @@ export const commitWordImportController = async (
 ) => {
   try {
     const user = (req as any).user;
-    const { title, admin_class_id, subject_id, class_id, duration_min, description, closes_at, opens_at, ends_at, num_versions, questions } =
-      req.body;
+    const {
+      title,
+      admin_class_id,
+      subject_id,
+      class_id,
+      duration_min,
+      description,
+      closes_at,
+      opens_at,
+      ends_at,
+      num_versions,
+      exam_type,
+      exam_category,
+      dynamic_num_questions,
+      review_mode_detailed,
+      require_seb,
+      questions,
+    } = req.body;
     const data = await createExamWithQuestionsService({
       title,
       admin_class_id,
@@ -199,6 +229,11 @@ export const commitWordImportController = async (
       opens_at,
       ends_at,
       num_versions: num_versions ? Number(num_versions) : 2,
+      exam_type,
+      exam_category,
+      dynamic_num_questions: dynamic_num_questions ? Number(dynamic_num_questions) : null,
+      review_mode_detailed: review_mode_detailed === true || review_mode_detailed === 'true',
+      require_seb: require_seb === true || require_seb === 'true',
       questions,
       created_by: user.userId,
       role: user.role,
@@ -209,31 +244,6 @@ export const commitWordImportController = async (
   }
 };
 
-export const aiRecomposeExamController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const file = getMultipartFile(req, "file");
-    const mediaArchive = getMultipartFile(req, "mediaArchive");
-    if (!file) {
-      return res.status(400).json({ success: false, message: "file .docx là bắt buộc" });
-    }
-    if (!isFileExtension(file, ".docx")) {
-      return res.status(400).json({ success: false, message: "file phải là .docx hợp lệ" });
-    }
-    if (mediaArchive && !isFileExtension(mediaArchive, ".zip")) {
-      return res.status(400).json({ success: false, message: "mediaArchive phải là file .zip" });
-    }
-    const examInfo = req.body.examInfo ? JSON.parse(req.body.examInfo) : {};
-    const result = await aiRecomposeExam(file.buffer, examInfo, mediaArchive?.buffer);
-    res.json({ success: true, data: result });
-  } catch (err: any) {
-    console.error("aiRecomposeExamController error:", err.message);
-    res.status(500).json({ success: false, message: err.message || "Lỗi khi xử lý AI" });
-  }
-};
 
 export const uploadExamMediaController = async (
   req: Request,
@@ -245,6 +255,11 @@ export const uploadExamMediaController = async (
     const isPreviewTemp = req.body?.scope === "preview-temp";
     if (!file) {
       return res.status(400).json({ success: false, message: "file media là bắt buộc" });
+    }
+    
+    const validMimeTypes = ["image/", "audio/", "video/"];
+    if (!validMimeTypes.some(type => file.mimetype.startsWith(type))) {
+      return res.status(400).json({ success: false, message: "Chỉ cho phép tải lên hình ảnh, âm thanh hoặc video" });
     }
 
     const uploaded = await uploadMediaBuffer({
@@ -272,6 +287,9 @@ export const uploadExamMediaController = async (
 
 export const updateExamController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.id, user.userId, user.role);
+    
     const exam = await updateExamService(req.params.id, req.body);
     if (!exam) return res.status(404).json({ success: false, message: "Không tìm thấy bài thi" });
     res.json({ success: true, data: exam });
@@ -282,6 +300,10 @@ export const updateExamController = async (req: Request, res: Response, next: Ne
 
 export const deleteExamController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.id, user.userId, user.role);
+    await assertNoActiveOrSubmittedSessions(req.params.id);
+
     const ok = await deleteExamService(req.params.id);
     if (!ok) return res.status(404).json({ success: false, message: "Không tìm thấy bài thi" });
     res.json({ success: true, message: "Đã xóa bài thi" });
@@ -293,10 +315,8 @@ export const deleteExamController = async (req: Request, res: Response, next: Ne
 export const getQuestionsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = (req as any).user;
-    const isTeacherOrAdmin = user.role === "teacher" || user.role === "admin";
-    const data = isTeacherOrAdmin
-      ? await getQuestionsForTeacher(req.params.examId)
-      : await getQuestionsForStudent(req.params.examId);
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    const data = await getQuestionsForTeacher(req.params.examId);
     res.json({ success: true, data });
   } catch (err) {
     next(err);
@@ -305,6 +325,9 @@ export const getQuestionsController = async (req: Request, res: Response, next: 
 
 export const addQuestionController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    
     const {
       content,
       options,
@@ -322,9 +345,9 @@ export const addQuestionController = async (req: Request, res: Response, next: N
     if (!content || points === undefined || points === null) {
       return res.status(400).json({ success: false, message: "content và points là bắt buộc" });
     }
-    const qt = (question_type || "mcq") as QuestionType;
-    if (qt !== "mcq" && qt !== "essay") {
-      return res.status(400).json({ success: false, message: "question_type phải là mcq hoặc essay" });
+    const qt: QuestionType = "mcq";
+    if (question_type && question_type !== "mcq") {
+      return res.status(400).json({ success: false, message: "question_type phải là mcq" });
     }
     const q = await addQuestion(
       req.params.examId,
@@ -350,6 +373,9 @@ export const addQuestionController = async (req: Request, res: Response, next: N
 
 export const updateQuestionController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    
     const {
       content,
       options,
@@ -368,9 +394,9 @@ export const updateQuestionController = async (req: Request, res: Response, next
         .status(400)
         .json({ success: false, message: "content, points và display_order là bắt buộc" });
     }
-    const qt = (question_type || "mcq") as QuestionType;
-    if (qt !== "mcq" && qt !== "essay") {
-      return res.status(400).json({ success: false, message: "question_type phải là mcq hoặc essay" });
+    const qt: QuestionType = "mcq";
+    if (question_type && question_type !== "mcq") {
+      return res.status(400).json({ success: false, message: "question_type phải là mcq" });
     }
     const q = await updateQuestionInExam(req.params.examId, req.params.questionId, {
       content,
@@ -393,6 +419,9 @@ export const updateQuestionController = async (req: Request, res: Response, next
 
 export const deleteQuestionController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+    
     const ok = await removeQuestion(req.params.questionId);
     if (!ok) return res.status(404).json({ success: false, message: "Không tìm thấy câu hỏi" });
     res.json({ success: true, message: "Đã xóa câu hỏi" });
@@ -405,7 +434,7 @@ export const startSessionController = async (req: Request, res: Response, next: 
   try {
     const user = (req as any).user;
     await tryStartScheduledExamById(req.params.examId);
-    const data = await startSessionWithMeta(req.params.examId, user.userId);
+    const data = await startSessionWithMeta(req.params.examId, user.userId, req.headers['user-agent']);
     res.status(201).json({ success: true, data });
   } catch (err) {
     next(err);
@@ -438,6 +467,8 @@ export const getMySessionsController = async (req: Request, res: Response, next:
 
 export const getExamSessionsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const { limit, offset } = parsePaginationQuery(req.query as Record<string, unknown>);
     const result = await querySessionsByExamPaginated(req.params.examId, limit, offset);
     const items = await enrichSessionsForTeacherView(result.items, req.params.examId);
@@ -458,6 +489,7 @@ export const forceSubmitExamSessionsController = async (
   try {
     const user = (req as any).user;
     const examId = req.params.examId;
+    await assertTeacherCanManageExam(examId, user.userId, user.role);
     const data = await forceSubmitActiveSessionsByExamService(examId);
     // Khi GV "force-submit" thì cũng cần tắt runtime để FE reload sẽ không còn hiển thị exam đang chạy.
     await saveExamRuntimeEnd(examId);
@@ -490,6 +522,8 @@ export const startExamRuntimeController = async (
   next: NextFunction
 ) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const data = await startExamRuntimeFromServer(req.params.examId);
     res.json({ success: true, data });
   } catch (err) {
@@ -508,15 +542,6 @@ export const getMySubmissionController = async (req: Request, res: Response, nex
   }
 };
 
-export const getSessionGradingController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = (req as any).user;
-    const data = await getSessionGradingView(req.params.sessionId, user.userId, user.role);
-    res.json({ success: true, data });
-  } catch (err) {
-    next(err);
-  }
-};
 
 export const getSessionReviewController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -528,16 +553,12 @@ export const getSessionReviewController = async (req: Request, res: Response, ne
   }
 };
 
-export const gradeSessionController = async (req: Request, res: Response, next: NextFunction) => {
+export const saveOfflineGradesController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { grades } = req.body;
-    if (!grades || typeof grades !== "object") {
-      return res.status(400).json({ success: false, message: "grades là object bắt buộc" });
-    }
     const user = (req as any).user;
-    const session = await gradeEssaySessionService(req.params.sessionId, user.userId, user.role, grades);
-    await auditGradeSession(user.userId, user.role, req.params.sessionId, req);
-    res.json({ success: true, data: session });
+    await saveOfflineGradesService(req.params.examId, user.userId, user.role, grades);
+    res.json({ success: true });
   } catch (err) {
     next(err);
   }
@@ -549,6 +570,8 @@ export const getExamProctoringController = async (
   next: NextFunction
 ) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const data = await getExamProctoringData(req.params.examId);
     res.json({ success: true, data });
   } catch (err) {
@@ -613,6 +636,8 @@ export const getIntegrityEventsController = async (
   next: NextFunction
 ) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const events = await getIntegrityEventsByExam(req.params.examId);
     res.json({ success: true, data: events });
   } catch (err) {
@@ -626,6 +651,8 @@ export const getProctorPresenceController = async (
   next: NextFunction
 ) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const presence = await getActivePresenceByExam(req.params.examId);
     res.json({ success: true, data: presence });
   } catch (err) {
@@ -639,6 +666,8 @@ export const getProctorLogsController = async (
   next: NextFunction
 ) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
     const { limit, offset } = parsePaginationQuery(req.query as Record<string, unknown>, {
       defaultLimit: 50,
       maxLimit: 500,
@@ -685,6 +714,43 @@ export const reportViolationController = async (
     emitViolationConfirmed(sessionId, data);
 
     res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const cloneExamController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = (req as any).user;
+    const {
+      source_exam_id,
+      title,
+      class_id,
+      admin_class_id,
+      opens_at,
+      ends_at,
+      closes_at,
+    } = req.body;
+
+    if (!source_exam_id) {
+      return res.status(400).json({ success: false, message: "source_exam_id là bắt buộc" });
+    }
+
+    const result = await cloneExamService(
+      { source_exam_id, title, class_id, admin_class_id, opens_at, ends_at, closes_at },
+      user.userId,
+      user.role
+    );
+
+    res.status(201).json({
+      success: true,
+      data: result,
+      message: `Đã nhân bản bài thi thành công (${result.cloned_question_count} câu hỏi)`,
+    });
   } catch (err) {
     next(err);
   }

@@ -78,6 +78,17 @@ notificationRouter.get("/user", async (req, res) => {
   }
 });
 
+notificationRouter.patch("/read-all", async (req, res) => {
+  const userId = (req as any).user?.userId;
+  try {
+    await markAllNotificationsRead(userId);
+    res.json({ success: true });
+  } catch (err: any) {
+    console.error("notificationRouter patch all error:", err?.message ?? err);
+    return res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
 notificationRouter.patch("/:id/read", async (req, res) => {
   const userId = (req as any).user?.userId;
   const { id } = req.params;
@@ -86,17 +97,6 @@ notificationRouter.patch("/:id/read", async (req, res) => {
     res.json({ success: true });
   } catch (err: any) {
     console.error("notificationRouter patch error:", err?.message ?? err);
-    return res.status(500).json({ success: false, error: "Internal server error" });
-  }
-});
-
-notificationRouter.patch("/read-all", async (req, res) => {
-  const userId = (req as any).user?.userId;
-  try {
-    await markAllNotificationsRead(userId);
-    res.json({ success: true });
-  } catch (err: any) {
-    console.error("notificationRouter patch all error:", err?.message ?? err);
     return res.status(500).json({ success: false, error: "Internal server error" });
   }
 });

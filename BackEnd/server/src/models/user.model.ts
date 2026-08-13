@@ -135,7 +135,7 @@ export const queryUsersPaginated = async (
 
   const baseSelect = `
     SELECT a.id, a.email, a.username, a.role, a.full_name, a.is_active, a.first_login,
-           a.password_plain, a.admin_class_id, a.created_at, a.updated_at,
+           a.admin_class_id, a.created_at, a.updated_at,
            m.full_name AS homeroom_teacher_name,
            m.email AS homeroom_teacher_email,
            ac.display_name AS admin_class_name,
@@ -158,17 +158,15 @@ export const createUser = async (
   hashedPassword: string,
   role: UserRole,
   fullName?: string,
-  passwordPlain?: string | null,
   opts?: { first_login?: boolean; admin_class_id?: string | null }
 ): Promise<User> => {
   const result = await pool.query(
-    `INSERT INTO accounts (email, username, hashed_password, password_plain, role, full_name, first_login, admin_class_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    `INSERT INTO accounts (email, username, hashed_password, role, full_name, first_login, admin_class_id)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
     [
       email,
       username,
       hashedPassword,
-      passwordPlain ?? null,
       role,
       fullName ?? null,
       opts?.first_login ?? false,
@@ -185,7 +183,6 @@ export type UserUpdateFields = {
   username?: string;
   email?: string;
   hashed_password?: string;
-  password_plain?: string | null;
   first_login?: boolean;
 };
 
@@ -200,7 +197,6 @@ export const updateUser = async (
     "username",
     "email",
     "hashed_password",
-    "password_plain",
     "first_login",
   ];
   const keys = allowed.filter((k) => fields[k] !== undefined);

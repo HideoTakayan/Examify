@@ -89,6 +89,11 @@ export const getStudentUpcomingExams = async (
       e.admin_class_id IS NOT NULL AND e.admin_class_id = acc.admin_class_id
     ) OR (
       e.class_id IS NOT NULL AND EXISTS (
+        SELECT 1 FROM term_student_enrollments tse
+        WHERE tse.term_offering_id = e.class_id AND tse.student_id = acc.id
+      )
+    ) OR (
+      e.class_id IS NOT NULL AND EXISTS (
         SELECT 1 FROM enrollments en
         WHERE en.class_id = e.class_id AND en.student_id = acc.id
       )
@@ -156,6 +161,7 @@ export const getStudentRecentSessions = async (
     LEFT JOIN subjects s ON s.id = COALESCE(e.subject_id, c.subject_id)
     WHERE es.student_id = $1
       AND es.status IN ('submitted', 'expired')
+      AND es.voided_at IS NULL
     ORDER BY COALESCE(es.submitted_at, es.created_at) DESC
     LIMIT $2
     `,
@@ -189,6 +195,7 @@ export const getClassAvgScale10ByExamIds = async (
     FROM exam_sessions
     WHERE exam_id = ANY($1::uuid[])
       AND status = 'submitted'
+      AND voided_at IS NULL
     GROUP BY exam_id
     `,
     [examIds]
@@ -227,7 +234,7 @@ export const getAdminOverview = async (): Promise<StaffOverviewRow> => {
       (SELECT COUNT(*)::int FROM accounts WHERE role = 'student') AS total_students,
       (SELECT COUNT(*)::int FROM accounts WHERE role = 'teacher') AS total_teachers,
       (SELECT COUNT(*)::int FROM exams) AS total_exams,
-      (SELECT COUNT(*)::int FROM exam_sessions) AS total_sessions,
+      (SELECT COUNT(*)::int FROM exam_sessions WHERE voided_at IS NULL) AS total_sessions,
       (SELECT COUNT(*)::int FROM classes) AS total_classes
     `
   );
@@ -254,21 +261,35 @@ const TEACHER_EXAM_SCOPE_SQL = `
     SELECT 1 FROM exam_collaborators ec
     WHERE ec.exam_id = e.id AND ec.teacher_id = $1
   )
+  OR EXISTS (
+    SELECT 1 FROM term_teacher_registrations tr
+    WHERE tr.term_offering_id = e.class_id AND tr.teacher_id = $1
+  )
+  OR EXISTS (
+    SELECT 1 FROM exam_shares esh
+    WHERE esh.exam_id = e.id AND esh.shared_with = $1
+  )
 `;
 
 export const getTeacherOverview = async (teacherId: string): Promise<StaffOverviewRow> => {
   const r = await pool.query<StaffOverviewRow>(
     `
     SELECT
-      (SELECT COUNT(*)::int FROM admin_classes WHERE manager_teacher_id = $1) AS total_classes,
+      (
+        (SELECT COUNT(*)::int FROM admin_classes WHERE manager_teacher_id = $1) +
+        (SELECT COUNT(*)::int FROM term_teacher_registrations WHERE teacher_id = $1)
+      ) AS total_classes,
       (SELECT COUNT(*)::int FROM exams e WHERE ${TEACHER_EXAM_SCOPE_SQL}) AS total_exams,
-      (SELECT COUNT(*)::int FROM accounts s
-        WHERE s.role = 'student'
-          AND s.admin_class_id IN (
-            SELECT id FROM admin_classes WHERE manager_teacher_id = $1
-          )) AS total_students,
+      (SELECT COUNT(DISTINCT s.id)::int 
+       FROM accounts s
+       LEFT JOIN admin_classes ac ON ac.id = s.admin_class_id
+       LEFT JOIN term_student_enrollments tse ON tse.student_id = s.id
+       LEFT JOIN term_teacher_registrations tr ON tr.term_offering_id = tse.term_offering_id
+       WHERE s.role = 'student'
+         AND (ac.manager_teacher_id = $1 OR tr.teacher_id = $1)
+      ) AS total_students,
       (SELECT COUNT(*)::int FROM exam_sessions es
-        WHERE es.exam_id IN (SELECT e.id FROM exams e WHERE ${TEACHER_EXAM_SCOPE_SQL})) AS total_sessions,
+        WHERE es.voided_at IS NULL AND es.exam_id IN (SELECT e.id FROM exams e WHERE ${TEACHER_EXAM_SCOPE_SQL})) AS total_sessions,
       0::int AS total_accounts,
       0::int AS total_teachers
     `,
@@ -385,7 +406,7 @@ export const countTeacherDashboardActivity = async (
     FROM exam_sessions es
     JOIN exams e ON e.id = es.exam_id
     JOIN accounts a ON a.id = es.student_id
-    WHERE ${TEACHER_EXAM_SCOPE_SQL}${filterSql}
+    WHERE es.voided_at IS NULL AND (${TEACHER_EXAM_SCOPE_SQL})${filterSql}
     `,
     [teacherId, ...filterParams]
   );
@@ -405,7 +426,7 @@ export const listTeacherDashboardActivity = async (
   const r = await pool.query<TeacherRecentSessionRow>(
     `
     ${activitySelectSql}
-    WHERE ${TEACHER_EXAM_SCOPE_SQL}${filterSql}
+    WHERE es.voided_at IS NULL AND (${TEACHER_EXAM_SCOPE_SQL})${filterSql}
     ORDER BY ${ACTIVITY_UPDATED_EXPR} DESC
     LIMIT $${limitIdx} OFFSET $${offsetIdx}
     `,
@@ -424,7 +445,7 @@ export const countAdminDashboardActivity = async (
     FROM exam_sessions es
     JOIN exams e ON e.id = es.exam_id
     JOIN accounts a ON a.id = es.student_id
-    WHERE 1=1${filterSql}
+    WHERE es.voided_at IS NULL${filterSql}
     `,
     filterParams
   );
@@ -442,7 +463,7 @@ export const listAdminDashboardActivity = async (
   const r = await pool.query<TeacherRecentSessionRow>(
     `
     ${activitySelectSql}
-    WHERE 1=1${filterSql}
+    WHERE es.voided_at IS NULL${filterSql}
     ORDER BY ${ACTIVITY_UPDATED_EXPR} DESC
     LIMIT $${limitIdx} OFFSET $${offsetIdx}
     `,

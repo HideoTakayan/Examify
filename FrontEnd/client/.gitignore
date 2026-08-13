@@ -13,6 +13,7 @@ dist-ssr
 test-results
 coverage
 *.local
+tsconfig.tsbuildinfo
 
 # Env
 .env

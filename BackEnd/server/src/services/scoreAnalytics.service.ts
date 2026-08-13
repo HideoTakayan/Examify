@@ -2,6 +2,7 @@ import {
   getScoreDistributionByExam,
   getSubjectsForAdminClass,
   getScoreAnalyticsBySubject,
+  getItemAnalysisByExam,
 } from "~/models/scoreAnalytics.model";
 import { getAdminClassByManager, teacherManagesClass } from "~/models/adminClass.model";
 
@@ -52,4 +53,8 @@ export const getSubjectScoreAnalytics = async (
   const data = await getScoreAnalyticsBySubject(adminClassId, subjectId);
   if (!data) throw Object.assign(new Error("Subject not found"), { status: 404 });
   return data;
+};
+
+export const getItemAnalysis = async (examId: string) => {
+  return await getItemAnalysisByExam(examId);
 };

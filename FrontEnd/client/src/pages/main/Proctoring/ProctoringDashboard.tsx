@@ -5,7 +5,7 @@ import {
   Box, Text, Loader, Table, Badge, Paper, Group, Alert, Stack, TextInput, Select, Button, Modal, Tooltip,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { IconUsers, IconAlertCircle, IconSend } from '@tabler/icons-react';
+import { IconUsers, IconSend } from '@tabler/icons-react';
 import examApi, { type ExamProctoringData } from '@/services/examApi';
 import { MAX_INTEGRITY_STRIKES } from '@/services/examIntegrityStrikes';
 import appConfig from '@/configs/app.config';

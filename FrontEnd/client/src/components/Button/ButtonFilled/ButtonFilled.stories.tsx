@@ -1,5 +1,5 @@
-// eslint-disable-next-line storybook/no-renderer-packages
-import type { Meta, StoryObj } from '@storybook/react';
+﻿// eslint-disable-next-line storybook/no-renderer-packages
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import ButtonFilled from './ButtonFilled';
 
 const meta: Meta<typeof ButtonFilled> = {
@@ -31,3 +31,4 @@ export const Primary: Story = {
     // leftIcon: <IconArrowRight />,
   },
 };
+

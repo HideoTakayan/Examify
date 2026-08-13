@@ -6,6 +6,7 @@ type StatusFilter = 'all' | 'not_done' | 'done';
 
 export function useExamListState(opts: {
   isStaff: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: (key: string, options?: any) => string;
 }) {
   const { isStaff, t } = opts;

@@ -61,10 +61,8 @@ const ExamList = () => {
     statusFilter,
     setStatusFilter,
     startingExamId,
-    updatingExamId,
     forceSubmittingExamId,
     latestSessionByExam,
-    submittedSessionByExam,
     hasSubmitted,
     hasRetakeGrant,
     activeSessionCountByExam,
@@ -100,6 +98,7 @@ const ExamList = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setListPage(1);
   }, [searchText, statusFilter]);
 
@@ -290,9 +289,30 @@ const ExamList = () => {
                     >
                       <Table.Td>{(listPage - 1) * listPageSize + idx + 1}</Table.Td>
                       <Table.Td>
-                        <TruncatedText fw={500} maxWidth={300}>
-                          {item.title}
-                        </TruncatedText>
+                        <Stack gap={2}>
+                          <TruncatedText fw={500} maxWidth={300}>
+                            {item.title}
+                          </TruncatedText>
+                          {item.exam_category && (
+                            <Badge
+                              size="xs"
+                              variant="light"
+                              color={
+                                item.exam_category === 'practice'
+                                  ? 'violet'
+                                  : item.exam_category === 'final'
+                                  ? 'red'
+                                  : 'blue'
+                              }
+                            >
+                              {item.exam_category === 'practice'
+                                ? '📝 Thi Thử'
+                                : item.exam_category === 'final'
+                                ? '🏁 Cuối Kỳ'
+                                : '🎓 Giữa Kỳ'}
+                            </Badge>
+                          )}
+                        </Stack>
                       </Table.Td>
                       <Table.Td>
                         {subjectName ? (

@@ -62,20 +62,28 @@ export function reverseAnswer(
 /** original_key (DB) → display key (ô SV thấy trên màn hình) */
 export function originalKeyToDisplayKey(
   optionMap: Record<string, string>,
-  originalKey: string | null | undefined
-): string | null {
-  if (originalKey == null || originalKey === "") return null;
-  const target = String(Array.isArray(originalKey) ? originalKey[0] : originalKey)
-    .trim()
-    .toUpperCase();
-  if (!/^[A-D]$/.test(target)) return null;
-  if (!looksLikeOptionKeyMap(optionMap)) return target;
-  for (const [displayKey, origKey] of Object.entries(optionMap)) {
-    if (String(origKey).trim().toUpperCase() === target) {
-      return displayKey.toUpperCase();
+  originalKeyRaw: string | string[] | null | undefined
+): string[] {
+  const keys = Array.isArray(originalKeyRaw) ? originalKeyRaw : originalKeyRaw ? [originalKeyRaw] : [];
+  const result: string[] = [];
+  for (const k of keys) {
+    const target = String(k).trim().toUpperCase();
+    if (!/^[A-Z]$/.test(target)) continue;
+    if (!looksLikeOptionKeyMap(optionMap)) {
+      result.push(target);
+      continue;
     }
+    let found = false;
+    for (const [displayKey, origKey] of Object.entries(optionMap)) {
+      if (String(origKey).trim().toUpperCase() === target) {
+        result.push(displayKey.toUpperCase());
+        found = true;
+        break;
+      }
+    }
+    if (!found) result.push(target);
   }
-  return target;
+  return result.sort();
 }
 
 /** display index ("0") hoặc question_id → map về question_id + đáp án gốc */
@@ -166,7 +174,8 @@ export const getVersionByCode = async (
 export function generateVersionPool(
   questionIds: string[],
   questionOptions: Record<string, Record<string, string>>, // q_id → { A: "original", B: "original", ... }
-  numVersions: number
+  numVersions: number,
+  startVersionIndex: number = 0
 ): Array<{
   versionIndex: number;
   versionCode: string;
@@ -180,7 +189,8 @@ export function generateVersionPool(
     optionMaps: Record<string, Record<string, string>>;
   }> = [];
 
-  for (let v = 0; v < numVersions; v++) {
+  for (let i = 0; i < numVersions; i++) {
+    const v = startVersionIndex + i;
     // Fisher-Yates shuffle with seeded-ish determinism per version
     const qOrder = shuffleArray([...questionIds], v);
 

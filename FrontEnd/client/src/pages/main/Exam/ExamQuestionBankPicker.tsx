@@ -25,7 +25,7 @@ const DIFFICULTY_COLORS = { DE: 'green', TRUNGBINH: 'yellow', KHO: 'red' } as co
 export type BankPickTarget = {
   question_bank_id: string;
   content: string;
-  question_type: 'mcq' | 'essay';
+  question_type: 'mcq' | 'essay' | 'msq' | 'fib';
   points: number;
   options: Record<string, string> | null;
   correct_answer: string | string[] | null;
@@ -282,11 +282,9 @@ export default function ExamQuestionBankPicker({
                                 <Badge
                                   size="xs"
                                   variant="light"
-                                  color={item.question_type === 'mcq' ? 'blue' : 'violet'}
+                                  color="blue"
                                 >
-                                  {item.question_type === 'mcq'
-                                    ? t('exam_authoring.mcq')
-                                    : t('exam_authoring.essay')}
+                                  {t('exam_authoring.mcq')}
                                 </Badge>
                                 <Badge
                                   size="xs"

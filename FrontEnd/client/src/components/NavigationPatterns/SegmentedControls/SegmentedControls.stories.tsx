@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import SegmentedControls from "./SegmentedControls";
 
@@ -16,3 +16,4 @@ export const Primary: Story = {
     return <SegmentedControls value={value} onChange={setValue} />;
   },
 };
+

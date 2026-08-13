@@ -80,7 +80,7 @@ function LinksGroup({ label, icon: Icon, links, initiallyOpened = false, link, c
                     justify={collapsed ? 'center' : 'flex-start'}
                     style={collapsed ? undefined : { flex: 1, minWidth: 0 }}
                 >
-                    <Icon size={24} style={{ flexShrink: 0 }} />
+                    <span style={{ display: 'flex', flexShrink: 0 }}><Icon size={24} /></span>
                     {!collapsed && (
                         <Text size="sm" lineClamp={2} style={{ flex: 1, minWidth: 0 }}>
                             {label}

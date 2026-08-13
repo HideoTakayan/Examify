@@ -9,7 +9,6 @@ export interface PasswordResetRequest {
   status: ResetRequestStatus;
   admin_note: string | null;
   approved_by: string | null;
-  new_password_plain: string | null;
   expires_at: string;
   created_at: string;
   updated_at: string;
@@ -110,19 +109,17 @@ export const updateResetRequestStatus = async (
   id: string,
   status: ResetRequestStatus,
   approvedBy: string,
-  adminNote?: string,
-  newPasswordPlain?: string
+  adminNote?: string
 ): Promise<PasswordResetRequest | null> => {
   const result = await pool.query(
     `UPDATE password_reset_requests
      SET status = $2,
          approved_by = $3,
          admin_note = $4,
-         new_password_plain = $5,
          updated_at = NOW()
      WHERE id = $1
      RETURNING *`,
-    [id, status, approvedBy, adminNote ?? null, newPasswordPlain ?? null]
+    [id, status, approvedBy, adminNote ?? null]
   );
   return (result.rows[0] as PasswordResetRequest) ?? null;
 };

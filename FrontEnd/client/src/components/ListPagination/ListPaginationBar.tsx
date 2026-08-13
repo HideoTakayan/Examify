@@ -9,7 +9,7 @@ type Props = {
   limit: number;
   onPageChange: (page: number) => void;
   onLimitChange?: (limit: number) => void;
-  pageSizeOptions?: number[];
+  pageSizeOptions?: readonly number[];
   /** Hiện dropdown đổi số dòng / trang */
   showPageSize?: boolean;
   alwaysShowSummary?: boolean;

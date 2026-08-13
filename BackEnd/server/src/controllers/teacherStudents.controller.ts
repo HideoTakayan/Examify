@@ -46,39 +46,82 @@ async function resolveAdminClassIdForGrades(req: Request): Promise<string | null
 export const listStudentsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = (req as any).user;
-    const adminClassId = await getTeacherAdminClassId(
-      user.userId,
-      (req.query.admin_class_id as string | undefined)?.trim()
-    );
-    if (!adminClassId) {
-      return res.status(403).json({ success: false, message: "Chưa được gán lớp quản lý" });
+    const subjectId = (req.query.subject_id as string)?.trim();
+
+    if (!subjectId) {
+      // Logic cũ cho admin_class_id nếu không phải ngữ cảnh môn học
+      const adminClassId = await getTeacherAdminClassId(
+        user.userId,
+        (req.query.admin_class_id as string | undefined)?.trim()
+      );
+      if (!adminClassId) {
+        return res.status(403).json({ success: false, message: "Chưa được gán lớp quản lý" });
+      }
+
+      const { limit, offset } = parsePaginationQuery(req.query as Record<string, unknown>);
+      const search = (req.query.search as string)?.trim();
+
+      let where = `WHERE a.admin_class_id = $1 AND a.role = 'student'`;
+      const params: unknown[] = [adminClassId];
+      let idx = 2;
+      if (search) {
+        where += ` AND (a.full_name ILIKE $${idx} OR a.email ILIKE $${idx} OR a.username ILIKE $${idx})`;
+        params.push(`%${search}%`);
+        idx++;
+      }
+
+      const countR = await pool.query(`SELECT COUNT(*)::int AS total FROM accounts a ${where}`, params);
+      const total = countR.rows[0]?.total ?? 0;
+
+      const dataR = await pool.query<StudentRow>(
+        `SELECT a.id, a.email, a.username, a.full_name, a.is_active, a.created_at::text
+         FROM accounts a ${where}
+         ORDER BY a.full_name NULLS LAST, a.email
+         LIMIT $${idx++} OFFSET $${idx++}`,
+        [...params, limit, offset]
+      );
+
+      return res.json({ success: true, data: buildPaginatedList(dataR.rows, total, limit, offset) });
     }
 
     const { limit, offset } = parsePaginationQuery(req.query as Record<string, unknown>);
     const search = (req.query.search as string)?.trim();
 
-    let where = `WHERE a.admin_class_id = $1 AND a.role = 'student'`;
-    const params: unknown[] = [adminClassId];
-    let idx = 2;
+    // Tìm sinh viên học các lớp (sections) của môn này do giáo viên dạy trong kỳ hiện tại
+    let where = `WHERE a.role = 'student' 
+      AND a.id IN (
+        SELECT tse.student_id 
+        FROM term_student_enrollments tse
+        JOIN term_subject_offerings tso ON tso.id = tse.term_offering_id
+        JOIN semesters sem ON sem.id = tso.semester_id
+        JOIN term_teacher_registrations ttr ON ttr.term_offering_id = tso.id
+        WHERE ttr.teacher_id = $1 AND tso.subject_id = $2 AND sem.is_current = true
+      )`;
+    const values: unknown[] = [user.userId, subjectId];
+    let idx = 3;
+
     if (search) {
-      where += ` AND (a.full_name ILIKE $${idx} OR a.email ILIKE $${idx} OR a.username ILIKE $${idx})`;
-      params.push(`%${search}%`);
+      where += ` AND (a.username ILIKE $${idx} OR a.email ILIKE $${idx} OR a.full_name ILIKE $${idx})`;
+      values.push(`%${search}%`);
       idx++;
     }
 
-    const countR = await pool.query(`SELECT COUNT(*)::int AS total FROM accounts a ${where}`, params);
-    const total = countR.rows[0]?.total ?? 0;
+    const countRes = await pool.query(`SELECT COUNT(*) FROM accounts a ${where}`, values);
+    const total = parseInt(countRes.rows[0].count, 10);
 
-    const dataR = await pool.query<StudentRow>(
-      `SELECT a.id, a.email, a.username, a.full_name, a.is_active, a.created_at::text
-       FROM accounts a ${where}
-       ORDER BY a.full_name NULLS LAST, a.email
-       LIMIT $${idx++} OFFSET $${idx++}`,
-      [...params, limit, offset]
+    const dataRes = await pool.query<StudentRow>(
+      `SELECT ${STUDENT_RETURN_COLS}
+       FROM accounts a
+       ${where}
+       ORDER BY a.username ASC
+       LIMIT $${idx} OFFSET $${idx + 1}`,
+      [...values, limit, offset]
     );
 
-    res.json({ success: true, data: buildPaginatedList(dataR.rows, total, limit, offset) });
-  } catch (err) { next(err); }
+    return res.json({ success: true, data: buildPaginatedList(dataRes.rows, total, limit, offset) });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const addStudentController = async (req: Request, res: Response, next: NextFunction) => {
@@ -107,10 +150,10 @@ export const addStudentController = async (req: Request, res: Response, next: Ne
 
     const hashed = await bcrypt.hash(password, 12);
     const r = await pool.query<StudentRow>(
-      `INSERT INTO accounts (email, username, hashed_password, password_plain, role, full_name, admin_class_id, first_login)
-       VALUES ($1, $2, $3, $4, 'student', $5, $6, true)
+      `INSERT INTO accounts (email, username, hashed_password, role, full_name, admin_class_id, first_login)
+       VALUES ($1, $2, $3, 'student', $4, $5, true)
        RETURNING ${STUDENT_RETURN_COLS}`,
-      [email, username, hashed, password, full_name ?? null, adminClassId]
+      [email, username, hashed, full_name ?? null, adminClassId]
     );
     res.status(201).json({ success: true, data: r.rows[0] });
   } catch (err) { next(err); }
@@ -810,7 +853,15 @@ async function loadStudentTranscriptPayload(studentId: string, adminClassId: str
     LEFT JOIN subjects s ON s.id = e.subject_id
     WHERE es.student_id = $1 AND es.status = 'submitted'
       AND es.voided_at IS NULL
-      AND e.admin_class_id = (SELECT admin_class_id FROM accounts WHERE id = $1)
+      AND (
+        e.admin_class_id = (SELECT admin_class_id FROM accounts WHERE id = $1)
+        OR e.class_id IN (
+          SELECT term_offering_id FROM term_student_enrollments WHERE student_id = $1
+        )
+        OR e.class_id IN (
+          SELECT class_id FROM enrollments WHERE student_id = $1
+        )
+      )
     ORDER BY COALESCE(e.subject_id::text, e.id::text), es.submitted_at DESC
     `,
     [studentId]

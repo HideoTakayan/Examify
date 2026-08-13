@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Box, Title, Text, Loader, Paper, Group, Stack, Button, TextInput, Select,
+  Box, Title, Text, Loader, Paper, Group, Stack, Button, TextInput, Select, MultiSelect,
   Badge, Table, ActionIcon, Modal, Textarea, NumberInput, SegmentedControl,
   Tooltip, Alert, FileInput, Checkbox,
 } from '@mantine/core';
@@ -612,18 +612,19 @@ function QBForm({ initial, subjects, catalogLoading, onSubmit, onCancel }: QBFor
   const [options, setOptions] = useState<Record<string, string>>(
     initial?.options ?? { A: '', B: '', C: '', D: '' }
   );
-  const [correctAnswer, setCorrectAnswer] = useState<string>(() => {
+  const [correctAnswer, setCorrectAnswer] = useState<string[]>(() => {
     const raw = initial?.correct_answer;
-    if (typeof raw === 'string') return raw;
-    if (Array.isArray(raw)) return typeof raw[0] === 'string' ? raw[0] : '';
-    return '';
+    if (Array.isArray(raw)) return raw;
+    if (typeof raw === 'string') return [raw];
+    return [];
   });
   const [chapter, setChapter] = useState<number | ''>(initial?.chapter ?? '');
   const [subjectId, setSubjectId] = useState<string | null>(initial?.subject_id ?? subjects[0]?.id ?? null);
 
   useEffect(() => {
     if (questionType !== 'mcq') {
-      setCorrectAnswer('');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCorrectAnswer([]);
     }
   }, [questionType]);
 
@@ -699,10 +700,10 @@ function QBForm({ initial, subjects, catalogLoading, onSubmit, onCancel }: QBFor
               />
             </Group>
           ))}
-          <Select
+          <MultiSelect
             label={t('question_bank.form_correct_answer')}
             value={correctAnswer}
-            onChange={v => setCorrectAnswer(v ?? '')}
+            onChange={v => setCorrectAnswer(v)}
             data={Object.keys(options).filter(k => options[k].trim())}
           />
         </>

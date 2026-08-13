@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Paper, Title, Text, Stack, TextInput, PasswordInput,
-  Button, Alert, Loader, Center, Box,
+  Paper, Title, Text, Stack, PasswordInput,
+  Alert, Center,
 } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { resetPassword } from '@/services/authApi';
 import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';
@@ -12,7 +11,6 @@ import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
 export default function ResetPasswordPage() {
-  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') ?? '';
 
@@ -23,6 +21,7 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus('error');
       setMsg('Thiếu token đặt lại mật khẩu. Vui lòng truy cập link từ email.');
     }

@@ -161,7 +161,6 @@ const SubjectCatalogManagementPage = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [total, setTotal] = useState(0);
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
@@ -288,8 +287,7 @@ const SubjectCatalogManagementPage = () => {
     if (!accessToken) return;
     void subjectApi
       .getSubjects()
-      .then((list) => setAllSubjects(list as Subject[]))
-      .catch(() => { });
+      .catch(() => {});
   }, [accessToken]);
 
   const pageIds = subjects.map((s) => s.id);
@@ -345,7 +343,7 @@ const SubjectCatalogManagementPage = () => {
       }
       void fetchSubjects();
       void loadPrograms();
-      void subjectApi.getSubjects().then((list) => setAllSubjects(list as Subject[]));
+
     } catch {
       setError('Xóa hàng loạt thất bại.');
     } finally {
@@ -500,10 +498,6 @@ const SubjectCatalogManagementPage = () => {
 
   const subjectsInProgram = programSubjects;
 
-  const subjectsInGroup = selectedGroupId
-    ? subjectsInProgram.filter((s) => s.subject_group_id === selectedGroupId)
-    : subjectsInProgram;
-
   const assignedGroupIds = useMemo(
     () => new Set(groups.map((g) => g.id)),
     [groups]
@@ -585,7 +579,7 @@ const SubjectCatalogManagementPage = () => {
       refreshCatalog();
       void fetchSubjects();
       void loadGroups();
-      void subjectApi.getSubjects().then((list) => setAllSubjects(list as Subject[]));
+
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error;
       setError(msg || 'Import thất bại.');
@@ -1174,6 +1168,7 @@ function SubjectForm({
 
   useEffect(() => {
     if (!programId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormGroups([]);
       return;
     }

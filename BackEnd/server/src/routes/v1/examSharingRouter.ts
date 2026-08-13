@@ -13,7 +13,9 @@ import {
   getGradingAssignmentsByExam,
   getMyGradingAssignments,
   getPendingGradingCount,
+  getGradingAssignmentById,
 } from "~/models/examSharing.model";
+import { assertTeacherCanManageExam } from "~/services/exam.service";
 
 const router = Router();
 
@@ -52,11 +54,15 @@ router.get("/exams/:examId/shares", roleMiddleware(["admin", "teacher"]), async 
 router.post("/exams/:examId/share", roleMiddleware(["admin", "teacher"]), async (req, res, next) => {
   try {
     const userId = (req as any).user?.userId;
+    const userRole = (req as any).user?.role;
     const { shared_with, role } = req.body;
     if (!shared_with || !role) {
       res.status(400).json({ success: false, error: "shared_with và role là bắt buộc" });
       return;
     }
+    
+    await assertTeacherCanManageExam(req.params.examId, userId, userRole);
+    
     const share = await shareExamWith(req.params.examId, shared_with, role, userId);
     res.status(201).json({ success: true, data: share });
   } catch (err) {
@@ -67,6 +73,11 @@ router.post("/exams/:examId/share", roleMiddleware(["admin", "teacher"]), async 
 // DELETE /v1/exam-sharing/exams/:examId/shares/:userId
 router.delete("/exams/:examId/shares/:userId", roleMiddleware(["admin", "teacher"]), async (req, res, next) => {
   try {
+    const callerId = (req as any).user?.userId;
+    const callerRole = (req as any).user?.role;
+    
+    await assertTeacherCanManageExam(req.params.examId, callerId, callerRole);
+
     const deleted = await removeExamShare(req.params.examId, req.params.userId);
     if (!deleted) {
       res.status(404).json({ success: false, error: "Không tìm thấy chia sẻ" });
@@ -105,6 +116,10 @@ router.get("/grading/pending/count", roleMiddleware(["admin", "teacher"]), async
 // GET /v1/exam-sharing/grading/exam/:examId
 router.get("/grading/exam/:examId", roleMiddleware(["admin", "teacher"]), async (req, res, next) => {
   try {
+    const userId = (req as any).user?.userId;
+    const userRole = (req as any).user?.role;
+    await assertTeacherCanManageExam(req.params.examId, userId, userRole);
+
     const assignments = await getGradingAssignmentsByExam(req.params.examId);
     res.json({ success: true, data: assignments });
   } catch (err) {
@@ -136,6 +151,24 @@ router.patch("/grading/:assignmentId", roleMiddleware(["admin", "teacher"]), asy
       res.status(400).json({ success: false, error: "status là bắt buộc" });
       return;
     }
+
+    const assignmentInfo = await getGradingAssignmentById(req.params.assignmentId);
+    if (!assignmentInfo) {
+      return res.status(404).json({ success: false, error: "Không tìm thấy phân công chấm" });
+    }
+
+    const userId = (req as any).user?.userId;
+    const userRole = (req as any).user?.role;
+
+    // Check permissions: Must be the assigned grader or someone who can manage the exam
+    if (assignmentInfo.teacher_id !== userId && userRole !== 'admin') {
+      try {
+        await assertTeacherCanManageExam(assignmentInfo.exam_id, userId, userRole);
+      } catch (err) {
+        return res.status(403).json({ success: false, error: "Bạn không có quyền cập nhật trạng thái chấm thi này" });
+      }
+    }
+
     const assignment = await updateGradingStatus(req.params.assignmentId, status, notes);
     if (!assignment) {
       res.status(404).json({ success: false, error: "Không tìm thấy phân công chấm" });

@@ -1,6 +1,6 @@
 import pool from "~/config/db";
 
-export type QuestionType = "mcq" | "essay";
+export type QuestionType = "mcq" | "essay" | "msq" | "fib";
 export type QuestionDifficulty = "DE" | "TRUNGBINH" | "KHO";
 
 export interface Question {
@@ -47,7 +47,7 @@ function mapQuestionRow(row: any): Question {
     id: row.id,
     exam_id: row.exam_id,
     content: row.content,
-    question_type: qt === "essay" ? "essay" : "mcq",
+    question_type: (["essay", "msq", "fib"].includes(qt)) ? qt : "mcq",
     options: row.options == null ? null : parseJson<Record<string, string>>(row.options, {}),
     correct_answer:
       row.correct_answer == null

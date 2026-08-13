@@ -30,8 +30,6 @@ import type { SubjectDto } from '@/services/subjectApi';
 
 import { getSubjectPickerCatalog } from '@/services/subjectApi';
 
-import { catalogToPickerGroups } from './predictionSubjectGrouping';
-
 import { formatSubjectLabel, type SubjectCategoryGroup } from './subjectGrouping';
 
 import styles from './SubjectCategoryPicker.module.scss';
@@ -156,6 +154,7 @@ export default function SubjectCategoryPicker({
   useEffect(() => {
     if (externalGroups) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFetchLoading(true);
     void getSubjectPickerCatalog(
       programId || programCode || adminClassId
@@ -164,10 +163,13 @@ export default function SubjectCategoryPicker({
     )
 
       .then((catalog) => {
-
-        if (!cancelled) setFetchedGroups(catalogToPickerGroups(catalog.groups));
-
-      })
+        if (!cancelled) {
+          setFetchedGroups(catalog.groups.map(g => ({
+            category: g.code,
+            label: g.label,
+            subjects: g.subjects as unknown as SubjectDto[]
+          })));
+        }      })
 
       .catch(() => {
 
@@ -325,6 +327,7 @@ export default function SubjectCategoryPicker({
 
     if (!groups.length) {
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveCategory(null);
 
       return;
@@ -347,6 +350,7 @@ export default function SubjectCategoryPicker({
 
     if (opened && selected) {
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveCategory(selected.category);
 
     }
@@ -359,6 +363,7 @@ export default function SubjectCategoryPicker({
 
     if (globalSearchResults?.length) {
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveCategory(globalSearchResults[0].group.category);
 
     }

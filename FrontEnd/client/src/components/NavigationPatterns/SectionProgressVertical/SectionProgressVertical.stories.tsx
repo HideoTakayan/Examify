@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
+﻿import type { Meta, StoryObj } from "@storybook/react-vite";
 import SectionProgressVertical from "./SectionProgressVertical";
 
 const meta: Meta<typeof SectionProgressVertical> = {
@@ -10,3 +10,4 @@ export default meta;
 type Story = StoryObj<typeof SectionProgressVertical>;
 
 export const Primary: Story = {};
+

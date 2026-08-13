@@ -113,18 +113,28 @@ export async function resolveProgramForPickerQuery(
       [userId]
     );
     const row = r.rows[0];
-    if (!row?.program_id) {
-      throw Object.assign(
-        new Error(
-          "Giáo viên chưa được gán lớp chủ nhiệm — không xác định được nhóm môn theo chuyên ngành"
-        ),
-        { status: 403 }
-      );
+    let programId: string | null | undefined = row?.program_id;
+    let adminClassId: string | null | undefined = row?.id;
+    let adminClassName: string | null | undefined = row?.display_name;
+
+    if (!programId) {
+      // Nếu giáo viên không chủ nhiệm lớp nào, dùng CTĐT mặc định (ví dụ CNTT) để họ vẫn thấy 
+      // được các môn họ được phân công giảng dạy trong kỳ.
+      const defaultId = await getDefaultProgramId();
+      if (!defaultId) {
+        throw Object.assign(
+          new Error("Chưa cấu hình chương trình mặc định và giáo viên chưa được gán lớp chủ nhiệm"),
+          { status: 400 }
+        );
+      }
+      programId = defaultId;
+      adminClassId = null;
+      adminClassName = null;
     }
     return {
-      programId: row.program_id,
-      adminClassId: row.id,
-      adminClassName: row.display_name,
+      programId: programId,
+      adminClassId: adminClassId,
+      adminClassName: adminClassName,
       source: "teacher_class",
     };
   }
@@ -525,6 +535,39 @@ export async function getSubjectPickerCatalog(
 
   const ctx = await resolveProgramForPickerQuery(resolvedQuery);
   const catalog = await getSubjectCatalog(ctx.programId, { hideEmptyGroups: true });
+
+  // Lọc chỉ lấy các môn giảng viên được phân công trong học kỳ hiện tại
+  if (resolvedQuery.userRole === "teacher" && resolvedQuery.userId) {
+    const teacherAssignments = await pool.query<{ subject_id: string; semester_code: string; section_name: string }>(
+      `SELECT tso.subject_id, sem.code AS semester_code, tso.section_name
+       FROM term_teacher_registrations ttr
+       JOIN term_subject_offerings tso ON tso.id = ttr.term_offering_id
+       JOIN semesters sem ON sem.id = tso.semester_id
+       WHERE ttr.teacher_id = $1 AND sem.is_current = true`,
+      [resolvedQuery.userId]
+    );
+
+    // Gom nhóm các lớp học phần (sections) theo từng môn học
+    const assignmentMap = new Map<string, { semesterCode: string; sections: Set<string> }>();
+    for (const row of teacherAssignments.rows) {
+      if (!assignmentMap.has(row.subject_id)) {
+        assignmentMap.set(row.subject_id, { semesterCode: row.semester_code, sections: new Set() });
+      }
+      assignmentMap.get(row.subject_id)!.sections.add(row.section_name);
+    }
+    
+    // Đổi tên môn học thành: Tên môn-Kỳ(Lớp1, Lớp2) và lọc bỏ các môn không có
+    catalog.groups.forEach(g => {
+      g.subjects = g.subjects.filter(s => assignmentMap.has(s.id));
+      g.subjects.forEach(s => {
+        const info = assignmentMap.get(s.id)!;
+        const sectionsStr = Array.from(info.sections).join(', ');
+        // VD: Công nghệ .Net-1-1-26(N02)
+        s.name = `${s.name}-${info.semesterCode}(${sectionsStr})`;
+      });
+    });
+    catalog.groups = catalog.groups.filter(g => g.subjects.length > 0);
+  }
 
   const progR = await pool.query<{ code: string; name: string }>(
     `SELECT code, name FROM programs WHERE id = $1 LIMIT 1`,

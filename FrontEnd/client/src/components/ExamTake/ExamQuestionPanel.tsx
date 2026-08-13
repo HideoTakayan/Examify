@@ -22,8 +22,8 @@ type Props = {
   isFlagged: boolean;
   onToggleFlag: () => void;
   /** key -> value (mcq key hoặc essay text hoặc blank) */
-  answers: Record<string, string>;
-  onAnswerChange: (key: string, value: string) => void;
+  answers: Record<string, string | string[]>;
+  onAnswerChange: (key: string, value: string | string[]) => void;
 };
 
 function countWords(s: string) {
@@ -38,7 +38,7 @@ function FillBlankLine({
 }: {
   segments: FillSegment[];
   answerPrefix: string;
-  answers: Record<string, string>;
+  answers: Record<string, string | string[]>;
   onChange: (storageKey: string, v: string) => void;
 }) {
   return (
@@ -55,7 +55,7 @@ function FillBlankLine({
             size="sm"
             radius="md"
             placeholder={seg.placeholder ?? '...'}
-            value={answers[storageKey] ?? ''}
+            value={String(answers[storageKey] ?? '')}
             onChange={(e) => onChange(storageKey, e.currentTarget.value)}
           />
         );
@@ -70,8 +70,8 @@ function PartMcq({
   onChange,
 }: {
   part: Extract<CompositePart, { kind: 'mcq' }>;
-  value: string | null;
-  onChange: (v: string) => void;
+  value: string | string[] | null;
+  onChange: (v: string | string[]) => void;
 }) {
   return (
     <Box className={classes.partBlock}>
@@ -127,20 +127,22 @@ function PartEssay({
 function hasDraftForQuestion(
   question: MockExamQuestion,
   qPrefix: string,
-  answers: Record<string, string>,
+  answers: Record<string, string | string[]>,
 ) {
   switch (question.type) {
     case 'mcq':
     case 'audio_mcq':
-    case 'image_mcq':
-      return Boolean(answers[qPrefix]);
+    case 'image_mcq': {
+      const v = answers[qPrefix];
+      return Array.isArray(v) ? v.length > 0 : Boolean(v);
+    }
     case 'essay':
-      return Boolean(answers[qPrefix]?.trim());
+      return Boolean(String(answers[qPrefix] ?? '').trim());
     case 'fill_blank':
       return Boolean(
         question.fillSegments?.some((s) => {
           if (s.type !== 'blank') return false;
-          return Boolean(answers[`${qPrefix}-${s.id}`]?.trim());
+          return Boolean(String(answers[`${qPrefix}-${s.id}`] ?? '').trim());
         }),
       );
     case 'composite': {
@@ -148,8 +150,9 @@ function hasDraftForQuestion(
       if (!parts?.length) return false;
       return parts.some((part) => {
         const pk = `${qPrefix}-${part.id}`;
-        if (part.kind === 'mcq') return Boolean(answers[pk]);
-        return Boolean(answers[pk]?.trim());
+        const v = answers[pk];
+        if (part.kind === 'mcq') return Array.isArray(v) ? v.length > 0 : Boolean(v);
+        return Boolean(String(v ?? '').trim());
       });
     }
     default:
@@ -169,12 +172,13 @@ export function ExamQuestionPanel({
   const { t } = useTranslation();
   const qPrefix = `q${question.number}`;
 
-  const renderMcq = (options: { key: string; label: string }[], answerKey: string) => (
+  const renderMcq = (options: { key: string; label: string }[], answerKey: string, multiSelect: boolean = false) => (
     <McqOptionList
       options={options}
       value={answers[answerKey] ?? null}
       onChange={(k) => onAnswerChange(answerKey, k)}
-      onClear={() => onAnswerChange(answerKey, '')}
+      onClear={() => onAnswerChange(answerKey, [])}
+      multiSelect={multiSelect}
     />
   );
 
@@ -185,7 +189,31 @@ export function ExamQuestionPanel({
           <>
             <div className={classes.questionText}>{question.prompt}</div>
             {question.media_url ? <ExamQuestionMedia url={question.media_url} /> : null}
-            {question.options && renderMcq(question.options, qPrefix)}
+            {question.options && renderMcq(question.options, qPrefix, false)}
+          </>
+        );
+
+      case 'msq':
+        return (
+          <>
+            <div className={classes.questionText}>{question.prompt}</div>
+            {question.media_url ? <ExamQuestionMedia url={question.media_url} /> : null}
+            {question.options && renderMcq(question.options, qPrefix, true)}
+          </>
+        );
+
+      case 'fib':
+        return (
+          <>
+            <div className={classes.questionText}>{question.prompt}</div>
+            {question.media_url ? <ExamQuestionMedia url={question.media_url} /> : null}
+            <TextInput
+              mt="md"
+              size="md"
+              placeholder={t('exam_question.fill_blank_placeholder', 'Nhập đáp án...')}
+              value={String(answers[qPrefix] ?? '')}
+              onChange={(e) => onAnswerChange(qPrefix, e.currentTarget.value)}
+            />
           </>
         );
 
@@ -261,12 +289,12 @@ export function ExamQuestionPanel({
               minRows={6}
               radius="md"
               placeholder={question.essay?.placeholder}
-              value={answers[qPrefix] ?? ''}
+              value={String(answers[qPrefix] ?? '')}
               onChange={(e) => onAnswerChange(qPrefix, e.currentTarget.value)}
             />
             <Text size="xs" c="dimmed" ta="right" mt={6}>
               {t('exam_question.word_count', {
-                count: countWords(answers[qPrefix] ?? ''),
+                count: countWords(String(answers[qPrefix] ?? '')),
                 max: question.essay?.maxWords ?? 200,
               })}
             </Text>
@@ -295,7 +323,7 @@ export function ExamQuestionPanel({
                 <PartEssay
                   key={part.id}
                   part={part}
-                  value={answers[pk] ?? ''}
+                  value={String(answers[pk] ?? '')}
                   onChange={(v) => onAnswerChange(pk, v)}
                 />
               );

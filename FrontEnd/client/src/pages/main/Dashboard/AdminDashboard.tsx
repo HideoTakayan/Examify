@@ -185,7 +185,7 @@ const AdminDashboard = ({ data }: AdminDashboardProps) => {
       {showStudentSection && (
         <Stack gap="sm" mb="xl">
           <Group justify="space-between" align="center" wrap="wrap">
-            <Title order={4}>{t('admin.student_list_title')}</Title>
+            <Title order={4}>{isAdmin ? t('admin.student_list_title') : t('nav.teacher_student_list', 'Sinh viên lớp tôi')}</Title>
             {isAdmin && (
               <Button
                 variant="subtle"

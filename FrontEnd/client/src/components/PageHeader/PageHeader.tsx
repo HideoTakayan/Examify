@@ -5,7 +5,7 @@ type PageHeaderProps = {
   title: string;
   subtitle?: string;
   action?: ReactNode;
-  accent?: 'blue' | 'violet' | 'green' | 'amber';
+  accent?: 'blue' | 'violet' | 'green' | 'amber' | 'teal';
 };
 
 export default function PageHeader({ title, subtitle, action }: PageHeaderProps) {

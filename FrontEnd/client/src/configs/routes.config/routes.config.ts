@@ -117,18 +117,7 @@ export const protectedRoutes: Routes = [
     component: lazy(() => import('@/pages/main/Exam/ExamResult')),
     authority: ['user', 'admin', 'teacher'],
   },
-  {
-    key: 'prediction',
-    path: '/prediction',
-    component: lazy(() => import('@/pages/main/Exam/Prediction')),
-    authority: ['user'],
-    nav: {
-      labelKey: 'nav.prediction',
-      position: 'main',
-      icon: IconFileAnalytics,
-      order: 9,
-    },
-  },
+
   {
     key: 'my-results',
     path: '/my-results',
@@ -211,7 +200,7 @@ export const protectedRoutes: Routes = [
   {
     key: 'grading',
     path: '/grading',
-    component: lazy(() => import('@/pages/main/Grading/GradingIndex')),
+    component: lazy(() => import('@/pages/main/Grading/SubjectOfferingsList')),
     authority: ['teacher'],
     nav: {
       labelKey: 'nav.grading',
@@ -225,6 +214,12 @@ export const protectedRoutes: Routes = [
     key: 'grading-session',
     path: '/grading/:sessionId',
     component: lazy(() => import('@/pages/main/Grading/Grading')),
+    authority: ['teacher'],
+  },
+  {
+    key: 'grading-offering',
+    path: '/grading/offering/:offeringId',
+    component: lazy(() => import('@/pages/main/Grading/SubjectGradingSheet')),
     authority: ['teacher'],
   },
   {

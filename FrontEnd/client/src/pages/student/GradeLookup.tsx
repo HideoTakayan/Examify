@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Tabs, Table, Text, Title, Badge, Group, Loader, Center, Box, ScrollArea, Grid, Stack, Divider, Select, ThemeIcon } from '@mantine/core';
+import { Card, Tabs, Table, Text, Title, Group, Loader, Center, Box, ScrollArea, Grid, Stack, Divider, Select } from '@mantine/core';
 import { IconBooks, IconChartBar, IconUser, IconId, IconCalendar, IconGenderMale, IconActivity, IconUsers, IconStar } from '@tabler/icons-react';
 import apiClient from '@/services/apiClient';
 

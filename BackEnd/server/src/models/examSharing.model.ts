@@ -139,6 +139,14 @@ export const updateGradingStatus = async (
   return result.rows[0] ?? null;
 };
 
+export const getGradingAssignmentById = async (assignmentId: string): Promise<GradingAssignment | null> => {
+  const result = await pool.query(
+    `SELECT * FROM grading_assignments WHERE id = $1`,
+    [assignmentId]
+  );
+  return result.rows[0] ?? null;
+};
+
 export const getGradingAssignmentsByExam = async (examId: string): Promise<GradingAssignment[]> => {
   const result = await pool.query(
     `SELECT ga.*, a.full_name AS teacher_name

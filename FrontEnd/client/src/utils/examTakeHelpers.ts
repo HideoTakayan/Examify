@@ -11,19 +11,6 @@ export function formatHms(totalSeconds: number) {
 export function toUiQuestion(question: ApiQuestion, number: number): MockExamQuestion {
   const media_url = question.media_url?.trim() ? question.media_url : null;
 
-  if (question.question_type === 'essay') {
-    return {
-      number,
-      points: question.points,
-      type: 'essay',
-      prompt: question.content,
-      media_url,
-      essay: {
-        placeholder: 'Nhap cau tra loi cua ban...',
-      },
-    };
-  }
-
   const options = Object.entries(question.options ?? {})
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, rawLabel]) => {
@@ -42,7 +29,7 @@ export function toUiQuestion(question: ApiQuestion, number: number): MockExamQue
   return {
     number,
     points: question.points,
-    type: 'mcq',
+    type: question.question_type as MockExamQuestion['type'],
     prompt: question.content,
     media_url,
     options,
@@ -77,13 +64,13 @@ export function mapSessionQuestionsToUi(questionData: StartSessionData['question
 }
 
 export function buildSubmitAnswers(
-  answers: Record<string, string>,
+  answers: Record<string, string | string[]>,
   questionIdByNumber: Record<number, string>,
   questionByNumber: Map<number, MockExamQuestion>,
 ): Record<string, string | string[]> {
   const payload: Record<string, string | string[]> = {};
 
-  for (const [rawNumber, questionId] of Object.entries(questionIdByNumber)) {
+  for (const rawNumber of Object.keys(questionIdByNumber)) {
     const number = Number(rawNumber);
     const displayIdx = String(number - 1);
     const question = questionByNumber.get(number);
@@ -92,14 +79,18 @@ export function buildSubmitAnswers(
     const answerKey = `q${number}`;
     const rawAnswer = answers[answerKey];
 
-    if (question.type === 'essay') {
-      const essay = rawAnswer?.trim();
-      if (essay) payload[displayIdx] = essay;
-      continue;
-    }
-
     if (question.type === 'mcq' && rawAnswer) {
-      payload[displayIdx] = rawAnswer;
+      if (Array.isArray(rawAnswer) ? rawAnswer.length > 0 : Boolean(rawAnswer)) {
+        payload[displayIdx] = rawAnswer;
+      }
+    } else if (question.type === 'msq' && rawAnswer) {
+      if (Array.isArray(rawAnswer) && rawAnswer.length > 0) {
+        payload[displayIdx] = rawAnswer;
+      }
+    } else if (question.type === 'fib' && rawAnswer) {
+      if (typeof rawAnswer === 'string' && rawAnswer.trim()) {
+        payload[displayIdx] = rawAnswer.trim();
+      }
     }
   }
 

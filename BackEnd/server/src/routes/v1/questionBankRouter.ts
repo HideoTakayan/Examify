@@ -8,7 +8,9 @@ import {
   updateQuestionBankItem,
   deleteQuestionBankItem,
   importToExam,
+  importRandomToExam,
 } from "~/models/questionBank.model";
+import { assertTeacherCanManageExam } from "~/services/exam.service";
 import type { QuestionBankFilter } from "~/models/questionBank.model";
 import { parsePaginationQuery, buildPaginatedList } from "~/utils/pagination";
 
@@ -72,11 +74,18 @@ router.post("/", async (req, res, next) => {
 // PATCH /v1/question-bank/:id — update
 router.patch("/:id", async (req, res, next) => {
   try {
-    const item = await updateQuestionBankItem(req.params.id, req.body);
-    if (!item) {
+    const user = (req as any).user;
+    const existing = await getQuestionBankById(req.params.id);
+    if (!existing) {
       res.status(404).json({ success: false, error: "Không tìm thấy câu hỏi" });
       return;
     }
+    if (user.role !== "admin" && existing.created_by !== user.userId) {
+      res.status(403).json({ success: false, error: "Không có quyền sửa câu hỏi này" });
+      return;
+    }
+
+    const item = await updateQuestionBankItem(req.params.id, req.body);
     res.json({ success: true, data: item });
   } catch (err) {
     next(err);
@@ -86,11 +95,18 @@ router.patch("/:id", async (req, res, next) => {
 // DELETE /v1/question-bank/:id
 router.delete("/:id", async (req, res, next) => {
   try {
-    const deleted = await deleteQuestionBankItem(req.params.id);
-    if (!deleted) {
+    const user = (req as any).user;
+    const existing = await getQuestionBankById(req.params.id);
+    if (!existing) {
       res.status(404).json({ success: false, error: "Không tìm thấy câu hỏi" });
       return;
     }
+    if (user.role !== "admin" && existing.created_by !== user.userId) {
+      res.status(403).json({ success: false, error: "Không có quyền xóa câu hỏi này" });
+      return;
+    }
+
+    await deleteQuestionBankItem(req.params.id);
     res.json({ success: true });
   } catch (err) {
     next(err);
@@ -100,6 +116,9 @@ router.delete("/:id", async (req, res, next) => {
 // POST /v1/question-bank/:id/import/:examId — import to exam
 router.post("/:id/import/:examId", async (req, res, next) => {
   try {
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+
     const versionIndex =
       req.body?.version_index != null ? Number(req.body.version_index) : undefined;
     const result = await importToExam(req.params.id, req.params.examId, {
@@ -111,6 +130,30 @@ router.post("/:id/import/:examId", async (req, res, next) => {
       res.status(404).json({ success: false, error: err.message });
       return;
     }
+    next(err);
+  }
+});
+
+// POST /v1/question-bank/random-import/:examId — import random questions to exam
+router.post("/random-import/:examId", async (req, res, next) => {
+  try {
+    const { num_questions, subject_id, version_index } = req.body;
+    if (!num_questions || typeof num_questions !== "number" || num_questions <= 0) {
+      return res.status(400).json({ success: false, error: "num_questions là bắt buộc và phải lớn hơn 0" });
+    }
+
+    const versionIndex = version_index != null ? Number(version_index) : undefined;
+    
+    const user = (req as any).user;
+    await assertTeacherCanManageExam(req.params.examId, user.userId, user.role);
+
+    const result = await importRandomToExam(req.params.examId, num_questions, {
+      subjectId: subject_id,
+      versionIndex,
+    });
+    
+    res.status(201).json({ success: true, data: result });
+  } catch (err) {
     next(err);
   }
 });

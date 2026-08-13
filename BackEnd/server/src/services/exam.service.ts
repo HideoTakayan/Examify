@@ -12,6 +12,8 @@ import {
 } from "~/models/exam.model";
 import { getAdminClassById } from "~/models/adminClass.model";
 import { getSubjectById } from "~/models/subject.model";
+import { getUserById } from "~/models/user.model";
+import { findEnrollment } from "~/models/enrollment.model";
 import { getProgramSubjectIds } from "~/services/subjectCatalog.service";
 import {
   getPublicQuestionsByExam,
@@ -113,6 +115,17 @@ export function httpError(status: number, message: string): Error & { status: nu
   return e;
 }
 
+export async function assertNoActiveOrSubmittedSessions(examId: string): Promise<void> {
+  const sessionCheck = await pool.query<{ cnt: number }>(
+    `SELECT COUNT(*)::int AS cnt FROM exam_sessions
+     WHERE exam_id = $1 AND voided_at IS NULL AND status IN ('active', 'submitted')`,
+    [examId]
+  );
+  if ((sessionCheck.rows[0]?.cnt ?? 0) > 0) {
+    throw httpError(409, "Không thể sửa hoặc xóa bài thi/câu hỏi khi đã có sinh viên làm bài. Hãy kết thúc và huỷ các phiên thi trước.");
+  }
+}
+
 export const listExams = async (): Promise<ExamDetail[]> => getAllExams();
 
 export const listExamsPaginated = async (
@@ -127,7 +140,7 @@ export const listExamsByAdminClass = async (adminClassId: string): Promise<Exam[
 export const getExam = async (id: string): Promise<ExamDetail | null> => getExamById(id);
 
 export interface CreateExamScope {
-  admin_class_id: string;
+  admin_class_id?: string;
   subject_id: string;
   class_id?: string | null;
 }
@@ -137,23 +150,45 @@ async function assertExamScope(
   userId: string,
   role: string
 ): Promise<CreateExamScope> {
-  const adminClass = await getAdminClassById(scope.admin_class_id);
-  if (!adminClass) throw httpError(404, "Không tìm thấy lớp hành chính");
-  if (role === "teacher" && adminClass.manager_teacher_id !== userId) {
-    throw httpError(403, "Bạn không quản lý lớp này");
-  }
   const subject = await getSubjectById(scope.subject_id);
   if (!subject) throw httpError(404, "Không tìm thấy môn học");
-  if (!adminClass.program_id) {
-    throw httpError(400, "Lớp hành chính chưa gán chuyên ngành");
+
+  if (scope.class_id) {
+    if (role === 'teacher') {
+      const result = await pool.query(`
+        SELECT 1 FROM term_teacher_registrations
+        WHERE term_offering_id = $1 AND teacher_id = $2
+      `, [scope.class_id, userId]);
+      
+      if (result.rows.length === 0) {
+        throw httpError(403, "Bạn không có quyền quản lý lớp học phần này");
+      }
+    }
+    const offering = await pool.query(`SELECT subject_id FROM term_subject_offerings WHERE id = $1`, [scope.class_id]);
+    if (offering.rows.length === 0) throw httpError(404, "Không tìm thấy lớp học phần");
+    if (offering.rows[0].subject_id !== scope.subject_id) {
+      throw httpError(400, "Môn học không khớp với lớp học phần");
+    }
+  } else if (scope.admin_class_id) {
+    const adminClass = await getAdminClassById(scope.admin_class_id);
+    if (!adminClass) throw httpError(404, "Không tìm thấy lớp hành chính");
+    if (role === "teacher" && adminClass.manager_teacher_id !== userId) {
+      throw httpError(403, "Bạn không quản lý lớp hành chính này");
+    }
+    if (!adminClass.program_id) {
+      throw httpError(400, "Lớp hành chính chưa gán chuyên ngành");
+    }
+    const programSubjectIds = await getProgramSubjectIds(adminClass.program_id);
+    if (!programSubjectIds.includes(scope.subject_id)) {
+      throw httpError(
+        403,
+        "Môn học không thuộc chương trình đào tạo của chuyên ngành lớp bạn quản lý"
+      );
+    }
+  } else {
+    throw httpError(400, "Cần cung cấp admin_class_id hoặc class_id");
   }
-  const programSubjectIds = await getProgramSubjectIds(adminClass.program_id);
-  if (!programSubjectIds.includes(scope.subject_id)) {
-    throw httpError(
-      403,
-      "Môn học không thuộc chương trình đào tạo của chuyên ngành lớp bạn quản lý"
-    );
-  }
+
   return scope;
 }
 
@@ -185,7 +220,12 @@ export const createExamService = async (
   closesAt?: string | null,
   numVersions?: number,
   opensAt?: string | null,
-  endsAt?: string | null
+  endsAt?: string | null,
+  examType?: 'mcq' | 'essay',
+  examCategory?: 'midterm' | 'final' | 'practice',
+  dynamicNumQuestions?: number | null,
+  reviewModeDetailed?: boolean,
+  requireSeb?: boolean
 ): Promise<Exam> => {
   validateScheduleFields({ opens_at: opensAt, ends_at: endsAt, closes_at: closesAt });
   const normOpens = normalizeScheduleAtInput(opensAt);
@@ -199,7 +239,10 @@ export const createExamService = async (
   }
   const normalized = normalizeClosesAtInput(closesAt);
   const validated = await assertExamScope(scope, createdBy, role);
-  return createExam(title, createdBy, effectiveDuration, {
+  return createExam({
+    title,
+    createdBy,
+    durationMin: effectiveDuration,
     description,
     closesAt: normalized,
     opensAt: normOpens,
@@ -208,6 +251,11 @@ export const createExamService = async (
     subjectId: validated.subject_id,
     classId: validated.class_id ?? null,
     numVersions,
+    examType: examType ?? 'mcq',
+    examCategory: examCategory ?? 'midterm',
+    dynamicNumQuestions,
+    reviewModeDetailed,
+    requireSeb,
   });
 };
 
@@ -221,12 +269,24 @@ export const updateExamService = async (
     opens_at?: string | null;
     ends_at?: string | null;
     num_versions?: number;
+    dynamic_num_questions?: number | null;
+    review_mode_detailed?: boolean;
+    exam_category?: 'midterm' | 'final' | 'practice';
+    require_seb?: boolean;
   }
 ): Promise<Exam | null> => {
   validateScheduleFields(payload);
   const fields: Partial<
-    Pick<Exam, "title" | "description" | "duration_min" | "closes_at" | "opens_at" | "ends_at" | "num_versions">
+    Pick<Exam, "title" | "description" | "duration_min" | "closes_at" | "opens_at" | "ends_at" | "num_versions" | "dynamic_num_questions" | "exam_category" | "review_mode_detailed" | "require_seb">
   > = {};
+
+  if (
+    payload.num_versions !== undefined ||
+    payload.dynamic_num_questions !== undefined ||
+    payload.exam_category !== undefined
+  ) {
+    await assertNoActiveOrSubmittedSessions(id);
+  }
 
   if (payload.title !== undefined) {
     const title = payload.title.trim();
@@ -259,6 +319,32 @@ export const updateExamService = async (
     }
     fields.num_versions = Math.floor(n);
   }
+  if (payload.dynamic_num_questions !== undefined) {
+    if (payload.dynamic_num_questions === null) {
+      fields.dynamic_num_questions = null;
+    } else {
+      const dn = Number(payload.dynamic_num_questions);
+      if (!Number.isFinite(dn) || dn < 1) {
+        throw httpError(400, "dynamic_num_questions phải lớn hơn 0");
+      }
+      fields.dynamic_num_questions = Math.floor(dn);
+    }
+  }
+  if (payload.exam_category !== undefined) {
+    fields.exam_category = payload.exam_category;
+    // If category is changed away from practice, force review_mode_detailed=false
+    if (payload.exam_category !== 'practice') {
+      fields.review_mode_detailed = false;
+    }
+  }
+  if (payload.require_seb !== undefined) {
+    fields.require_seb = payload.require_seb;
+  }
+  if (payload.review_mode_detailed !== undefined) {
+    // Only allow detailed review for practice exams
+    const effectiveCategory = payload.exam_category ?? (await getExamById(id))?.exam_category;
+    fields.review_mode_detailed = effectiveCategory === 'practice' ? payload.review_mode_detailed : false;
+  }
 
   if (
     fields.opens_at !== undefined ||
@@ -284,6 +370,158 @@ export const updateExamService = async (
 };
 
 export const deleteExamService = async (id: string): Promise<boolean> => deleteExam(id);
+
+// ---------------------------------------------------------------------------
+// Clone Exam — nhân bản bài thi sang lớp/lịch thi khác
+// ---------------------------------------------------------------------------
+export interface CloneExamPayload {
+  /** ID bài thi gốc cần clone */
+  source_exam_id: string;
+  /** Tiêu đề mới (nếu không truyền, dùng tên gốc + " (Bản sao)") */
+  title?: string;
+  /** Lớp học phần đích (term_subject_offerings.id) */
+  class_id?: string | null;
+  /** Lớp hành chính đích */
+  admin_class_id?: string | null;
+  /** Thời gian mở đề (ISO) */
+  opens_at?: string | null;
+  /** Thời gian kết thúc (ISO) */
+  ends_at?: string | null;
+  /** Thời gian hạn nộp tự làm (ISO) */
+  closes_at?: string | null;
+}
+
+export interface CloneExamResult {
+  exam: Exam;
+  cloned_question_count: number;
+}
+
+export const cloneExamService = async (
+  payload: CloneExamPayload,
+  actorId: string,
+  actorRole: string
+): Promise<CloneExamResult> => {
+  // 1. Load bài thi gốc
+  const source = await getExamById(payload.source_exam_id);
+  if (!source) throw httpError(404, "Không tìm thấy bài thi gốc");
+
+  // 2. Người dùng phải có quyền QUẢN LÝ bài thi gốc
+  await assertTeacherCanManageExam(payload.source_exam_id, actorId, actorRole);
+
+  // 3. Xác định scope đích — phải cung cấp class_id hoặc admin_class_id
+  const targetClassId = payload.class_id ?? null;
+  const targetAdminClassId = payload.admin_class_id ?? null;
+  if (!targetClassId && !targetAdminClassId) {
+    throw httpError(400, "Cần cung cấp class_id hoặc admin_class_id cho lớp đích");
+  }
+
+  // 4. Validate scope đích (kiểm tra quyền GV với lớp đích + subject match)
+  const subjectId = source.subject_id!;
+  const targetScope: CreateExamScope = {
+    subject_id: subjectId,
+    class_id: targetClassId,
+    admin_class_id: targetAdminClassId ?? undefined,
+  };
+  await assertExamScope(targetScope, actorId, actorRole);
+
+  // 5. Validate lịch thi mới nếu được truyền
+  const normOpens = normalizeScheduleAtInput(payload.opens_at);
+  const normEnds = normalizeScheduleAtInput(payload.ends_at ?? payload.closes_at);
+  if (normOpens || normEnds) {
+    validateScheduleFields({
+      opens_at: payload.opens_at,
+      ends_at: payload.ends_at,
+      closes_at: payload.closes_at,
+    });
+  }
+  const scheduledDuration = durationMinFromSchedule(normOpens, normEnds);
+  const effectiveDuration = scheduledDuration ?? source.duration_min;
+
+  const newTitle = payload.title?.trim() || `${source.title} (Bản sao)`;
+
+  // 6. Transaction: tạo exam mới + clone câu hỏi
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Tạo exam mới
+    const examRes = await client.query(
+      `INSERT INTO exams (
+         title, description, class_id, admin_class_id, subject_id,
+         created_by, duration_min, num_versions,
+         closes_at, opens_at, ends_at, exam_type, exam_category,
+         dynamic_num_questions, review_mode_detailed, require_seb
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,
+      [
+        newTitle,
+        source.description ?? null,
+        targetClassId,
+        targetAdminClassId,
+        subjectId,
+        actorId,
+        effectiveDuration,
+        source.num_versions,
+        normalizeClosesAtInput(payload.closes_at),
+        normOpens,
+        normEnds,
+        source.exam_type,
+        source.exam_category,
+        source.dynamic_num_questions ?? null,
+        source.review_mode_detailed ?? false,
+        source.require_seb ?? false,
+      ]
+    );
+    const newExam = examRes.rows[0] as Exam;
+
+    // Gán owner
+    await client.query(
+      `INSERT INTO exam_collaborators (exam_id, teacher_id, role)
+       VALUES ($1, $2, 'owner') ON CONFLICT DO NOTHING`,
+      [newExam.id, actorId]
+    );
+
+    // Clone toàn bộ câu hỏi (media_url được giữ nguyên, không cần re-upload)
+    const sourceQuestions = await getQuestionsByExam(source.id);
+    for (const q of sourceQuestions) {
+      await client.query(
+        `INSERT INTO questions (
+           exam_id, content, question_type, options, correct_answer, media_url,
+           points, display_order, version_index, question_bank_id,
+           difficulty, chapter, chapter_label, answer_hint, explanation
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+        [
+          newExam.id,
+          q.content,
+          q.question_type,
+          q.options ? JSON.stringify(q.options) : null,
+          q.correct_answer ? JSON.stringify(q.correct_answer) : null,
+          q.media_url ?? null,
+          q.points,
+          q.display_order,
+          q.version_index,
+          q.question_bank_id ?? null,
+          q.difficulty,
+          q.chapter ?? null,
+          q.chapter_label ?? null,
+          q.answer_hint ?? null,
+          q.explanation ?? null,
+        ]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    // Sau transaction: Khái niệm Mã đề (ensureVersionPool) đã bị loại bỏ
+    // Đề thi sẽ được trộn ngẫu nhiên lúc sinh viên bấm Bắt đầu thi (startSessionWithMeta)
+
+    return { exam: newExam, cloned_question_count: sourceQuestions.length };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+};
 
 export const getQuestionsForStudent = async (examId: string): Promise<PublicQuestion[]> =>
   getPublicQuestionsByExam(examId);
@@ -397,6 +635,11 @@ export interface CreateExamWithQuestionsPayload {
   closes_at?: string | null;
   opens_at?: string | null;
   ends_at?: string | null;
+  exam_type?: "mcq" | "essay";
+  exam_category?: "midterm" | "final" | "practice";
+  dynamic_num_questions?: number | null;
+  review_mode_detailed?: boolean;
+  require_seb?: boolean;
   questions: ImportedQuestionDraft[];
 }
 
@@ -464,8 +707,8 @@ export const createExamWithQuestionsService = async (
   try {
     await client.query("BEGIN");
     const examResult = await client.query(
-      `INSERT INTO exams (title, description, class_id, admin_class_id, subject_id, created_by, duration_min, num_versions, closes_at, opens_at, ends_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+      `INSERT INTO exams (title, description, class_id, admin_class_id, subject_id, created_by, duration_min, num_versions, closes_at, opens_at, ends_at, exam_type, exam_category, dynamic_num_questions, review_mode_detailed, require_seb)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *`,
       [
         payload.title.trim(),
         payload.description ?? null,
@@ -478,6 +721,12 @@ export const createExamWithQuestionsService = async (
         normalizeClosesAtInput(payload.closes_at),
         normOpens,
         normEnds,
+        payload.exam_type ?? 'mcq',
+        payload.exam_category ?? 'midterm',
+        payload.dynamic_num_questions ?? null,
+        // midterm/final always false; practice uses payload value
+        payload.exam_category === 'practice' ? (payload.review_mode_detailed ?? false) : false,
+        payload.require_seb ?? false
       ]
     );
     const exam = examResult.rows[0] as Exam;
@@ -552,7 +801,6 @@ export const createExamWithQuestionsService = async (
     }
 
     await client.query("COMMIT");
-    await ensureVersionPool(exam.id);
     return { exam, questions: insertedQuestions };
   } catch (err) {
     await client.query("ROLLBACK");
@@ -604,11 +852,36 @@ export interface StartSessionPayload {
 
 export const startSessionWithMeta = async (
   examId: string,
-  studentId: string
+  studentId: string,
+  userAgent?: string
 ): Promise<StartSessionPayload> => {
   const exam = await getExamById(examId);
   if (!exam) throw httpError(404, "Không tìm thấy bài thi");
+
+  // Check enrollment to prevent bypassing
+  const student = await getUserById(studentId);
+  if (!student) throw httpError(404, "Không tìm thấy sinh viên");
+
+  if (exam.require_seb) {
+    if (!userAgent || (!userAgent.toLowerCase().includes('seb') && !userAgent.toLowerCase().includes('safeexambrowser'))) {
+      throw httpError(403, "Bài thi này yêu cầu sử dụng Safe Exam Browser để làm bài. Vui lòng mở bài thi bằng ứng dụng SEB.");
+    }
+  }
+  
+  if (exam.admin_class_id && student.admin_class_id !== exam.admin_class_id) {
+    throw httpError(403, "Bạn không thuộc lớp hành chính được phép thi bài này");
+  }
+  if (exam.class_id) {
+    const enrollment = await findEnrollment(exam.class_id, studentId);
+    if (!enrollment) {
+      throw httpError(403, "Bạn không có trong danh sách lớp học phần được phép thi bài này");
+    }
+  }
+
   const nowMs = Date.now();
+  const grant = await getApprovedRetakeGrant(examId, studentId);
+  const bypassEndsAt = !!grant;
+
   if (exam.opens_at && isBeforeOpensAt(exam.opens_at, nowMs)) {
     const runtimeState = await getRuntimeStateByExam(examId);
     const earlyManualOpen = runtimeState?.is_active && new Date(runtimeState.ends_at).getTime() > nowMs;
@@ -616,68 +889,97 @@ export const startSessionWithMeta = async (
       throw httpError(400, "Chưa đến giờ mở thi");
     }
   }
-  const endAt = effectiveEndsAt(exam);
-  if (endAt && isPastEndsAt(endAt, nowMs)) {
-    throw httpError(400, "Đã quá hạn nộp bài thi");
+  
+  if (!bypassEndsAt) {
+    const endAt = effectiveEndsAt(exam);
+    if (endAt && isPastEndsAt(endAt, nowMs)) {
+      throw httpError(400, "Đã quá hạn nộp bài thi");
+    }
+    if (!endAt && exam.closes_at && isPastClosesAt(exam.closes_at, nowMs)) {
+      throw httpError(400, "Đã quá hạn bắt đầu bài thi");
+    }
   }
-  if (!endAt && exam.closes_at && isPastClosesAt(exam.closes_at, nowMs)) {
-    throw httpError(400, "Đã quá hạn bắt đầu bài thi");
-  }
 
-  // Ensure version pool exists (lazy-create)
-  await ensureVersionPool(examId);
-
-  // Get total versions
-  const versions = await getVersionsByExam(examId);
-  if (versions.length === 0) throw httpError(500, "Không có mã đề cho kỳ thi này");
-
-  // Round-robin assignment based on existing session count for this exam
-  const sessionCountResult = await pool.query(
-    `SELECT COUNT(*)::int AS cnt FROM exam_sessions WHERE exam_id = $1`,
-    [examId]
-  );
-  const sessionCount = Number(sessionCountResult.rows[0]?.cnt ?? 0);
-  const versionIdx = sessionCount % versions.length;
-  const version = versions[versionIdx];
-
-  // Create or reuse session (update version if already exists)
+  // Create or reuse session
   let session = await getActiveSession(examId, studentId);
   if (!session) {
     const alreadySubmitted = await getLatestSubmittedSession(examId, studentId);
-    if (alreadySubmitted) {
-      const grant = await getApprovedRetakeGrant(examId, studentId);
-      if (!grant) {
-        throw httpError(409, "Bạn đã nộp bài thi này. Xem kết quả tại mục Kết quả.");
-      }
+    if (alreadySubmitted && !grant) {
+      throw httpError(409, "Bạn đã nộp bài thi này. Xem kết quả tại mục Kết quả.");
     }
   }
-  if (session) {
-    // Update version on existing session if not already set
-    if (!session.version_id) {
+
+  let version: any;
+
+  if (session && session.version_id) {
+    const vResult = await pool.query(`SELECT * FROM exam_versions WHERE id = $1`, [session.version_id]);
+    version = vResult.rows[0];
+    if (!version) throw httpError(500, "Không tìm thấy mã đề của phiên thi");
+  } else {
+    // Generate new dynamic version for this session
+    const allQuestions = await getQuestionsByExam(examId);
+    if (allQuestions.length === 0) throw httpError(500, "Đề thi chưa có câu hỏi nào");
+
+    let selectedQuestions = allQuestions;
+    if (exam.dynamic_num_questions && exam.dynamic_num_questions > 0 && exam.dynamic_num_questions < allQuestions.length) {
+      // Bốc ngẫu nhiên N câu
+      const tempShuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+      selectedQuestions = tempShuffled.slice(0, exam.dynamic_num_questions);
+    }
+
+    const questionIds = selectedQuestions.map((q) => q.id);
+    const questionOptions: Record<string, Record<string, string>> = {};
+    for (const q of selectedQuestions) {
+      questionOptions[q.id] = q.options ? { ...q.options } : { A: "A", B: "B", C: "C", D: "D" };
+    }
+
+    // Xáo trộn câu hỏi và đáp án bằng hàm generateVersionPool với seed ngẫu nhiên
+    const randomSeed = Math.floor(Math.random() * 1000000);
+    const poolData = generateVersionPool(questionIds, questionOptions, 1, randomSeed);
+    const shuffled = poolData[0];
+    const versionCode = `S-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+    version = await createVersion(examId, versionCode, 0, shuffled.questionOrder, shuffled.optionMaps);
+
+    if (session) {
       await pool.query(
         `UPDATE exam_sessions SET version_id = $1, version_code = $2 WHERE id = $3`,
         [version.id, version.version_code, session.id]
       );
       session = await getSessionById(session.id);
       if (!session) throw httpError(500, "Không thể cập nhật phiên thi");
+    } else {
+      try {
+        session = await pool.query(
+          `INSERT INTO exam_sessions (exam_id, student_id, version_id, version_code, started_at, status)
+           VALUES ($1, $2, $3, $4, NOW(), 'active') RETURNING *`,
+          [examId, studentId, version.id, version.version_code]
+        ).then((r) => r.rows[0] as ExamSession);
+      } catch (err: any) {
+        if (err.code === '23505') {
+          throw httpError(409, "Bạn đang có một phiên thi đang mở. Vui lòng tải lại trang.");
+        }
+        throw err;
+      }
+      if (!session) throw httpError(500, "Không thể tạo phiên thi");
+      await applyRetakeOnSessionStart(examId, studentId, session.id);
     }
-  } else {
-    session = await pool.query(
-      `INSERT INTO exam_sessions (exam_id, student_id, version_id, version_code, started_at, status)
-       VALUES ($1, $2, $3, $4, NOW(), 'active') RETURNING *`,
-      [examId, studentId, version.id, version.version_code]
-    ).then((r) => r.rows[0] as ExamSession);
-    if (!session) throw httpError(500, "Không thể tạo phiên thi");
-    await applyRetakeOnSessionStart(examId, studentId, session.id);
   }
 
   const started = new Date(session.started_at).getTime();
-  const deadline = started + exam.duration_min * 60 * 1000;
+  let deadline = started + exam.duration_min * 60 * 1000;
+  if (!bypassEndsAt) {
+    const globalEndStr = effectiveEndsAt(exam);
+    const globalEnd = globalEndStr ? new Date(globalEndStr).getTime() : null;
+    if (globalEnd && deadline > globalEnd) {
+      deadline = globalEnd;
+    }
+  }
 
   // Return questions in shuffled order with shuffled options
   const questions = await getQuestionsByExam(examId);
   const shuffledQuestions = version.question_order
-    .map((qId) => questions.find((q) => q.id === qId))
+    .map((qId: string) => questions.find((q) => q.id === qId))
     .filter(Boolean) as Question[];
 
   const shuffledPayload = shuffledQuestions.map((q) => ({
@@ -720,39 +1022,6 @@ export const startSessionWithMeta = async (
 // helpers
 // ---------------------------------------------------------------------------
 
-async function ensureVersionPool(examId: string): Promise<void> {
-  const existing = await getVersionsByExam(examId);
-  if (existing.length > 0) return; // already generated
-
-  const exam = await getExamById(examId);
-  if (!exam) return;
-
-  const questions = await getQuestionsByExam(examId);
-  if (questions.length === 0) return;
-
-  const numVersions = exam.num_versions ?? 2;
-
-  for (let v = 0; v < numVersions; v += 1) {
-    const versionQuestions = questions.filter((q) => (q.version_index ?? 0) === v);
-    if (versionQuestions.length === 0) continue;
-
-    const questionIds = versionQuestions.map((q) => q.id);
-    const questionOptions: Record<string, Record<string, string>> = {};
-    for (const q of versionQuestions) {
-      if (q.options) {
-        questionOptions[q.id] = { ...q.options };
-      } else {
-        questionOptions[q.id] = { A: "A", B: "B", C: "C", D: "D" };
-      }
-    }
-
-    // Một lần xáo câu + đáp án cho toàn bộ SV cùng mã đề (D01, D02, …)
-    const pool = generateVersionPool(questionIds, questionOptions, 1);
-    const shuffled = pool[0];
-    const versionCode = `D${String(v + 1).padStart(2, "0")}`;
-    await createVersion(examId, versionCode, v, shuffled.questionOrder, shuffled.optionMaps);
-  }
-}
 
 /** Build options shown to student: display label → answer text */
 function buildShuffledOptionsForStudent(
@@ -801,8 +1070,8 @@ export interface SubmitResult {
     question_type: QuestionType;
     submitted: string | string[] | null;
     correct?: string | string[] | null;
-    is_correct: boolean;
-    points_earned: number | null;
+    is_correct?: boolean;
+    points_earned?: number | null;
     max_points: number;
     pending_grading?: boolean;
   }>;
@@ -977,6 +1246,26 @@ export const persistAutosaveSnapshotService = async (payload: {
     throw httpError(409, "Phiên thi không còn active");
   }
 
+  const exam = await getExamById(payload.examId);
+  if (!exam) throw httpError(404, "Không tìm thấy bài thi");
+
+  const started = new Date(session.started_at).getTime();
+  let deadline = started + exam.duration_min * 60 * 1000;
+  
+  const grant = await getApprovedRetakeGrant(session.exam_id, payload.studentId);
+  const bypassGlobalEnd = !!grant;
+
+  if (!bypassGlobalEnd) {
+    const globalEndStr = effectiveEndsAt(exam);
+    const globalEnd = globalEndStr ? new Date(globalEndStr).getTime() : null;
+    if (globalEnd && deadline > globalEnd) {
+      deadline = globalEnd;
+    }
+  }
+  if (Date.now() > deadline) {
+    throw httpError(400, "Đã hết thời gian làm bài");
+  }
+
   const answers = normalizeAutosaveAnswers(payload.answers);
 
   const snapshot = await upsertAutosaveSnapshot({
@@ -1146,6 +1435,36 @@ async function recomputeMcqGradingForSession(
       continue;
     }
 
+    if (q.question_type === "fib") {
+      const fibRaw = originalByQuestionId[qId] ?? displayByIndex[String(i)] ?? prev?.submitted;
+      const submitted = Array.isArray(fibRaw) ? String(fibRaw[0]) : String(fibRaw ?? "");
+      const submittedNorm = submitted.trim().toLowerCase();
+      
+      const correctRaw = q.correct_answer;
+      const correctAnsList = Array.isArray(correctRaw) ? correctRaw : [correctRaw];
+      
+      const isCorrect = correctAnsList.some(c => c && String(c).trim().toLowerCase() === submittedNorm);
+      const pointsEarned = isCorrect ? Number(q.points) : 0;
+      score += pointsEarned;
+
+      const row: GradedDetailRow = {
+        question_id: q.id,
+        question_type: "fib",
+        submitted,
+        is_correct: isCorrect,
+        points_earned: pointsEarned,
+        max_points: Number(q.points),
+      };
+      
+      if (prev && (prev.points_earned !== row.points_earned || prev.is_correct !== row.is_correct)) {
+        changed = true;
+      }
+      
+      unshuffled[qId] = submitted;
+      gradedRows.push(row);
+      continue;
+    }
+
     const optionMap = versionMaps?.optionMaps[qId];
     const opts = originalOptionsByQuestion[qId];
     const recomputeInput = pickRecomputeMcqInput(
@@ -1189,7 +1508,9 @@ async function recomputeMcqGradingForSession(
     gradedRows.push(row);
   }
 
-  return { graded_details: gradedRows, score, student_answers: unshuffled, changed };
+  const scaledScore = computeScaledScoreFromDetails(gradedRows, questionOrder.length);
+
+  return { graded_details: gradedRows, score: scaledScore, student_answers: unshuffled, changed };
 }
 
 function parseGradedDetails(raw: unknown): GradedDetailRow[] {
@@ -1205,6 +1526,33 @@ function parseGradedDetails(raw: unknown): GradedDetailRow[] {
   return [];
 }
 
+function computeScaledScoreFromDetails(
+  details: GradedDetailRow[],
+  questionOrderLength: number
+): number {
+  let score = 0;
+  let totalPoints = 0;
+  let correctCount = 0;
+
+  for (const d of details) {
+    totalPoints += Number(d.max_points || 0);
+    if (d.points_earned != null) {
+      score += Number(d.points_earned);
+    }
+    if (d.is_correct) {
+      correctCount++;
+    }
+  }
+
+  if (totalPoints > 0) {
+    return (score / totalPoints) * 10;
+  }
+  if (questionOrderLength > 0) {
+    return (correctCount / questionOrderLength) * 10;
+  }
+  return 0;
+}
+
 /** Bỏ câu trong graded_details không còn thuộc đề (sau khi GV sửa/xóa câu tự luận). */
 function alignGradedDetailsToExam(
   gradedDetails: GradedDetailRow[],
@@ -1218,15 +1566,8 @@ function alignGradedDetailsToExam(
   const validIds = new Set(allQuestions.map((q) => q.id));
   const details = gradedDetails.filter((d) => validIds.has(d.question_id));
   const changed = details.length !== gradedDetails.length;
-  const score = details.reduce(
-    (s, d) => s + (d.points_earned != null ? Number(d.points_earned) : 0),
-    0
-  );
-  const gradingStatus: GradingStatus = details.some(
-    (d) => d.question_type === "essay" && d.pending_grading
-  )
-    ? "pending_manual"
-    : "complete";
+  const score = computeScaledScoreFromDetails(details, details.length);
+  const gradingStatus: GradingStatus = "complete";
   return { details, changed, score, gradingStatus };
 }
 
@@ -1248,10 +1589,23 @@ export const submitSessionService = async (
   const exam = await getExamById(session.exam_id);
   if (!exam) throw httpError(404, "Không tìm thấy bài thi");
 
-  const deadline = new Date(session.started_at).getTime() + exam.duration_min * 60 * 1000;
+  const started = new Date(session.started_at).getTime();
+  let deadline = started + exam.duration_min * 60 * 1000;
+  
+  const grant = await getApprovedRetakeGrant(session.exam_id, studentId);
+  const bypassGlobalEnd = !!grant;
+
+  if (!bypassGlobalEnd) {
+    const globalEndStr = effectiveEndsAt(exam);
+    const globalEnd = globalEndStr ? new Date(globalEndStr).getTime() : null;
+    if (globalEnd && deadline > globalEnd) {
+      deadline = globalEnd;
+    }
+  }
   const allowPastDeadline = options?.allowPastDeadline === true;
-  if (!allowPastDeadline && Date.now() > deadline) {
-    throw httpError(400, "Đã hết thời gian làm bài");
+  // Cho phép trễ tối đa 2 phút do độ trễ mạng hoặc chênh lệch đồng hồ client-server
+  if (!allowPastDeadline && Date.now() > deadline + 2 * 60 * 1000) {
+    throw httpError(400, "Đã quá hạn thời gian nộp bài");
   }
 
   const allQuestions = await getQuestionsByExam(session.exam_id);
@@ -1346,15 +1700,17 @@ export const submitSessionService = async (
     };
   }).filter(Boolean) as GradedDetailRow[];
 
-  const gradingStatus: GradingStatus = hasEssay ? "pending_manual" : "complete";
+  const gradingStatus: GradingStatus = "complete";
   const learningAssessmentSummary = buildLearningAssessmentSummary(
     allQuestions,
     gradedRows
   );
 
+  score = computeScaledScoreFromDetails(gradedRows, questionOrder.length);
+
   const updated = await finalizeSessionSubmit(sessionId, {
     score,
-    max_points: totalPoints,
+    max_points: 10,
     student_answers: unshuffledAnswers, // store in original (unshuffled) format
     graded_details: gradedRows,
     grading_status: gradingStatus,
@@ -1364,8 +1720,7 @@ export const submitSessionService = async (
 
   if (!updated) throw httpError(409, "Không thể nộp bài (phiên không còn active)");
 
-  // Notify student of result (auto-grade: no essay)
-  if (gradingStatus === "complete" && updated.student_id) {
+  if (updated.student_id) {
     const examRow = await pool.query(
       `SELECT e.title FROM exams e WHERE e.id = (SELECT exam_id FROM exam_sessions WHERE id = $1)`,
       [sessionId]
@@ -1378,28 +1733,17 @@ export const submitSessionService = async (
       `Bài thi "${examTitle}" — Điểm: ${formatScoreScale10Pair(score, totalPoints)} — Đã nộp lúc ${submittedAt}`,
       "success"
     ).catch(() => { /* non-critical */ });
-  } else if (gradingStatus === "pending_manual" && updated.student_id) {
-    // Has essay — notify pending grading
-    const examRow = await pool.query(
-      `SELECT e.title FROM exams e WHERE e.id = (SELECT exam_id FROM exam_sessions WHERE id = $1)`,
-      [sessionId]
-    );
-    const examTitle = examRow.rows[0]?.title ?? "Bài thi";
-    void createNotification(
-      updated.student_id,
-      "[Thông báo] Bài đã được nộp",
-      `Bài thi "${examTitle}" đã được nộp. Đang chờ giáo viên chấm điểm tự luận.`,
-      "info"
-    ).catch(() => { /* non-critical */ });
   }
+
+  const showDetailed = exam.exam_category === "practice" && exam.review_mode_detailed === true;
 
   const studentDetails = gradedRows.map((d) => ({
     question_id: d.question_id,
     question_type: d.question_type,
     submitted: d.submitted,
-    correct: d.question_type === "mcq" ? d.correct ?? null : null,
-    is_correct: d.is_correct,
-    points_earned: d.points_earned,
+    correct: showDetailed ? (d.question_type === "mcq" ? d.correct ?? null : null) : undefined,
+    is_correct: showDetailed ? d.is_correct : undefined,
+    points_earned: showDetailed ? d.points_earned : undefined,
     max_points: d.max_points,
     pending_grading: d.pending_grading,
   }));
@@ -1411,7 +1755,7 @@ export const submitSessionService = async (
     correct_count: correctCount,
     total_questions: questionOrder.length,
     grading_status: gradingStatus,
-    learning_assessment_summary: learningAssessmentSummary,
+    learning_assessment_summary: showDetailed ? learningAssessmentSummary : undefined,
     details: studentDetails,
   };
 };
@@ -1472,8 +1816,10 @@ export interface SessionReviewPayload {
   score: number | null;
   max_points: number | null;
   grading_status: GradingStatus | null;
-  learning_assessment_summary?: LearningAssessmentSummary;
+  learning_assessment_summary?: LearningAssessmentSummary | null;
   questions: ReviewDetailRow[];
+  correct_count: number;
+  total_questions: number;
 }
 
 /** Đã chấm đúng lúc submit — không ghi đè bằng autosave khi mở review. */
@@ -1522,7 +1868,7 @@ async function applyRecomputeIfNeeded(
   const hasPendingEssay = recompute.graded_details.some(
     (d) => d.question_type === "essay" && d.pending_grading
   );
-  const gradingStatus: GradingStatus = hasPendingEssay ? "pending_manual" : "complete";
+  const gradingStatus: GradingStatus = "complete";
   const updated = await updateSessionGrading(session.id, {
     score: recompute.score,
     graded_details: recompute.graded_details,
@@ -1554,13 +1900,14 @@ async function buildReviewQuestionsForSession(
       q.options && optionMap && Object.keys(optionMap).length > 0
         ? buildShuffledOptionsForStudent(q.options, optionMap)
         : q.options;
+    const isObjective = ["mcq", "msq"].includes(q.question_type);
     const correctOriginal =
-      q.question_type === "mcq"
+      isObjective
         ? resolveReviewCorrectKey(q.correct_answer, q.options, detail?.correct)
-        : null;
+        : q.question_type === "fib" ? q.correct_answer : null;
     const submittedRaw = detail?.submitted ?? null;
     const submittedOriginalResolved =
-      q.question_type === "mcq"
+      isObjective
         ? resolveSubmittedOriginalKey(
             submittedRaw,
             q.correct_answer,
@@ -1582,11 +1929,13 @@ async function buildReviewQuestionsForSession(
     const essayPoints =
       q.question_type === "essay" ? detail?.points_earned ?? null : null;
     const isCorrect =
-      q.question_type === "mcq"
+      isObjective
         ? mcqAnswersEqual(submittedOriginalResolved, q.correct_answer)
-        : essayPoints != null && !detail?.pending_grading
-          ? essayPoints >= Number(q.points)
-          : false;
+        : q.question_type === "fib"
+          ? detail?.is_correct ?? false
+          : essayPoints != null && !detail?.pending_grading
+            ? essayPoints >= Number(q.points)
+            : false;
     reviewQuestions.push({
       question_id: q.id,
       question_type: q.question_type,
@@ -1600,7 +1949,7 @@ async function buildReviewQuestionsForSession(
       correct: correctForUi,
       is_correct: isCorrect,
       points_earned:
-        q.question_type === "mcq"
+        isObjective || q.question_type === "fib"
           ? isCorrect
             ? Number(q.points)
             : 0
@@ -1623,7 +1972,7 @@ async function repairGradedDetailsFromReview(
   let changed = false;
 
   for (const rq of reviewQuestions) {
-    if (rq.question_type !== "mcq") continue;
+    if (!["mcq", "msq"].includes(rq.question_type)) continue;
     const idx = repaired.findIndex((d) => d.question_id === rq.question_id);
     if (idx < 0) continue;
     const q = allQuestions.find((item) => item.id === rq.question_id);
@@ -1657,7 +2006,7 @@ async function repairGradedDetailsFromReview(
   const updated = await updateSessionGrading(session.id, {
     score,
     graded_details: repaired,
-    grading_status: hasPendingEssay ? "pending_manual" : "complete",
+    grading_status: "complete",
   });
   return { session: updated ?? session, gradedDetails: repaired };
 }
@@ -1675,6 +2024,18 @@ export const getSessionReview = async (
 
   const exam = await getExamById(session.exam_id);
   if (!exam) throw httpError(404, "Không tìm thấy bài thi");
+
+  // Chống gian lận: Không cho phép xem lại đáp án nếu kỳ thi vẫn đang diễn ra
+  const now = Date.now();
+  if (exam.runtime_is_active) {
+    throw httpError(403, "Bài thi vẫn đang diễn ra trên lớp, bạn chưa thể xem đáp án để đảm bảo công bằng.");
+  }
+  if (exam.ends_at && new Date(exam.ends_at).getTime() > now) {
+    throw httpError(403, "Ca thi chưa kết thúc, bạn chưa thể xem đáp án để đảm bảo công bằng.");
+  }
+  if (exam.closes_at && new Date(exam.closes_at).getTime() > now) {
+    throw httpError(403, "Hạn làm bài chưa đóng, bạn chưa thể xem đáp án để đảm bảo công bằng.");
+  }
 
   const allQuestions = await getQuestionsByExam(session.exam_id);
   let gradedDetails = parseGradedDetails(session.graded_details);
@@ -1700,6 +2061,9 @@ export const getSessionReview = async (
     repaired.gradedDetails
   );
 
+  // Bài thi giữa kỳ/cuối kỳ và bài thi thử "chỉ hiện điểm" → ẩn toàn bộ câu hỏi để tránh lộ đáp án qua Network Inspector
+  const showDetailed = exam.review_mode_detailed === true;
+
   return {
     session: repaired.session,
     exam,
@@ -1707,8 +2071,10 @@ export const getSessionReview = async (
     max_points:
       repaired.session.max_points != null ? Number(repaired.session.max_points) : null,
     grading_status: repaired.session.grading_status,
-    learning_assessment_summary: learningAssessmentSummary,
-    questions: reviewQuestions,
+    learning_assessment_summary: showDetailed ? learningAssessmentSummary : null,
+    questions: showDetailed ? reviewQuestions : [],
+    correct_count: repaired.gradedDetails.filter((d) => d.is_correct).length,
+    total_questions: repaired.gradedDetails.length,
   };
 };
 
@@ -1731,10 +2097,7 @@ export const getSessionGradingView = async (
   if (!meta) throw httpError(404, "Không tìm thấy phiên thi");
   if (meta.status !== "submitted") throw httpError(400, "Chỉ chấm bài đã nộp");
 
-  const canGrade =
-    actorRole === "admin" ||
-    (actorRole === "teacher" && meta.exam_created_by === actorId);
-  if (!canGrade) throw httpError(403, "Không có quyền chấm bài này");
+  await assertTeacherCanManageExam(meta.exam_id, actorId, actorRole);
 
   const exam = await getExamById(meta.exam_id);
   if (!exam) throw httpError(404, "Không tìm thấy đề");
@@ -1775,96 +2138,7 @@ export const getSessionGradingView = async (
   };
 };
 
-export const gradeEssaySessionService = async (
-  sessionId: string,
-  actorId: string,
-  actorRole: string,
-  grades: Record<string, { points_awarded: number; comment?: string }>
-): Promise<ExamSession> => {
-  const meta = await getSessionWithExam(sessionId);
-  if (!meta) throw httpError(404, "Không tìm thấy phiên thi");
-  if (meta.status !== "submitted") throw httpError(400, "Phiên không hợp lệ");
 
-  const canGrade =
-    actorRole === "admin" ||
-    (actorRole === "teacher" && meta.exam_created_by === actorId);
-  if (!canGrade) throw httpError(403, "Không có quyền chấm bài này");
-
-  const questions = await getQuestionsByExam(meta.exam_id);
-  const qMap = new Map(questions.map((q) => [q.id, q]));
-  let details = [...parseGradedDetails(meta.graded_details)];
-  if (details.length === 0) throw httpError(400, "Không có dữ liệu chấm");
-
-  const aligned = alignGradedDetailsToExam(details, questions);
-  if (aligned.changed) {
-    details = aligned.details;
-    await updateSessionGrading(sessionId, {
-      score: aligned.score,
-      graded_details: aligned.details,
-      grading_status: aligned.gradingStatus,
-    });
-  }
-
-  for (const [qid, g] of Object.entries(grades)) {
-    const idx = details.findIndex((d) => d.question_id === qid);
-    if (idx < 0) throw httpError(400, "Không tìm thấy câu trong bài nộp");
-    const detail = details[idx];
-    const q = qMap.get(qid);
-    if (detail.question_type !== "essay") {
-      throw httpError(400, "Câu không phải tự luận hoặc không tồn tại");
-    }
-    if (typeof g.points_awarded !== "number" || Number.isNaN(g.points_awarded)) {
-      throw httpError(400, "points_awarded không hợp lệ");
-    }
-    const maxPts = q ? Number(q.points) : Number(detail.max_points);
-    if (g.points_awarded < 0 || g.points_awarded > maxPts) {
-      throw httpError(400, "Điểm vượt quá max cho câu");
-    }
-    details[idx] = {
-      ...details[idx],
-      points_earned: g.points_awarded,
-      pending_grading: false,
-      teacher_comment: g.comment ?? null,
-      /** Tự luận chỉ "đúng" khi đạt tối đa điểm câu; điểm một phần không coi là đúng/sai nhị phân. */
-      is_correct: g.points_awarded >= maxPts,
-    };
-  }
-
-  const score = details.reduce(
-    (s, d) => s + (d.points_earned != null ? Number(d.points_earned) : 0),
-    0
-  );
-  const pendingEssay = details.some(
-    (d) => d.question_type === "essay" && d.pending_grading
-  );
-  const gradingStatus: GradingStatus = pendingEssay ? "pending_manual" : "complete";
-  const wasPendingManual = meta.grading_status === "pending_manual";
-
-  const updated = await updateSessionGrading(sessionId, {
-    score,
-    graded_details: details,
-    grading_status: gradingStatus,
-  });
-  if (!updated) throw httpError(500, "Cập nhật chấm thất bại");
-
-  if (
-    gradingStatus === "complete" &&
-    wasPendingManual &&
-    updated.student_id
-  ) {
-    const maxPts =
-      updated.max_points != null ? Number(updated.max_points) : score;
-    void createNotification(
-      updated.student_id,
-      "[Kết quả] Đã chấm tự luận xong",
-      `Bài thi "${meta.exam_title}" đã được giảng viên chấm xong. Điểm: ${formatScoreScale10Pair(score, maxPts)}. Vào xem kết quả chi tiết.`,
-      "success",
-      `/result/${meta.exam_id}`
-    ).catch(() => { /* non-critical */ });
-  }
-
-  return updated;
-};
 
 export const getStudentSessions = async (studentId: string): Promise<ExamSession[]> =>
   getSessionsByStudent(studentId);
@@ -2208,4 +2482,75 @@ export const getExamProctoringData = async (examId: string): Promise<ExamProctor
     expired_sessions: sessions.filter((s) => s.status === "expired").length,
     sessions: entries,
   };
+};
+
+export const assertTeacherCanManageExam = async (examId: string, userId: string, role: string) => {
+  if (role === 'admin') return true;
+  if (role !== 'teacher') throw httpError(403, "Bạn không có quyền thực hiện hành động này");
+  
+  const examResult = await pool.query("SELECT created_by, admin_class_id, class_id FROM exams WHERE id = $1", [examId]);
+  const exam = examResult.rows[0];
+  if (!exam) throw httpError(404, "Không tìm thấy bài thi");
+  if (exam.created_by === userId) return true;
+  
+  const collab = await pool.query(
+    `SELECT 1 FROM exam_collaborators WHERE exam_id = $1 AND teacher_id = $2`,
+    [examId, userId]
+  );
+  if (collab.rows.length > 0) return true;
+  
+  const share = await pool.query(
+    `SELECT 1 FROM exam_shares WHERE exam_id = $1 AND shared_with = $2`,
+    [examId, userId]
+  );
+  if (share.rows.length > 0) return true;
+
+  if (exam.class_id) {
+    const classCheck = await pool.query(
+      `SELECT 1 FROM term_teacher_registrations WHERE teacher_id = $1 AND term_offering_id = $2`,
+      [userId, exam.class_id]
+    );
+    if (classCheck.rows.length > 0) return true;
+  }
+  
+  if (exam.admin_class_id) {
+    const adminCheck = await pool.query(
+      `SELECT 1 FROM admin_classes WHERE manager_teacher_id = $1 AND id = $2`,
+      [userId, exam.admin_class_id]
+    );
+    if (adminCheck.rows.length > 0) return true;
+  }
+  
+  throw httpError(403, "Bạn không có quyền quản lý bài thi này");
+};
+
+export const saveOfflineGradesService = async (
+  examId: string,
+  teacherId: string,
+  teacherRole: string,
+  grades: { student_id: string; score: number }[]
+) => {
+  await assertTeacherCanManageExam(examId, teacherId, teacherRole);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    for (const g of grades) {
+      const res = await client.query(`
+        UPDATE exam_sessions SET score = $3, status = 'submitted', max_points = 10, grading_status = 'complete'
+        WHERE exam_id = $1 AND student_id = $2 AND voided_at IS NULL
+      `, [examId, g.student_id, g.score]);
+      if (res.rowCount === 0) {
+        await client.query(`
+          INSERT INTO exam_sessions (exam_id, student_id, score, status, max_points, grading_status)
+          VALUES ($1, $2, $3, 'submitted', 10, 'complete')
+        `, [examId, g.student_id, g.score]);
+      }
+    }
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
 };

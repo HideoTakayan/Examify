@@ -1,5 +1,5 @@
-// eslint-disable-next-line storybook/no-renderer-packages
-import type { Meta, StoryObj } from '@storybook/react';
+﻿// eslint-disable-next-line storybook/no-renderer-packages
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import ButtonOutline from './ButtonOutline';
 import { IconArrowRight } from '@tabler/icons-react';
 
@@ -32,3 +32,4 @@ export const Primary: Story = {
         leftIcon: <IconArrowRight />,
     },
 };
+

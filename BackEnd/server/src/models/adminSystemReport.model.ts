@@ -44,7 +44,7 @@ export const getAdminSystemReport = async (): Promise<AdminSystemReport> => {
       (SELECT COUNT(*)::int FROM exam_sessions es
          JOIN exams e ON e.id = es.exam_id
          WHERE e.title NOT ILIKE 'E2E Exam%') AS total_sessions,
-      (SELECT COUNT(*)::int FROM classes) AS total_classes
+      (SELECT (SELECT COUNT(*)::int FROM admin_classes) + (SELECT COUNT(*)::int FROM term_subject_offerings)) AS total_classes
   `);
 
   // Session stats

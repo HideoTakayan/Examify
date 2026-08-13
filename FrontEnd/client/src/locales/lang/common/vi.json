@@ -481,11 +481,11 @@
     "your_answer_wrong": "Đã chọn (sai)"
   },
   "grading": {
-    "title": "Chấm điểm tự luận",
+    "title": "Nhập điểm thi giấy",
     "score": "Điểm",
     "submitted_at": "Nộp lúc",
     "mcq_summary": "Kết quả trắc nghiệm",
-    "essay_grading": "Chấm điểm tự luận",
+    "essay_grading": "Quản lý điểm môn học",
     "essay": "Tự luận",
     "essay_question": "Câu tự luận {{n}}",
     "question": "Câu hỏi",
@@ -735,7 +735,7 @@
     "audit_logs": "Nhật ký hệ thống",
     "system_report": "Báo cáo hệ thống",
     "password_reset": "Đặt lại mật khẩu",
-    "grading": "Chấm điểm tự luận",
+    "grading": "Quản lý điểm",
     "my_results": "Kết quả của tôi",
     "grade_lookup": "Tra cứu điểm",
     "security": "Bảo mật",

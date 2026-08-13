@@ -76,7 +76,7 @@ export const approveResetRequest = async (
   );
 
   // Lưu temp password vào admin_note để admin có thể gửi cho sinh viên nếu email chưa cấu hình
-  await updateResetRequestStatus(requestId, "approved", approverId, adminNote, tempPassword);
+  await updateResetRequestStatus(requestId, "approved", approverId, adminNote);
 
   // Gửi email cho sinh viên nếu SMTP đã cấu hình
   if (isEmailConfigured()) {

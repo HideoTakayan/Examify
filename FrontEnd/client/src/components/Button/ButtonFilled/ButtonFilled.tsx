@@ -3,9 +3,11 @@ import { Button } from '@mantine/core';
 import { type ReactNode } from "react";
 import style from './ButtonFilled.module.scss'
 interface ButtonFilledProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  disabled: boolean;
+  disabled?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  leftSection?: ReactNode;
+  rightSection?: ReactNode;
   label?: string;
   fontWeight?: number;
   loading?: boolean;
@@ -18,6 +20,8 @@ interface ButtonFilledProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 const ButtonFilled: React.FC<ButtonFilledProps> = ({
   leftIcon,
   rightIcon,
+  leftSection,
+  rightSection,
   label,
   disabled,
   loading,
@@ -27,8 +31,8 @@ const ButtonFilled: React.FC<ButtonFilledProps> = ({
   <Button
     variant="filled"
     color={color || 'primary'}
-    leftSection={leftIcon}
-    rightSection={rightIcon}
+    leftSection={leftIcon || leftSection}
+    rightSection={rightIcon || rightSection}
     disabled={disabled}
     loading={loading}
     classNames={{

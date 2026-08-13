@@ -3,7 +3,7 @@
 export type EssayGradeState = 'pending' | 'partial' | 'full' | 'zero' | 'unanswered';
 
 export type ResultQuestionLike = {
-  question_type: 'mcq' | 'essay';
+  question_type: 'mcq' | 'essay' | 'msq' | 'fib';
   is_correct: boolean;
   points_earned: number | null;
   max_points: number;
@@ -59,10 +59,7 @@ export function countFullyCorrectQuestions(questions: ResultQuestionLike[]): num
   return questions.filter(isQuestionFullyCorrect).length;
 }
 
-/** @deprecated dùng countFullyCorrectQuestions */
-export function countMcqCorrect(questions: ResultQuestionLike[]): number {
-  return countFullyCorrectQuestions(questions.filter((q) => q.question_type === 'mcq'));
-}
+
 
 export function sumMcqScore(questions: ResultQuestionLike[]): { earned: number; max: number } {
   const mcq = questions.filter((q) => q.question_type === 'mcq');
@@ -86,18 +83,7 @@ export function sumEssayScore(questions: ResultQuestionLike[]): {
   return { earned, max, pendingCount: 0 };
 }
 
-export function getTotalScorePercent(score: number | null, max: number | null): number | null {
-  if (max == null || max <= 0 || score == null) return null;
-  return Math.round((score / max) * 100);
-}
 
-export function getMcqAccuracyPercent(questions: ResultQuestionLike[]): number | null {
-  const mcq = questions.filter((q) => q.question_type === 'mcq');
-  if (mcq.length === 0) return null;
-  const { earned, max } = sumMcqScore(questions);
-  if (max <= 0) return null;
-  return Math.round((earned / max) * 100);
-}
 
 /** Tỷ lệ câu đạt đủ điểm tối đa / tổng số câu. */
 export function getFullyCorrectPercent(questions: ResultQuestionLike[]): number | null {

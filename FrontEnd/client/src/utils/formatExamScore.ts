@@ -5,23 +5,9 @@ export function formatExamScore(value: number | null | undefined): string {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
 }
 
-export function formatExamScorePair(
-  score: number | null | undefined,
-  maxPoints: number | null | undefined
-): string {
-  return `${formatExamScore(score)}/${formatExamScore(maxPoints)}`;
-}
 
-export function grade10ToLetter(grade10: number): string {
-  if (grade10 >= 9) return 'A+';
-  if (grade10 >= 8) return 'A';
-  if (grade10 >= 7) return 'B';
-  if (grade10 >= 6) return 'C';
-  if (grade10 >= 5) return 'D+';
-  return 'F';
-}
 
-export function scoreToGrade10(
+function scoreToGrade10(
   score: number | null | undefined,
   maxPoints: number | null | undefined
 ): number | null {
@@ -56,7 +42,7 @@ export function sanitizeScoreInText(text: string): string {
   });
   out = out.replace(
     /Điểm:\s*(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/g,
-    (m, s: string, max: string) => `Điểm: ${formatScoreScale10Pair(parseFloat(s), parseFloat(max))}`
+    (_, s: string, max: string) => `Điểm: ${formatScoreScale10Pair(parseFloat(s), parseFloat(max))}`
   );
   return out;
 }

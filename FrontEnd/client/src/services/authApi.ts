@@ -28,7 +28,7 @@ export interface LoginResponse {
 const ACCESS_TOKEN_KEY = 'access_token';
 const DEVICE_ID_KEY = 'device_id';
 
-export const getDeviceId = (): string => {
+const getDeviceId = (): string => {
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
   if (!deviceId) {
     deviceId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
@@ -50,23 +50,7 @@ export const login = async (
   return res.data.data;
 };
 
-/**
- * Chỉ gọi khi đã đăng nhập **admin** (token gắn tự động).
- * Sinh viên / giảng viên không tự đăng ký qua UI — tài khoản do admin tạo.
- */
-export const registerUserAsAdmin = async (
-  email: string,
-  username: string,
-  password: string,
-  role: UserRole,
-  full_name?: string
-): Promise<UserInfo> => {
-  const res = await apiClient.post<{ success: boolean; data: UserInfo }>(
-    '/auth/register',
-    { email, username, password, role, full_name }
-  );
-  return res.data.data;
-};
+
 
 export interface SessionInfo {
   valid: boolean;
@@ -93,7 +77,7 @@ export const fetchSession = async (): Promise<SessionInfo> => {
   return res.data.data;
 };
 
-export const logout = async (): Promise<void> => {
+const logout = async (): Promise<void> => {
   setVoluntaryLogout(true);
   try {
     try {
@@ -109,14 +93,7 @@ export const logout = async (): Promise<void> => {
 
 export const clearSession = (): Promise<void> => logout();
 
-export const checkServerSession = async (): Promise<boolean> => {
-  try {
-    await apiClient.get('/auth/session');
-    return true;
-  } catch {
-    return false;
-  }
-};
+
 
 export const changePassword = async (
   userId: string,
@@ -154,33 +131,6 @@ export interface PasswordResetRequestItem {
   approved_by_full_name: string | null;
 }
 
-export const getMyPasswordResetRequests = async (): Promise<PasswordResetRequestItem[]> => {
-  const res = await apiClient.get<{ success: boolean; data: PasswordResetRequestItem[] }>(
-    "/password-reset/me"
-  );
-  return res.data.data;
-};
-
-/** Đã đăng nhập: gửi yêu cầu đặt lại MK lên admin (tab Cài đặt tài khoản). */
-export const submitMyPasswordResetRequest = async (): Promise<{ requestId: string; message: string }> => {
-  const res = await apiClient.post<{
-    success: boolean;
-    message: string;
-    data: { requestId: string };
-  }>("/password-reset/me");
-  return {
-    requestId: res.data.data.requestId,
-    message: res.data.message || "Yêu cầu đã được gửi lên quản trị viên. Vui lòng chờ xử lý.",
-  };
-};
-
-export const requestSelfPasswordReset = async (email: string): Promise<{ requestId: string }> => {
-  const res = await apiClient.post<{ success: boolean; data: { requestId: string } }>(
-    "/password-reset/self",
-    { email }
-  );
-  return res.data.data;
-};
 
 // Manual admin-approval password reset (Task 6): student submits request → admin approves → email sent
 export const forgotPassword = async (email: string): Promise<{ requestId: string; message: string }> => {

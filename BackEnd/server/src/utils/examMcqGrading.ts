@@ -1,43 +1,53 @@
 import { reverseAnswer } from "~/models/examVersion.model";
 
-/** Chữ cái A–D (happy path: chỉ dùng key, không so text option). */
-export function normalizeLetterKey(val: unknown): string | null {
-  if (val == null) return null;
-  const raw = Array.isArray(val) ? val[0] : val;
-  const t = String(raw).trim().toUpperCase();
-  if (/^[A-D]$/.test(t)) return t;
-  return null;
+/** Chuẩn hóa 1 chữ cái hoặc mảng chữ cái thành mảng chữ cái (A, B, C...) có sắp xếp */
+export function normalizeLetterKeys(val: unknown): string[] {
+  if (val == null) return [];
+  const arr = Array.isArray(val) ? val : [val];
+  return arr
+    .map(String)
+    .map((t) => t.trim().toUpperCase())
+    .filter((t) => /^[A-Z]$/.test(t))
+    .sort();
 }
 
-/** Đáp án đúng trong question bank — luôn là chữ cái gốc. */
+/** Tương thích ngược: chỉ lấy chữ cái đầu tiên */
+export function normalizeLetterKey(val: unknown): string | null {
+  const keys = normalizeLetterKeys(val);
+  return keys.length > 0 ? keys[0] : null;
+}
+
+/** Đáp án đúng trong question bank — luôn là mảng chữ cái gốc. */
 export function resolveCorrectAnswerKey(
   correct: string | string[] | null | undefined
-): string | null {
-  return normalizeLetterKey(correct);
+): string[] {
+  return normalizeLetterKeys(correct);
 }
 
 /** display_key (ô SV bấm) → original_key qua option_map. */
 export function resolveOriginalKeyFromDisplay(
-  displayKey: string,
+  displayKeysRaw: unknown,
   optionMap: Record<string, string>,
   originalOptions?: Record<string, string> | null
-): string | null {
-  const pick = normalizeLetterKey(displayKey);
-  if (!pick) return null;
-  const resolved = reverseAnswer(pick, optionMap, originalOptions);
-  return normalizeLetterKey(resolved);
+): string[] {
+  const displayKeys = normalizeLetterKeys(displayKeysRaw);
+  const resolved = displayKeys.map((pick) => {
+    const rev = reverseAnswer(pick, optionMap, originalOptions);
+    return normalizeLetterKey(rev) ?? pick;
+  });
+  return normalizeLetterKeys(resolved);
 }
 
 export interface McqGradeResult {
   isCorrect: boolean;
-  originalKey: string | null;
-  correctKey: string | null;
-  displayKey: string | null;
+  originalKey: string[];
+  correctKey: string[];
+  displayKey: string[];
 }
 
 /**
- * Chấm TN: selected display key → option_map → original_key === correct_answer.
- * Không so sánh nội dung text của đáp án.
+ * Chấm TN: selected display keys → option_map → original_keys === correct_answers.
+ * Trả về đúng nếu mảng trùng khớp 100%.
  */
 export function gradeMcq(
   displayOrOriginalKey: unknown,
@@ -46,36 +56,32 @@ export function gradeMcq(
   originalOptions?: Record<string, string> | null
 ): McqGradeResult {
   const correctKey = resolveCorrectAnswerKey(correctAnswer);
-  const displayKey = normalizeLetterKey(displayOrOriginalKey);
+  const displayKey = normalizeLetterKeys(displayOrOriginalKey);
 
-  if (!correctKey || !displayKey) {
+  if (correctKey.length === 0 || displayKey.length === 0) {
     return { isCorrect: false, originalKey: displayKey, correctKey, displayKey };
   }
 
   let originalKey = displayKey;
   if (optionMap && Object.keys(optionMap).length > 0) {
-    const mapped = resolveOriginalKeyFromDisplay(displayKey, optionMap, originalOptions);
-    if (mapped) originalKey = mapped;
+    originalKey = resolveOriginalKeyFromDisplay(displayKey, optionMap, originalOptions);
   }
 
+  const isCorrect = originalKey.join(",") === correctKey.join(",");
+
   return {
-    isCorrect: originalKey === correctKey,
+    isCorrect,
     originalKey,
     correctKey,
     displayKey,
   };
 }
 
-/** Nguồn đáp án khi recompute — tránh map option_map hai lần. */
 export type RecomputeMcqInput =
-  | { kind: "display"; key: string }
-  | { kind: "original"; key: string };
+  | { kind: "display"; key: string[] }
+  | { kind: "original"; key: string[] };
 
 export type PickRecomputeMcqOptions = {
-  /**
-   * true = phiên đã nộp: ưu tiên student_answers / graded_details (original, khớp submit).
-   * false = chỉ có autosave (force-submit, sửa option_maps cũ): ưu tiên display từ autosave.
-   */
   preferSubmittedSource?: boolean;
 };
 
@@ -84,34 +90,33 @@ function pickDisplayByIndex(
   displayByIndex: Record<string, string>
 ): RecomputeMcqInput | null {
   const fromAutosave = displayByIndex[String(displayIdx)]?.trim();
-  if (fromAutosave && /^[A-D]$/i.test(fromAutosave)) {
-    return { kind: "display", key: fromAutosave.toUpperCase() };
+  const keys = normalizeLetterKeys(fromAutosave ? fromAutosave.split(",") : []);
+  if (keys.length > 0) {
+    return { kind: "display", key: keys };
   }
   return null;
 }
 
 function pickOriginalByQuestion(
   questionId: string,
-  originalByQuestionId: Record<string, string>,
+  originalByQuestionId: Record<string, string | string[]>,
   gradedDetailSubmitted?: unknown
 ): RecomputeMcqInput | null {
-  const fromStudent = originalByQuestionId[questionId]?.trim();
-  if (fromStudent && /^[A-D]$/i.test(fromStudent)) {
-    return { kind: "original", key: fromStudent.toUpperCase() };
+  const fromStudent = originalByQuestionId[questionId];
+  let keys = normalizeLetterKeys(fromStudent);
+  if (keys.length > 0) {
+    return { kind: "original", key: keys };
   }
-  const fromGraded = normalizeLetterKey(gradedDetailSubmitted);
-  if (fromGraded) return { kind: "original", key: fromGraded };
+  keys = normalizeLetterKeys(gradedDetailSubmitted);
+  if (keys.length > 0) return { kind: "original", key: keys };
   return null;
 }
 
-/**
- * Chọn nguồn recompute theo ngữ cảnh — tránh autosave stale ghi đè kết quả submit.
- */
 export function pickRecomputeMcqInput(
   displayIdx: number,
   questionId: string,
   displayByIndex: Record<string, string>,
-  originalByQuestionId: Record<string, string>,
+  originalByQuestionId: Record<string, string | string[]>,
   gradedDetailSubmitted?: unknown,
   options?: PickRecomputeMcqOptions
 ): RecomputeMcqInput | null {
@@ -129,7 +134,6 @@ export function pickRecomputeMcqInput(
   return fromDisplay ?? fromOriginal;
 }
 
-/** Chấm TN khi recompute: display → gradeMcq; original → chỉ so chữ (không option_map). */
 export function gradeMcqRecompute(
   input: RecomputeMcqInput | null,
   correctAnswer: string | string[] | null | undefined,
@@ -143,80 +147,80 @@ export function gradeMcqRecompute(
     return gradeMcq(input.key, correctAnswer, optionMap, originalOptions);
   }
   const correctKey = resolveCorrectAnswerKey(correctAnswer);
-  const originalKey = normalizeLetterKey(input.key);
+  const originalKey = normalizeLetterKeys(input.key);
   return {
-    isCorrect: Boolean(originalKey && correctKey && originalKey === correctKey),
+    isCorrect: Boolean(originalKey.length && correctKey.length && originalKey.join(",") === correctKey.join(",")),
     originalKey,
     correctKey,
-    displayKey: null,
+    displayKey: [],
   };
 }
 
-/** Sau unshuffle: submitted đã là original_key — chỉ so chữ cái. */
 export function mcqAnswersEqual(
   submittedOriginalKey: unknown,
   correctAnswer: string | string[] | null | undefined
 ): boolean {
-  const sub = normalizeLetterKey(submittedOriginalKey);
-  const cor = resolveCorrectAnswerKey(correctAnswer);
+  const sub = normalizeLetterKeys(submittedOriginalKey).join(",");
+  const cor = resolveCorrectAnswerKey(correctAnswer).join(",");
   if (!sub || !cor) return false;
   return sub === cor;
 }
 
-function findMcqKeyByOptionText(
+function findMcqKeysByOptionText(
   answer: unknown,
   options?: Record<string, string> | null
-): string | null {
-  if (!options || answer == null) return null;
-  const needle = String(Array.isArray(answer) ? answer[0] : answer).trim();
-  if (!needle) return null;
-  for (const [key, label] of Object.entries(options)) {
-    if (String(label).trim() === needle) return normalizeLetterKey(key);
+): string[] {
+  if (!options || answer == null) return [];
+  const needles = (Array.isArray(answer) ? answer : [answer]).map(s => String(s).trim());
+  const found: string[] = [];
+  for (const needle of needles) {
+    if (!needle) continue;
+    for (const [key, label] of Object.entries(options)) {
+      if (String(label).trim() === needle) {
+        const k = normalizeLetterKey(key);
+        if (k) found.push(k);
+      }
+    }
   }
-  return null;
+  return normalizeLetterKeys(found);
 }
 
-/**
- * Chuẩn hóa đáp án đã lưu: có thể là original (B) hoặc display (D) tùy phiên cũ.
- * Thử map display → original; nếu khớp đáp án đúng thì dùng bản original.
- */
 export function resolveSubmittedOriginalKey(
   submitted: unknown,
   correctAnswer: string | string[] | null | undefined,
   optionMap?: Record<string, string> | null,
   originalOptions?: Record<string, string> | null
-): string | null {
-  const letter = normalizeLetterKey(
-    Array.isArray(submitted) ? submitted[0] : submitted
-  );
-  if (!letter) return null;
-  if (!optionMap || Object.keys(optionMap).length === 0) return letter;
+): string | string[] | null {
+  const letters = normalizeLetterKeys(submitted);
+  if (letters.length === 0) return null;
+  if (!optionMap || Object.keys(optionMap).length === 0) return letters;
 
-  const fromDisplay = resolveOriginalKeyFromDisplay(letter, optionMap, originalOptions);
-  if (fromDisplay && mcqAnswersEqual(fromDisplay, correctAnswer)) return fromDisplay;
-  if (mcqAnswersEqual(letter, correctAnswer)) return letter;
-  return fromDisplay ?? letter;
+  const fromDisplay = resolveOriginalKeyFromDisplay(letters, optionMap, originalOptions);
+  if (fromDisplay.length > 0 && mcqAnswersEqual(fromDisplay, correctAnswer)) return fromDisplay;
+  if (mcqAnswersEqual(letters, correctAnswer)) return letters;
+  return fromDisplay.length > 0 ? fromDisplay : letters;
 }
 
-/** Đáp án đúng hiển thị trên trang review (ưu tiên graded_details, rồi question bank). */
 export function resolveReviewCorrectKey(
   correctAnswer: string | string[] | null | undefined,
   options?: Record<string, string> | null,
   gradedDetailCorrect?: unknown
-): string | null {
-  const fromGraded = normalizeLetterKey(gradedDetailCorrect);
-  if (fromGraded) return fromGraded;
+): string | string[] | null {
+  const fromGraded = normalizeLetterKeys(gradedDetailCorrect);
+  if (fromGraded.length > 0) return fromGraded;
   const fromQuestion = resolveCorrectAnswerKey(correctAnswer);
-  if (fromQuestion) return fromQuestion;
-  const fromText = findMcqKeyByOptionText(correctAnswer, options);
-  if (fromText) return fromText;
+  if (fromQuestion.length > 0) return fromQuestion;
+  const fromText = findMcqKeysByOptionText(correctAnswer, options);
+  if (fromText.length > 0) return fromText;
   return resolveMcqAnswerKey(correctAnswer, options);
 }
 
-/** @deprecated Chỉ dùng để hiển thị UI — không dùng khi chấm điểm. */
 export function resolveMcqAnswerKey(
   answer: string | string[] | null | undefined,
   _options?: Record<string, string> | null
-): string | null {
-  return normalizeLetterKey(answer) ?? resolveCorrectAnswerKey(answer);
+): string | string[] | null {
+  const letters = normalizeLetterKeys(answer);
+  if (letters.length > 0) return letters;
+  const cor = resolveCorrectAnswerKey(answer);
+  return cor.length > 0 ? cor : null;
 }

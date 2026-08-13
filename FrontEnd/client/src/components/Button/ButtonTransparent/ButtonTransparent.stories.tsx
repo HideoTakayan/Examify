@@ -1,5 +1,5 @@
-// eslint-disable-next-line storybook/no-renderer-packages
-import type { Meta, StoryObj } from '@storybook/react';
+﻿// eslint-disable-next-line storybook/no-renderer-packages
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import ButtonTransparent from './ButtonTransparent';
 import { IconArrowRight } from '@tabler/icons-react';
 
@@ -30,3 +30,4 @@ export const Primary: Story = {
         rightIcon: <IconArrowRight />,
     },
 };
+

@@ -13,7 +13,6 @@ export interface SubjectDto {
   code: string;
   credits: number;
   semester: number;
-  has_prediction_model?: boolean;
   category: string;
   sub_category?: string | null;
   subject_group_id?: string | null;
@@ -62,7 +61,6 @@ export type SubjectCatalogSubject = {
   code: string;
   credits: number;
   semester: number;
-  has_prediction_model?: boolean;
   category: string;
   sub_category: string | null;
   subject_group_id: string | null;
@@ -113,7 +111,6 @@ export type SubjectPickerCatalogGroup = {
     credits: number;
     semester: number;
     model_subject_id: string | null;
-    has_prediction_model?: boolean;
     prerequisite_ids?: string[];
     prerequisite_names?: string[];
   }>;

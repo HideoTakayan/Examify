@@ -6,10 +6,11 @@ import { auditLogin } from "~/services/auditHelpers";
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, username, password, role, full_name } = req.body;
-    if (!email || !username || !password || !role) {
-      return res.status(400).json({ success: false, message: "email/username/password/role là bắt buộc" });
+    const { email, username, password, full_name } = req.body;
+    if (!email || !username || !password) {
+      return res.status(400).json({ success: false, message: "email/username/password là bắt buộc" });
     }
+    const role = "student"; // Force student role for public registration
     const user = await registerUser(email, username, password, role, full_name);
     return res.status(201).json({ success: true, data: user });
   } catch (err: any) {

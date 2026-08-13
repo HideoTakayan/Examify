@@ -115,7 +115,8 @@ const SESSIONS_BASE_SQL = `
   JOIN exams e ON e.id = es.exam_id
   JOIN accounts a ON a.id = es.student_id
   LEFT JOIN classes c ON c.id = e.class_id
-  LEFT JOIN subjects s ON s.id = COALESCE(e.subject_id, c.subject_id)
+  LEFT JOIN term_subject_offerings tso ON tso.id = e.class_id
+  LEFT JOIN subjects s ON s.id = COALESCE(e.subject_id, c.subject_id, tso.subject_id)
   WHERE es.status = 'submitted'
     AND es.score IS NOT NULL
     AND es.max_points > 0
@@ -333,4 +334,114 @@ export const getScoreDistributionByExam = async (
     min_score: min,
     buckets: DEFAULT_BUCKETS.map((b, i) => ({ ...b, count: counts[i] })),
   };
+};
+
+export interface ItemAnalysisResult {
+  question_id: string;
+  question_number: number;
+  content: string;
+  question_type: string;
+  options: Record<string, string> | null;
+  correct_answer: string | string[] | null;
+  total_attempts: number;
+  correct_count: number;
+  correct_rate: number;
+  options_count: Record<string, number>;
+  fib_answers_count: Array<{ answer: string; count: number }>;
+}
+
+export const getItemAnalysisByExam = async (examId: string): Promise<ItemAnalysisResult[]> => {
+  const qRes = await pool.query(
+    `SELECT id, content, question_type, options, correct_answer, display_order, created_at 
+     FROM questions 
+     WHERE exam_id = $1 
+     ORDER BY display_order ASC, created_at ASC`,
+    [examId]
+  );
+  
+  if (qRes.rows.length === 0) return [];
+  
+  const questions = qRes.rows;
+  
+  const sessionRes = await pool.query(
+    `SELECT graded_details 
+     FROM exam_sessions 
+     WHERE exam_id = $1 AND status = 'submitted'`,
+    [examId]
+  );
+  
+  const results: Record<string, ItemAnalysisResult> = {};
+  
+  questions.forEach((q, idx) => {
+    results[q.id] = {
+      question_id: q.id,
+      question_number: idx + 1,
+      content: q.content,
+      question_type: q.question_type,
+      options: q.options ? (typeof q.options === 'string' ? JSON.parse(q.options) : q.options) : null,
+      correct_answer: q.correct_answer ? (typeof q.correct_answer === 'string' && q.correct_answer.startsWith('[') ? JSON.parse(q.correct_answer) : q.correct_answer) : null,
+      total_attempts: 0,
+      correct_count: 0,
+      correct_rate: 0,
+      options_count: {},
+      fib_answers_count: [],
+    };
+    if (results[q.id].options) {
+      Object.keys(results[q.id].options!).forEach(k => {
+        results[q.id].options_count[k] = 0;
+      });
+    }
+  });
+  
+  const fibCounts: Record<string, Record<string, number>> = {};
+  
+  sessionRes.rows.forEach(row => {
+    const details = row.graded_details;
+    if (!Array.isArray(details)) return;
+    
+    details.forEach((d: any) => {
+      const qId = d.question_id;
+      if (!results[qId]) return;
+      
+      const item = results[qId];
+      if (d.submitted != null && d.submitted !== '') {
+        item.total_attempts++;
+        
+        if (d.is_correct) {
+          item.correct_count++;
+        }
+        
+        if (item.question_type === 'mcq' || item.question_type === 'msq') {
+          const sub = Array.isArray(d.submitted) ? d.submitted : [d.submitted];
+          sub.forEach((ans: any) => {
+            if (typeof ans === 'string') {
+              const k = ans.trim().toUpperCase();
+              if (item.options_count[k] !== undefined) {
+                item.options_count[k]++;
+              } else {
+                item.options_count[k] = 1;
+              }
+            }
+          });
+        } else if (item.question_type === 'fib') {
+          const ans = String(d.submitted).trim();
+          if (!fibCounts[qId]) fibCounts[qId] = {};
+          if (!fibCounts[qId][ans]) fibCounts[qId][ans] = 0;
+          fibCounts[qId][ans]++;
+        }
+      }
+    });
+  });
+  
+  return Object.values(results).map(item => {
+    item.correct_rate = item.total_attempts > 0 ? (item.correct_count / item.total_attempts) * 100 : 0;
+    
+    if (item.question_type === 'fib' && fibCounts[item.question_id]) {
+      item.fib_answers_count = Object.entries(fibCounts[item.question_id])
+        .map(([answer, count]) => ({ answer, count }))
+        .sort((a, b) => b.count - a.count);
+    }
+    
+    return item;
+  }).sort((a, b) => a.question_number - b.question_number);
 };

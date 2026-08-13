@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
+﻿import type { Meta, StoryObj } from "@storybook/react-vite";
 import ContentTabs from "./ContentTabs";
 
 const meta: Meta<typeof ContentTabs> = {
@@ -10,3 +10,4 @@ export default meta;
 type Story = StoryObj<typeof ContentTabs>;
 
 export const Primary: Story = {};
+

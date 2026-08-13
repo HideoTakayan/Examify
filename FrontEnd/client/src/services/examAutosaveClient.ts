@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 
 /** q1, q2, … — giá trị là display key (A–D) ô SV bấm trên màn hình, không unshuffle. */
-export type DraftAnswers = Record<string, string>;
+export type DraftAnswers = Record<string, string | string[]>;
 
 type DraftSnapshot = {
   examId: string;

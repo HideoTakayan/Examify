@@ -18,9 +18,11 @@ import { ListPaginationBar } from '@/components/ListPagination';
 import { DEFAULT_PAGE_SIZE, pageToOffset } from '@/utils/pagination';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import { formatScoreScale10Pair, scoreToPointPercent } from '@/utils/formatExamScore';
+import SubjectCategoryPicker from '@/components/Input/SubjectCategoryPicker';
 
 const TeacherStudents = () => {
   const { t } = useTranslation();
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -78,12 +80,19 @@ const TeacherStudents = () => {
   }, [gradeSearch]);
 
   const loadStudents = useCallback(async () => {
+    if (!selectedSubjectId) {
+      setStudents([]);
+      setTotal(0);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const r = await teacherStudentsApi.list({
         limit: pageSize,
         offset: pageToOffset(page, pageSize),
         search: searchDebounced || undefined,
+        subject_id: selectedSubjectId,
       });
       setStudents(r.items);
       setTotal(r.total);
@@ -92,9 +101,9 @@ const TeacherStudents = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, searchDebounced, t]);
+  }, [page, pageSize, searchDebounced, t, selectedSubjectId]);
 
-  useEffect(() => { void loadStudents(); }, [loadStudents]);
+  useEffect(() => { void loadStudents(); }, [loadStudents, selectedSubjectId]);
 
   const openEdit = (s: StudentItem) => {
     setEditForm({
@@ -298,17 +307,35 @@ const TeacherStudents = () => {
           <Tabs.Tab value="grades">{t('teacher_students.tab_grades')}</Tabs.Tab>
         </Tabs.List>
 
-        {/* Tab: Danh sách */}
         <Tabs.Panel value="list">
           <Stack gap="md">
-            <Group justify="space-between" wrap="wrap">
-              <InputText
-                placeholder={t('teacher_students.search_placeholder')}
-                value={search}
-                onChange={(e) => setSearch(e.currentTarget.value)}
-                style={{ maxWidth: 320 }}
-              />
-              <Group gap="xs">
+            <Paper withBorder p="md" radius="md">
+            <Group align="flex-end">
+              <Box className="w-[300px]">
+                <SubjectCategoryPicker
+                  value={selectedSubjectId}
+                  onChange={setSelectedSubjectId}
+                />
+              </Box>
+              <Box className="flex-1 max-w-[300px]">
+                <InputText
+                  placeholder={t('teacher_students.search')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  disabled={!selectedSubjectId}
+                />
+              </Box>
+            </Group>
+          </Paper>
+
+          {!selectedSubjectId ? (
+            <Paper p="xl" withBorder radius="md" ta="center">
+              <Text c="dimmed">{t('exam_authoring.form.choose_subject')}</Text>
+            </Paper>
+          ) : (
+            <>
+              <Group justify="space-between" mb="md">
+                <Text fw={500}>{t('teacher_students.total_count', { count: total })}</Text>
                 {selectedStudentIds.size > 0 && (
                   <ButtonFilled
                     label={t('teacher_students.send_grades_btn', { count: selectedStudentIds.size })}
@@ -320,7 +347,6 @@ const TeacherStudents = () => {
                   />
                 )}
               </Group>
-            </Group>
             {emailResult && (
               <Text size="sm" c={emailResultError ? 'red' : 'teal'}>
                 {emailResult}
@@ -409,6 +435,8 @@ const TeacherStudents = () => {
                 </Table>
               )}
             </Paper>
+            </>
+          )}
           </Stack>
         </Tabs.Panel>
 

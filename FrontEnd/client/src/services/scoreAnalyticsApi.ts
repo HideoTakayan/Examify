@@ -39,6 +39,20 @@ export type SubjectScoreAnalytics = {
   exams: ExamScoreStat[];
 };
 
+export type ItemAnalysisResult = {
+  question_id: string;
+  question_number: number;
+  content: string;
+  question_type: string;
+  options: Record<string, string> | null;
+  correct_answer: string | string[] | null;
+  total_attempts: number;
+  correct_count: number;
+  correct_rate: number;
+  options_count: Record<string, number>;
+  fib_answers_count: Array<{ answer: string; count: number }>;
+};
+
 const scoreAnalyticsApi = {
   getSubjects: async (adminClassId?: string | null): Promise<SubjectOption[]> => {
     const res = await apiClient.get<{ success: boolean; data: SubjectOption[] }>(
@@ -64,6 +78,13 @@ const scoreAnalyticsApi = {
       }
     );
     return res.data.data;
+  },
+
+  getItemAnalysis: async (examId: string): Promise<ItemAnalysisResult[]> => {
+    const res = await apiClient.get<{ success: boolean; data: ItemAnalysisResult[] }>(
+      `/score-analytics/exam/${examId}/item-analysis`
+    );
+    return res.data.data ?? [];
   },
 };
 

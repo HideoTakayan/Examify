@@ -14,6 +14,7 @@ import EmptyState from '@/components/EmptyState/EmptyState';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import SubjectCategoryPicker from '@/components/Input/SubjectCategoryPicker';
 import { useSubjectPickerCatalog } from '@/hooks/useSubjectPickerCatalog';
+import { ItemAnalysisModal } from './ItemAnalysisModal';
 import useAuth from '@/hooks/useAuth';
 import { formatExamScore } from '@/utils/formatExamScore';
 
@@ -45,6 +46,8 @@ const ScoreAnalytics = () => {
   const [subjects, setSubjects] = useState<SubjectOption[]>([]);
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [analytics, setAnalytics] = useState<SubjectScoreAnalytics | null>(null);
+
+  const [itemAnalysisExam, setItemAnalysisExam] = useState<{ id: string; title: string } | null>(null);
 
   useEffect(() => {
     const loadClasses = async () => {
@@ -155,10 +158,7 @@ const ScoreAnalytics = () => {
     [pickerGroups, analyticsSubjectIds]
   );
 
-  const selectedSubjectMeta = useMemo(
-    () => subjects.find((s) => s.subject_id === selectedSubjectId) ?? null,
-    [subjects, selectedSubjectId]
-  );
+
 
   const chartData = useMemo(
     () =>
@@ -297,6 +297,7 @@ const ScoreAnalytics = () => {
                       <Table.Th>{t('score_analytics.min')}</Table.Th>
                       <Table.Th>{t('score_analytics.max')}</Table.Th>
                       <Table.Th>{t('score_analytics.pass_rate')}</Table.Th>
+                      <Table.Th></Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
@@ -308,6 +309,16 @@ const ScoreAnalytics = () => {
                         <Table.Td>{formatGrade10(exam.min_grade10)}</Table.Td>
                         <Table.Td>{formatGrade10(exam.max_grade10)}</Table.Td>
                         <Table.Td>{formatPercent(exam.pass_rate)}</Table.Td>
+                        <Table.Td>
+                          <Badge 
+                            variant="light" 
+                            color="blue" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setItemAnalysisExam({ id: exam.exam_id, title: exam.exam_title })}
+                          >
+                            Phân tích câu hỏi
+                          </Badge>
+                        </Table.Td>
                       </Table.Tr>
                     ))}
                   </Table.Tbody>
@@ -330,6 +341,15 @@ const ScoreAnalytics = () => {
             icon={<Text style={{ fontSize: 36 }}>📊</Text>}
             title={t('score_analytics.no_subjects_title')}
             description={t('score_analytics.no_subjects_desc')}
+          />
+        )}
+
+        {itemAnalysisExam && (
+          <ItemAnalysisModal
+            examId={itemAnalysisExam.id}
+            examTitle={itemAnalysisExam.title}
+            opened={!!itemAnalysisExam}
+            onClose={() => setItemAnalysisExam(null)}
           />
         )}
       </Stack>

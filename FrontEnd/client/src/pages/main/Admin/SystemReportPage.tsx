@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
-  Box, Text, Loader, SimpleGrid, Paper, Stack, Group, Badge, Table, Progress,
+  Box, Text, Loader, SimpleGrid, Paper, Stack, Badge, Table, Progress,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
 import StatCard from '@/components/StatCard/StatCard';
-import ButtonFilled from '@/components/Button/ButtonFilled/ButtonFilled';
-import { IconUsers, IconBook, IconClipboardList, IconUserCheck, IconAlertTriangle } from '@tabler/icons-react';
+import { IconUsers, IconBook, IconClipboardList, IconUserCheck } from '@tabler/icons-react';
 import PageHeader from '@/components/PageHeader/PageHeader';
 
 type SystemReport = {

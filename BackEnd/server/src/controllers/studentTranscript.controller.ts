@@ -58,16 +58,18 @@ export const getStudentTranscript = async (req: Request, res: Response) => {
         sg.code as group_code,
         sg.name as group_name,
         MAX(es.score) as score10,
-        c.semester,
-        c.year
+        COALESCE(c.semester, tso.semester_id::text, 'HK1') as semester,
+        COALESCE(c.year, EXTRACT(YEAR FROM es.created_at)::int, 2024) as year
       FROM exam_sessions es
       JOIN exams e ON e.id = es.exam_id
-      JOIN classes c ON c.id = e.class_id
-      JOIN subjects s ON s.id = c.subject_id
+      LEFT JOIN classes c ON c.id = e.class_id
+      LEFT JOIN term_subject_offerings tso ON tso.id = e.class_id
+      JOIN subjects s ON s.id = COALESCE(e.subject_id, c.subject_id, tso.subject_id)
       LEFT JOIN subject_groups sg ON sg.id = s.subject_group_id
       WHERE es.student_id = $1 AND es.status = 'submitted'
-      GROUP BY s.id, s.name, s.code, s.credits, sg.code, sg.name, c.semester, c.year
-      ORDER BY c.year ASC, c.semester ASC, s.name ASC
+        AND (c.id IS NOT NULL OR tso.id IS NOT NULL OR e.subject_id IS NOT NULL)
+      GROUP BY s.id, s.name, s.code, s.credits, sg.code, sg.name, c.semester, c.year, tso.semester_id, es.created_at
+      ORDER BY year ASC, semester ASC, s.name ASC
     `;
     const takenResult = await pool.query(takenQuery, [studentId]);
     const takenRecords = takenResult.rows;

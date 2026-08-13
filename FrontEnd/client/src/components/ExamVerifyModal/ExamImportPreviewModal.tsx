@@ -19,14 +19,12 @@ import {
   NumberInput,
   Textarea,
   Alert,
-  Loader,
   FileInput,
   ActionIcon,
 } from '@mantine/core';
 import {
   IconCheck,
   IconAlertCircle,
-  IconWand,
   IconPhoto,
   IconMicrophone,
   IconVideo,
@@ -340,7 +338,7 @@ function QuestionCard({
               label="Chương"
               min={1}
               placeholder="Bắt buộc khai báo CHUONG trong file Word"
-              value={q.chapter}
+              value={q.chapter ?? undefined}
               disabled
             />
           )}
@@ -378,7 +376,7 @@ export default function ExamImportPreviewModal({
   onClose,
 }: ExamImportPreviewModalProps) {
   const [, setFormTick] = useState(0);
-  const [currentPreview, setCurrentPreview] = useState<ExamImportPreview>(preview);
+  const [currentPreview] = useState<ExamImportPreview>(preview);
   const [confirmError, setConfirmError] = useState('');
   const form = useForm<ImportPreviewFormValues>({
     mode: 'uncontrolled',
@@ -389,11 +387,7 @@ export default function ExamImportPreviewModal({
     },
   });
 
-  const [recomposing, setRecomposing] = useState(false);
-  const [recomposeError, setRecomposeError] = useState('');
-  const [recomposeFile, setRecomposeFile] = useState<File | null>(null);
-  const [recomposeArchiveFile, setRecomposeArchiveFile] = useState<File | null>(null);
-  const [showFileUpload, setShowFileUpload] = useState(false);
+
   const [mediaFiles, setMediaFiles] = useState<Record<number, File | null>>({});
   const [mediaPreviews, setMediaPreviews] = useState<Record<number, MediaPreview>>({});
   const [mediaUploading, setMediaUploading] = useState<Record<number, boolean>>({});
@@ -521,37 +515,7 @@ export default function ExamImportPreviewModal({
     }
   };
 
-  const handleRecompose = async () => {
-    if (!recomposeFile) {
-      setShowFileUpload(true);
-      return;
-    }
-    setRecomposing(true);
-    setRecomposeError('');
-    try {
-      const result = await examApi.aiRecomposeExam({
-        file: recomposeFile,
-        mediaArchive: recomposeArchiveFile ?? mediaArchive ?? null,
-        examInfo: currentPreview.exam,
-      });
-      setCurrentPreview(result);
-      const nextValues = draftsToFormValues(result.questions);
-      form.setInitialValues(nextValues);
-      form.setValues(nextValues);
-      form.reset();
-      setShowFileUpload(false);
-      setRecomposeFile(null);
-      setRecomposeArchiveFile(null);
-      setConfirmError('');
-      setMediaFiles({});
-      setMediaPreviews({});
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'AI xử lý thất bại. Thử lại.';
-      setRecomposeError(message);
-    } finally {
-      setRecomposing(false);
-    }
-  };
+
 
   const handleConfirm = () => {
     const rows = form.getValues().questions;
@@ -698,37 +662,7 @@ export default function ExamImportPreviewModal({
           </Stack>
 
           <Group gap="xs" wrap="nowrap">
-            {showFileUpload && (
-              <>
-                <FileInput
-                  size="xs"
-                  placeholder="Chọn file docx..."
-                  accept=".docx"
-                  value={recomposeFile}
-                  onChange={setRecomposeFile}
-                  style={{ minWidth: 160 }}
-                />
-                <FileInput
-                  size="xs"
-                  placeholder={mediaArchive ? 'Giữ ZIP hiện tại hoặc chọn ZIP mới' : 'Chọn file zip (tùy chọn)'}
-                  accept=".zip,application/zip"
-                  value={recomposeArchiveFile}
-                  onChange={setRecomposeArchiveFile}
-                  clearable
-                  style={{ minWidth: 200 }}
-                />
-              </>
-            )}
-            <Button
-              size="xs"
-              variant="light"
-              color="teal"
-              leftSection={recomposing ? <Loader size={12} color="#fff" /> : <IconWand size={12} />}
-              onClick={handleRecompose}
-              disabled={recomposing || (showFileUpload && !recomposeFile)}
-            >
-              AI Sửa Lại
-            </Button>
+
             <Button
               size="xs"
               color="cyan"
@@ -743,11 +677,7 @@ export default function ExamImportPreviewModal({
           </Group>
         </Group>
 
-        {recomposeError && (
-          <Alert mt="xs" color="red" variant="light">
-            {recomposeError}
-          </Alert>
-        )}
+
         {mediaArchive && (
           <Alert mt="xs" color="teal" variant="light" icon={<IconCheck size={14} />}>
             Đã có file ZIP media đi kèm từ bước xem trước. Nếu cần, bạn có thể chọn ZIP mới khi bấm AI Sửa Lại.

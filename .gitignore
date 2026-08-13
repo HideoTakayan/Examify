@@ -20,7 +20,11 @@ yarn-error.log*
 
 # coverage and tests
 coverage/
+test-results/
 .nyc_output/
+
+# TypeScript incremental build info
+*.tsbuildinfo
 
 # IDE and editors
 .vscode/
@@ -41,9 +45,11 @@ coverage/
 ehthumbs.db
 Thumbs.db
 
-# temp files
+# temp / scratch files
 tmp/
 temp/
+scratch/
+scratch.sql
 
 # Exclude documents
 *.md

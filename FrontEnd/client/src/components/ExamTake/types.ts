@@ -27,7 +27,7 @@ export type MockExamQuestion = {
   /** 1-based index shown in navigator */
   number: number;
   points?: number;
-  type: 'mcq' | 'audio_mcq' | 'image_mcq' | 'essay' | 'fill_blank' | 'composite';
+  type: 'mcq' | 'msq' | 'fib' | 'audio_mcq' | 'image_mcq' | 'essay' | 'fill_blank' | 'composite';
   prompt: string;
   /** Ảnh / audio / video từ server (vd. Cloudinary) — mcq & essay */
   media_url?: string | null;
