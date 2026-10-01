@@ -21,6 +21,8 @@ import {
   startExamRuntimeController,
   getMySubmissionController,
   getSessionReviewController,
+  getSessionGradingController,
+  gradeSessionController,
   getExamProctoringController,
   saveOfflineGradesController,
   postIntegrityEventsController,
@@ -73,6 +75,16 @@ examRouter.get(
   "/sessions/:sessionId/review",
   roleMiddleware(["student"]),
   getSessionReviewController
+);
+examRouter.get(
+  "/sessions/:sessionId/grading",
+  roleMiddleware(["admin", "teacher"]),
+  getSessionGradingController
+);
+examRouter.patch(
+  "/sessions/:sessionId/grade",
+  roleMiddleware(["admin", "teacher"]),
+  gradeSessionController
 );
 
 examRouter.post(

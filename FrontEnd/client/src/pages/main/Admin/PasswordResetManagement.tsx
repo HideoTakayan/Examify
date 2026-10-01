@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Box, Text, Loader, Table, Paper, Group, Alert, Stack, Textarea, Modal,
 } from '@mantine/core';
@@ -35,7 +35,7 @@ const PasswordResetManagement = () => {
     setNoteText('');
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const isFirstLoad = initialLoading;
     try {
       if (!isFirstLoad) setRefreshing(true);
@@ -48,12 +48,11 @@ const PasswordResetManagement = () => {
       setInitialLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     void load();
-  }, []);
+  }, [load]);
 
   const handleApprove = async (id: string, note: string) => {
     try {

@@ -214,15 +214,24 @@ router.get("/exam-results", async (req, res, next) => {
               THEN (es.score / es.max_points * 100)
               ELSE NULL
          END AS percentage,
-         (SELECT COUNT(*)::int FROM jsonb_array_elements(es.graded_details) AS ca
-          WHERE (ca->>'is_correct')::boolean = true) AS correct_count,
-         jsonb_array_length(es.graded_details) AS total_questions,
+         CASE WHEN jsonb_typeof(es.graded_details) = 'array'
+              THEN (SELECT COUNT(*)::int FROM jsonb_array_elements(es.graded_details) AS ca
+                    WHERE (ca->>'is_correct')::boolean = true)
+              ELSE NULL
+         END AS correct_count,
+         CASE WHEN jsonb_typeof(es.graded_details) = 'array'
+              THEN jsonb_array_length(es.graded_details)
+              ELSE NULL
+         END AS total_questions,
          es.status,
          es.submitted_at,
          NULL AS graded_at,
          es.grading_status,
-         (SELECT string_agg(ca->>'teacher_comment', '; ') FROM jsonb_array_elements(es.graded_details) AS ca
-          WHERE ca->>'teacher_comment' IS NOT NULL AND ca->>'teacher_comment' <> '') AS teacher_comment
+         CASE WHEN jsonb_typeof(es.graded_details) = 'array'
+              THEN (SELECT string_agg(ca->>'teacher_comment', '; ') FROM jsonb_array_elements(es.graded_details) AS ca
+                    WHERE ca->>'teacher_comment' IS NOT NULL AND ca->>'teacher_comment' <> '')
+              ELSE NULL
+         END AS teacher_comment
        FROM exam_sessions es
        JOIN exams e ON e.id = es.exam_id
        LEFT JOIN classes c ON c.id = e.class_id

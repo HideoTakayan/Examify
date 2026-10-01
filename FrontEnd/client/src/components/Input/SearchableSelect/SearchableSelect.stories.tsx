@@ -1,4 +1,4 @@
-﻿// eslint-disable-next-line storybook/no-renderer-packages
+﻿ 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import SearchableSelect, { type OptionType } from "./SearchableSelect";
 

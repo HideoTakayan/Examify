@@ -318,7 +318,7 @@ export default function ExamAuthoring() {
 
   const currentQuestions = useMemo(
     () => questions.filter((q) => (q.version_index ?? 0) === 0),
-    [questions, 0]
+    [questions]
   );
 
   
@@ -336,7 +336,7 @@ export default function ExamAuthoring() {
       }
     }
     return ids;
-  }, [questions, 0]);
+  }, [questions]);
 
   const handleAddFromBank = (picked: BankPickTarget[]) => {
     if (!picked.length) return;

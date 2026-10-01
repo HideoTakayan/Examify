@@ -79,7 +79,7 @@ export const protectedRoutes: Routes = [
     key: 'exam-list',
     path: '/exams',
     component: lazy(() => import('@/pages/main/Exam/ExamList')),
-    authority: ['user', 'teacher'],
+    authority: ['user', 'admin', 'teacher'],
     nav: {
       labelKey: 'nav.exam_list',
       position: 'sub',
@@ -91,7 +91,7 @@ export const protectedRoutes: Routes = [
     key: 'exam-authoring',
     path: '/exams/new',
     component: lazy(() => import('@/pages/main/Exam/ExamAuthoring')),
-    authority: ['teacher'],
+    authority: ['admin', 'teacher'],
     nav: {
       labelKey: 'nav.exam_create',
       position: 'sub',
@@ -103,7 +103,25 @@ export const protectedRoutes: Routes = [
     key: 'exam-authoring-edit',
     path: '/exams/:examId/edit',
     component: lazy(() => import('@/pages/main/Exam/ExamAuthoring')),
-    authority: ['teacher'],
+    authority: ['admin', 'teacher'],
+  },
+  {
+    key: 'proctoring-list',
+    path: '/proctoring',
+    component: lazy(() => import('@/pages/main/Proctoring/ProctoringList')),
+    authority: ['admin', 'teacher'],
+    nav: {
+      labelKey: 'nav.proctoring',
+      position: 'sub',
+      groupKey: 'exams',
+      order: 3,
+    },
+  },
+  {
+    key: 'proctoring-dashboard',
+    path: '/proctoring/:examId',
+    component: lazy(() => import('@/pages/main/Proctoring/ProctoringDashboard')),
+    authority: ['admin', 'teacher'],
   },
   {
     key: 'exam-take',

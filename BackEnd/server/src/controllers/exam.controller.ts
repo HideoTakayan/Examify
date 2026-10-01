@@ -28,6 +28,8 @@ import {
   persistAutosaveSnapshotService,
   createExamWithQuestionsService,
   getSessionReview,
+  getSessionGradingView,
+  gradeSessionService,
   reportViolationService,
   saveOfflineGradesService,
   assertTeacherCanManageExam,
@@ -228,7 +230,7 @@ export const commitWordImportController = async (
       closes_at,
       opens_at,
       ends_at,
-      num_versions: num_versions ? Number(num_versions) : 2,
+      num_versions: num_versions ? Number(num_versions) : undefined,
       exam_type,
       exam_category,
       dynamic_num_questions: dynamic_num_questions ? Number(dynamic_num_questions) : null,
@@ -342,12 +344,10 @@ export const addQuestionController = async (req: Request, res: Response, next: N
       chapter_label,
       answer_hint,
     } = req.body;
-    if (!content || points === undefined || points === null) {
-      return res.status(400).json({ success: false, message: "content và points là bắt buộc" });
-    }
-    const qt: QuestionType = "mcq";
-    if (question_type && question_type !== "mcq") {
-      return res.status(400).json({ success: false, message: "question_type phải là mcq" });
+    const allowedQuestionTypes: QuestionType[] = ["mcq", "msq", "fib", "essay"];
+    const qt: QuestionType = (question_type as QuestionType) || "mcq";
+    if (question_type && !allowedQuestionTypes.includes(qt)) {
+      return res.status(400).json({ success: false, message: "question_type phải là mcq, msq, fib hoặc essay" });
     }
     const q = await addQuestion(
       req.params.examId,
@@ -394,9 +394,10 @@ export const updateQuestionController = async (req: Request, res: Response, next
         .status(400)
         .json({ success: false, message: "content, points và display_order là bắt buộc" });
     }
-    const qt: QuestionType = "mcq";
-    if (question_type && question_type !== "mcq") {
-      return res.status(400).json({ success: false, message: "question_type phải là mcq" });
+    const allowedQuestionTypes: QuestionType[] = ["mcq", "msq", "fib", "essay"];
+    const qt: QuestionType = (question_type as QuestionType) || "mcq";
+    if (question_type && !allowedQuestionTypes.includes(qt)) {
+      return res.status(400).json({ success: false, message: "question_type phải là mcq, msq, fib hoặc essay" });
     }
     const q = await updateQuestionInExam(req.params.examId, req.params.questionId, {
       content,
@@ -547,6 +548,31 @@ export const getSessionReviewController = async (req: Request, res: Response, ne
   try {
     const user = (req as any).user;
     const data = await getSessionReview(req.params.sessionId, user.userId);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getSessionGradingController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = (req as any).user;
+    const data = await getSessionGradingView(req.params.sessionId, user.userId, user.role);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const gradeSessionController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = (req as any).user;
+    const { grades } = req.body;
+    if (!grades || typeof grades !== "object") {
+      return res.status(400).json({ success: false, message: "grades là bắt buộc (object)" });
+    }
+    const data = await gradeSessionService(req.params.sessionId, user.userId, user.role, grades);
+    await auditGradeSession(user.userId, user.role, req.params.sessionId, req);
     res.json({ success: true, data });
   } catch (err) {
     next(err);

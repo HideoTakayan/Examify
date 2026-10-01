@@ -355,7 +355,7 @@ export default function SubjectCategoryPicker({
 
     }
 
-  }, [opened, selected?.id, selected?.category]);
+  }, [opened, selected]);
 
 
 

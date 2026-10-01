@@ -67,8 +67,11 @@ export function buildLearningAssessmentSummary(
   allQuestions: Question[],
   gradedDetails: GradedDetailRow[]
 ): LearningAssessmentSummary {
-  const questionsById = new Map(allQuestions.map((q, idx) => [q.id, { q, order: idx + 1 }]));
-  const totalQuestions = allQuestions.length;
+  const sessionQuestionIds = new Set(gradedDetails.map((d) => d.question_id));
+  const sessionQuestions = allQuestions.filter((q) => sessionQuestionIds.has(q.id));
+  const questionsToAssess = sessionQuestions.length > 0 ? sessionQuestions : allQuestions;
+  const questionsById = new Map(questionsToAssess.map((q, idx) => [q.id, { q, order: idx + 1 }]));
+  const totalQuestions = gradedDetails.length > 0 ? gradedDetails.length : allQuestions.length;
   const wrongRows = gradedDetails
     .filter((d) => !d.is_correct && !d.pending_grading && d.question_type !== "essay")
     .map((detail) => {
@@ -82,7 +85,7 @@ export function buildLearningAssessmentSummary(
   const mode = resolveMode(wrongCount, totalQuestions);
 
   const chapterMap = new Map<string, ChapterAssessmentSummary>();
-  for (const question of allQuestions) {
+  for (const question of questionsToAssess) {
     const key = `${question.chapter ?? "null"}|${question.chapter_label ?? ""}`;
     const existing = chapterMap.get(key) ?? {
       chapter: question.chapter ?? null,

@@ -54,18 +54,22 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  email: string,
+  emailOrUsername: string,
   password: string,
   deviceId: string,
   deviceInfo?: string
 ): Promise<LoginResult> => {
-  const user = await getUserByEmail(email);
-  if (!user) throw new Error("Email hoặc mật khẩu không đúng");
+  const identifier = emailOrUsername.trim();
+  let user = await getUserByEmail(identifier);
+  if (!user) {
+    user = await getUserByUsername(identifier);
+  }
+  if (!user) throw new Error("Email/Tên đăng nhập hoặc mật khẩu không đúng");
 
   if (!user.is_active) throw new Error("Tài khoản đã bị vô hiệu hóa");
 
   const valid = await bcrypt.compare(password, user.hashed_password);
-  if (!valid) throw new Error("Email hoặc mật khẩu không đúng");
+  if (!valid) throw new Error("Email/Tên đăng nhập hoặc mật khẩu không đúng");
 
   const existingSession = await getActiveSessionByUserId(user.id);
   const hasExistingSession = !!existingSession;

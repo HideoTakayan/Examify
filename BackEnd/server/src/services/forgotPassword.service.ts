@@ -26,7 +26,11 @@ export const forgotPassword = async (
   }
 
   const token = await generateResetToken(user.id);
-  const resetLink = `${env.APP_HOST}/reset-password?token=${token}`;
+  const clientBase =
+    process.env.FRONTEND_URL ||
+    env.CORS_ORIGINS[0] ||
+    (env.APP_HOST.startsWith("http") ? env.APP_HOST : `http://${env.APP_HOST}:5173`);
+  const resetLink = `${clientBase.replace(/\/+$/, "")}/reset-password?token=${token}`;
 
   await sendForgotPasswordLink(user.email, {
     fullName: user.full_name ?? undefined,

@@ -13,7 +13,7 @@ export const getOfferingsController = async (req: Request, res: Response) => {
     const teacherId = user?.userId;
     if (!teacherId) return res.status(401).json({ message: "Unauthorized" });
 
-    const offerings = await getOfferingsByTeacher(teacherId);
+    const offerings = await getOfferingsByTeacher(teacherId, user.role);
     res.json(offerings);
   } catch (error) {
     console.error(error);

@@ -413,7 +413,13 @@ export async function resolveMediaArchiveInPreview(
 
 const QUESTION_TYPE_MAP: Record<string, QuestionType> = {
   TN: "mcq",
-  TL: "mcq", // Legacy: treat TL (tự luận) as MCQ since system is MCQ-only
+  MCQ: "mcq",
+  TL: "essay",
+  ESSAY: "essay",
+  MSQ: "msq",
+  "TN-NHIEU": "msq",
+  FIB: "fib",
+  "DIEN-KHUYET": "fib",
   "TN-ANH": "mcq",
   "TN-AUDIO": "mcq",
   "TN-VIDEO": "mcq",
@@ -507,12 +513,16 @@ function finalizeQuestion(
     errors.push(`Câu ${current.index}: thiếu nội dung câu hỏi.`);
   }
 
-  if (current.question_type === "mcq") {
+  if (current.question_type === "mcq" || current.question_type === "msq") {
     if (Object.keys(current.options).length < 2) {
       errors.push(`Câu ${current.index}: câu trắc nghiệm cần ít nhất 2 lựa chọn.`);
     }
     if (!current.correct_answer) {
       errors.push(`Câu ${current.index}: câu trắc nghiệm thiếu đáp án đúng.`);
+    }
+  } else if (current.question_type === "fib") {
+    if (!current.correct_answer) {
+      errors.push(`Câu ${current.index}: câu điền khuyết thiếu đáp án đúng.`);
     }
   }
 
@@ -527,12 +537,15 @@ function finalizeQuestion(
     current.chapter_label = chapterDefinitions.get(current.chapter) ?? current.chapter_label ?? null;
   }
 
+  const isOptionType = current.question_type === "mcq" || current.question_type === "msq";
+  const hasAnswer = current.question_type !== "essay";
+
   const nextQuestion: ImportedQuestionDraft = {
     content,
     question_type: current.question_type,
     points: current.points,
-    options: current.question_type === "mcq" ? current.options : null,
-    correct_answer: current.question_type === "mcq" ? current.correct_answer : null,
+    options: isOptionType ? current.options : null,
+    correct_answer: hasAnswer ? current.correct_answer : null,
     answer_hint: current.question_type === "essay" ? current.answer_hint : null,
     display_order: questions.length + 1,
     difficulty: current.difficulty,

@@ -15,6 +15,8 @@ import bcrypt from "bcrypt";
 import { sendEmail, sendPasswordReset } from "./email.service";
 import { isEmailConfigured } from "./email.service";
 
+import { invalidateAllUserTokens } from "~/services/authToken.service";
+
 export const requestPasswordReset = async (
   userId: string,
   targetUserId: string
@@ -71,9 +73,11 @@ export const approveResetRequest = async (
   const hashed = await bcrypt.hash(tempPassword, 12);
 
   await pool.query(
-    `UPDATE accounts SET hashed_password = $1, updated_at = NOW() WHERE id = $2`,
+    `UPDATE accounts SET hashed_password = $1, first_login = true, updated_at = NOW() WHERE id = $2`,
     [hashed, request.user_id]
   );
+
+  await invalidateAllUserTokens(request.user_id);
 
   // Lưu temp password vào admin_note để admin có thể gửi cho sinh viên nếu email chưa cấu hình
   await updateResetRequestStatus(requestId, "approved", approverId, adminNote);

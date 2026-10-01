@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Tabs, Table, Text, Title, Group, Loader, Center, Box, ScrollArea, Grid, Stack, Divider, Select } from '@mantine/core';
-import { IconBooks, IconChartBar, IconUser, IconId, IconCalendar, IconGenderMale, IconActivity, IconUsers, IconStar } from '@tabler/icons-react';
+import { IconBooks, IconChartBar, IconUser, IconId, IconActivity, IconStar } from '@tabler/icons-react';
 import apiClient from '@/services/apiClient';
+import useAuth from '@/hooks/useAuth';
 
 interface SubjectInfo {
   subject_id: string;
@@ -48,6 +49,7 @@ interface TranscriptData {
 }
 
 export default function GradeLookup() {
+  const { userName, userEmail } = useAuth();
   const [data, setData] = useState<TranscriptData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -80,6 +82,8 @@ export default function GradeLookup() {
   const totalAccumulated = data.blocks.reduce((acc, b) => acc + b.accumulatedCredits, 0);
   const totalTaken = data.semesters.reduce((acc, sem) => acc + sem.summary.totalCredits, 0);
 
+  const studentName = userName || (userEmail ? userEmail.split('@')[0] : 'Sinh viên');
+
   return (
     <Box p="md" bg="var(--mantine-color-gray-0)" style={{ minHeight: '100vh' }}>
       <Grid>
@@ -89,40 +93,25 @@ export default function GradeLookup() {
             {/* THÔNG TIN SINH VIÊN */}
             <Card withBorder radius="md" p="md" shadow="sm">
               <Select
-                data={['Công nghệ thông tin Việt Nhật']}
-                defaultValue="Công nghệ thông tin Việt Nhật"
+                data={['Công nghệ thông tin']}
+                defaultValue="Công nghệ thông tin"
                 mb="md"
               />
               <Stack gap="xs">
                 <Group wrap="nowrap">
                   <IconUser size={16} color="gray" />
                   <Text size="sm" c="dimmed" w={80}>Họ tên:</Text>
-                  <Text size="sm" fw={600}>Sinh viên 01</Text>
+                  <Text size="sm" fw={600}>{studentName}</Text>
                 </Group>
                 <Group wrap="nowrap">
                   <IconId size={16} color="gray" />
-                  <Text size="sm" c="dimmed" w={80}>Mã số:</Text>
-                  <Text size="sm" fw={600}>1671020001</Text>
-                </Group>
-                <Group wrap="nowrap">
-                  <IconCalendar size={16} color="gray" />
-                  <Text size="sm" c="dimmed" w={80}>Ngày sinh:</Text>
-                  <Text size="sm" fw={600}>01/01/2005</Text>
-                </Group>
-                <Group wrap="nowrap">
-                  <IconGenderMale size={16} color="gray" />
-                  <Text size="sm" c="dimmed" w={80}>Giới tính:</Text>
-                  <Text size="sm" fw={600}>Nam</Text>
+                  <Text size="sm" c="dimmed" w={80}>Email:</Text>
+                  <Text size="sm" fw={600} style={{ wordBreak: 'break-all' }}>{userEmail || '—'}</Text>
                 </Group>
                 <Group wrap="nowrap">
                   <IconActivity size={16} color="gray" />
                   <Text size="sm" c="dimmed" w={80}>Trạng thái:</Text>
                   <Text size="sm" fw={600}>Đang học</Text>
-                </Group>
-                <Group wrap="nowrap">
-                  <IconUsers size={16} color="gray" />
-                  <Text size="sm" c="dimmed" w={80}>Lớp:</Text>
-                  <Text size="sm" fw={600}>K17-CNTTVJ_1</Text>
                 </Group>
               </Stack>
             </Card>

@@ -1,7 +1,5 @@
 # Examify - Hệ thống thi trắc nghiệm trực tuyến — Online Examination System
 
-> **学者は手に持つ。** *"Người học thức giấc trong tay."*
-
 
 ---
 
@@ -56,7 +54,3 @@ cd FrontEnd/client && npm test
 ```
 
 ---
-
-## Liên hệ
-
-**Author:** Examify · **License:** MIT

@@ -399,7 +399,10 @@ export default function ExamImportPreviewModal({
   const needsReviewCount = questions.filter((q) => q.needs_review).length;
   const mcqCount = questions.filter((q) => q.question_type === 'mcq').length;
   const essayCount = questions.filter((q) => q.question_type === 'essay').length;
-  const chapterDefinitions = currentPreview.chapter_definitions ?? [];
+  const chapterDefinitions = useMemo(
+    () => currentPreview.chapter_definitions ?? [],
+    [currentPreview.chapter_definitions]
+  );
   const chapterOptions = useMemo<ChapterOption[]>(
     () =>
       chapterDefinitions.map((item) => ({

@@ -1,6 +1,20 @@
 import pool from "~/config/db";
 
-export const getOfferingsByTeacher = async (teacherId: string) => {
+export const getOfferingsByTeacher = async (teacherId: string, role?: string) => {
+  if (role === "admin") {
+    const result = await pool.query(`
+      SELECT o.id, o.section_name, s.name as subject_name, s.code as subject_code,
+             sem.name as semester_name, sem.year as year,
+             COUNT(e.student_id) as student_count
+      FROM term_subject_offerings o
+      JOIN subjects s ON s.id = o.subject_id
+      JOIN semesters sem ON sem.id = o.semester_id
+      LEFT JOIN term_student_enrollments e ON e.term_offering_id = o.id
+      GROUP BY o.id, s.name, s.code, sem.name, sem.year
+      ORDER BY sem.name DESC, s.name ASC
+    `);
+    return result.rows;
+  }
   const result = await pool.query(`
     SELECT o.id, o.section_name, s.name as subject_name, s.code as subject_code,
            sem.name as semester_name, sem.year as year,

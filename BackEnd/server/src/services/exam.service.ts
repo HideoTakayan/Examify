@@ -649,18 +649,32 @@ function validateQuestionDraft(question: ImportedQuestionDraft, index: number) {
   if (!Number.isInteger(question.chapter) || Number(question.chapter) <= 0) {
     throw httpError(400, `${label}: bắt buộc phải có [CHUONG:x] hợp lệ`);
   }
-  if (question.question_type !== "mcq" && question.question_type !== "essay") {
+  const validTypes: QuestionType[] = ["mcq", "msq", "fib", "essay"];
+  if (!validTypes.includes(question.question_type)) {
     throw httpError(400, `${label}: question_type không hợp lệ`);
   }
   if (!Number.isFinite(question.points) || question.points <= 0) {
     throw httpError(400, `${label}: points phải lớn hơn 0`);
   }
-  if (question.question_type === "mcq") {
+  if (question.question_type === "mcq" || question.question_type === "msq") {
     if (!question.options || Object.keys(question.options).length < 2) {
       throw httpError(400, `${label}: câu trắc nghiệm cần ít nhất 2 lựa chọn`);
     }
-    if (question.correct_answer == null || question.correct_answer === "") {
+    if (
+      question.correct_answer == null ||
+      question.correct_answer === "" ||
+      (Array.isArray(question.correct_answer) && question.correct_answer.length === 0)
+    ) {
       throw httpError(400, `${label}: câu trắc nghiệm cần đáp án đúng`);
+    }
+  }
+  if (question.question_type === "fib") {
+    if (
+      question.correct_answer == null ||
+      question.correct_answer === "" ||
+      (Array.isArray(question.correct_answer) && question.correct_answer.length === 0)
+    ) {
+      throw httpError(400, `${label}: câu điền khuyết cần đáp án đúng`);
     }
   }
 }
@@ -695,7 +709,14 @@ export const createExamWithQuestionsService = async (
     throw httpError(400, "questions là mảng bắt buộc");
   }
   payload.questions.forEach(validateQuestionDraft);
-  const numVersions = payload.num_versions ?? 2;
+  const maxVersionIndex = payload.questions.reduce(
+    (max, q) => Math.max(max, q.version_index ?? 0),
+    0
+  );
+  const numVersions =
+    payload.num_versions && payload.num_versions > 0
+      ? payload.num_versions
+      : Math.max(1, maxVersionIndex + 1);
   for (let v = 0; v < numVersions; v += 1) {
     const count = payload.questions.filter((q) => (q.version_index ?? 0) === v).length;
     if (count === 0) {
@@ -1567,7 +1588,8 @@ function alignGradedDetailsToExam(
   const details = gradedDetails.filter((d) => validIds.has(d.question_id));
   const changed = details.length !== gradedDetails.length;
   const score = computeScaledScoreFromDetails(details, details.length);
-  const gradingStatus: GradingStatus = "complete";
+  const hasPending = details.some((d) => d.question_type === "essay" && d.pending_grading);
+  const gradingStatus: GradingStatus = hasPending ? "pending_manual" : "complete";
   return { details, changed, score, gradingStatus };
 }
 
@@ -1670,6 +1692,28 @@ export const submitSessionService = async (
       };
     }
 
+    if (q.question_type === "fib") {
+      const fibText = Array.isArray(submitted) ? String(submitted[0] ?? "") : String(submitted ?? "");
+      const submittedNorm = fibText.trim().toLowerCase();
+      const correctRaw = q.correct_answer;
+      const correctAnsList = Array.isArray(correctRaw) ? correctRaw : [correctRaw];
+      const isCorrect = correctAnsList.some(c => c && String(c).trim().toLowerCase() === submittedNorm);
+      const pointsEarned = isCorrect ? Number(q.points) : 0;
+      score += pointsEarned;
+      if (isCorrect) correctCount++;
+
+      return {
+        question_id: q.id,
+        question_type: "fib",
+        submitted: fibText,
+        correct: Array.isArray(correctRaw) ? correctRaw.join(" / ") : String(correctRaw ?? ""),
+        is_correct: isCorrect,
+        points_earned: pointsEarned,
+        max_points: Number(q.points),
+        pending_grading: false,
+      };
+    }
+
     const correct = q.correct_answer;
     const correctKey = resolveCorrectAnswerKey(correct);
     const optionMap = versionMaps?.optionMaps[qId];
@@ -1690,7 +1734,7 @@ export const submitSessionService = async (
 
     return {
       question_id: q.id,
-      question_type: "mcq",
+      question_type: q.question_type || "mcq",
       submitted: submittedOriginal ?? submitted,
       correct: correctKey,
       is_correct: isCorrect,
@@ -1700,7 +1744,7 @@ export const submitSessionService = async (
     };
   }).filter(Boolean) as GradedDetailRow[];
 
-  const gradingStatus: GradingStatus = "complete";
+  const gradingStatus: GradingStatus = hasEssay ? "pending_manual" : "complete";
   const learningAssessmentSummary = buildLearningAssessmentSummary(
     allQuestions,
     gradedRows
@@ -1868,7 +1912,7 @@ async function applyRecomputeIfNeeded(
   const hasPendingEssay = recompute.graded_details.some(
     (d) => d.question_type === "essay" && d.pending_grading
   );
-  const gradingStatus: GradingStatus = "complete";
+  const gradingStatus: GradingStatus = hasPendingEssay ? "pending_manual" : "complete";
   const updated = await updateSessionGrading(session.id, {
     score: recompute.score,
     graded_details: recompute.graded_details,
@@ -2006,7 +2050,7 @@ async function repairGradedDetailsFromReview(
   const updated = await updateSessionGrading(session.id, {
     score,
     graded_details: repaired,
-    grading_status: "complete",
+    grading_status: hasPendingEssay ? "pending_manual" : "complete",
   });
   return { session: updated ?? session, gradedDetails: repaired };
 }
@@ -2136,6 +2180,81 @@ export const getSessionGradingView = async (
     version_code: (meta as any).version_code ?? null,
     version_id: (meta as any).version_id ?? null,
   };
+};
+
+export const gradeSessionService = async (
+  sessionId: string,
+  actorId: string,
+  actorRole: string,
+  grades: Record<string, { points_awarded: number; comment?: string }>
+): Promise<ExamSession> => {
+  const session = await getSessionById(sessionId);
+  if (!session) throw httpError(404, "Không tìm thấy phiên thi");
+  if (session.status !== "submitted") throw httpError(400, "Chỉ chấm bài đã nộp");
+
+  await assertTeacherCanManageExam(session.exam_id, actorId, actorRole);
+
+  const allQuestions = await getQuestionsByExam(session.exam_id);
+  const questionsById = new Map(allQuestions.map((q) => [q.id, q]));
+  let gradedDetails = parseGradedDetails(session.graded_details);
+
+  for (const [questionId, gradeInfo] of Object.entries(grades)) {
+    const q = questionsById.get(questionId);
+    if (!q) continue;
+
+    const maxPoints = Number(q.points);
+    const awarded = Math.max(0, Math.min(maxPoints, Number(gradeInfo.points_awarded || 0)));
+    const comment = typeof gradeInfo.comment === "string" ? gradeInfo.comment.trim() : null;
+
+    const detailIdx = gradedDetails.findIndex((d) => d.question_id === questionId);
+    if (detailIdx >= 0) {
+      gradedDetails[detailIdx] = {
+        ...gradedDetails[detailIdx],
+        points_earned: awarded,
+        teacher_comment: comment,
+        pending_grading: false,
+        is_correct: awarded >= maxPoints,
+      };
+    } else {
+      gradedDetails.push({
+        question_id: questionId,
+        question_type: q.question_type,
+        submitted: null,
+        is_correct: awarded >= maxPoints,
+        points_earned: awarded,
+        max_points: maxPoints,
+        pending_grading: false,
+        teacher_comment: comment,
+      });
+    }
+  }
+
+  const score = computeScaledScoreFromDetails(gradedDetails, gradedDetails.length);
+  const hasPendingEssay = gradedDetails.some(
+    (d) => d.question_type === "essay" && d.pending_grading
+  );
+  const gradingStatus: GradingStatus = hasPendingEssay ? "pending_manual" : "complete";
+
+  const updated = await updateSessionGrading(sessionId, {
+    score,
+    graded_details: gradedDetails,
+    grading_status: gradingStatus,
+  });
+
+  if (!updated) throw httpError(500, "Không thể cập nhật điểm phiên thi");
+
+  if (updated.student_id) {
+    const exam = await getExamById(session.exam_id);
+    const examTitle = exam?.title ?? "Bài thi";
+    void createNotification(
+      updated.student_id,
+      "[Chấm bài] Giáo viên đã chấm bài tự luận",
+      `Bài thi "${examTitle}" đã được chấm xong. Điểm: ${score.toFixed(2)}/10`,
+      "success"
+    ).catch(() => {});
+  }
+
+  return updated;
 };
 
 

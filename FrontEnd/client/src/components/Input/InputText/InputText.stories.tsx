@@ -1,4 +1,4 @@
-﻿// eslint-disable-next-line storybook/no-renderer-packages
+﻿ 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import InputText from "./InputText";
 import { IconMail } from "@tabler/icons-react";

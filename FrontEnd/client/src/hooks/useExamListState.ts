@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import examApi, { type Exam, type ExamSession, type ForceSubmitSummary } from '@/services/examApi';
 
@@ -19,20 +19,14 @@ export function useExamListState(opts: {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [searchText, setSearchText] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [startingExamId, setStartingExamId] = useState<string | null>(null);
   const [updatingExamId, setUpdatingExamId] = useState<string | null>(null);
   const [forceSubmittingExamId, setForceSubmittingExamId] = useState<string | null>(null);
   const [retakeGrantExamIds, setRetakeGrantExamIds] = useState<Set<string>>(new Set());
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSetSearchText = (value: string) => {
     setSearchText(value);
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => {
-      setDebouncedSearch(value);
-    }, 350);
   };
 
   const loadExams = useCallback(async () => {
@@ -80,7 +74,7 @@ export function useExamListState(opts: {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, isStaff, t]);
+  }, [isStaff, t]);
 
   useEffect(() => {
     if (location.pathname !== '/exams') return;
